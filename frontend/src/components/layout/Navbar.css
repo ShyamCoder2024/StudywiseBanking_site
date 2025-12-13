@@ -1,0 +1,23 @@
+.navbar-logo {
+    height: 32px;
+    width: auto;
+}
+
+.nav-link {
+    padding: 8px 12px;
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+@media (max-width: 768px) {
+    .navbar-nav .nav-link {
+        display: none;
+    }
+}

@@ -1,0 +1,190 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3);
+    background-color: var(--color-bg);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card {
+    padding: var(--space-4);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--space-4);
+}
+
+.auth-header h1 {
+    margin-bottom: var(--space-1);
+}
+
+.auth-form {
+    margin-bottom: var(--space-3);
+}
+
+.auth-forgot {
+    text-align: right;
+    margin-bottom: var(--space-3);
+}
+
+.auth-forgot a {
+    font-size: var(--font-size-sm);
+}
+
+.auth-footer {
+    text-align: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+}
+
+.auth-footer p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.auth-admin-link {
+    text-align: center;
+    margin-top: var(--space-3);
+}
+
+.auth-admin-link a {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+/* Progress Steps for Forgot Password */
+.auth-progress {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.auth-progress-step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.auth-progress-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+
+.auth-progress-dot.active {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.auth-progress-dot.completed {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.auth-progress-line {
+    width: 40px;
+    height: 2px;
+    background-color: var(--color-border);
+}
+
+.auth-progress-line.active {
+    background-color: var(--color-primary);
+}
+
+/* Gender/Status Radio in Register */
+.register-form .form-radio-group {
+    margin-top: var(--space-1);
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .auth-container {
+        max-width: 400px;
+    }
+
+    .auth-card {
+        padding: var(--space-3);
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+    .auth-page {
+        padding: var(--space-2);
+        align-items: flex-start;
+        padding-top: var(--space-4);
+    }
+
+    .auth-container {
+        max-width: 100%;
+    }
+
+    .auth-card {
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+    }
+
+    .auth-header {
+        margin-bottom: var(--space-3);
+    }
+
+    .auth-progress {
+        gap: var(--space-1);
+    }
+
+    .auth-progress-line {
+        width: 24px;
+    }
+
+    .auth-progress-dot {
+        width: 28px;
+        height: 28px;
+        font-size: var(--font-size-xs);
+    }
+
+    .register-form .form-radio-group {
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+}
+
+/* Small Mobile (< 480px) */
+@media (max-width: 479px) {
+    .auth-page {
+        padding: var(--space-1);
+        padding-top: var(--space-3);
+    }
+
+    .auth-card {
+        padding: var(--space-2);
+    }
+
+    .auth-header h1 {
+        font-size: var(--font-size-lg);
+    }
+
+    .auth-progress-line {
+        width: 16px;
+    }
+
+    .auth-progress-dot {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+}
