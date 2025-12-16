@@ -1,293 +1,1131 @@
-.dashboard-header {
-    margin-bottom: var(--space-3);
+/* StudentDashboard.css - Final Polish */
+
+.bento-dashboard {
+    padding-bottom: 90px;
+    padding-top: 24px;
+    background: var(--color-bg);
+    min-height: 100vh;
 }
 
-/* CTA Card */
-.cta-card {
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-card) 100%);
-    border: 1px solid var(--color-primary-light);
-    margin-bottom: var(--space-3);
+.dashboard-container {
+    max-width: 1280px;
+    /* Wider on big screens */
+    margin: 0 auto;
+    padding: 0 40px;
+    /* Breathing room */
 }
 
-.cta-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-2);
-}
-
-.cta-icon {
-    font-size: 48px;
-    flex-shrink: 0;
-}
-
-.cta-text {
-    flex: 1;
-}
-
-.cta-text h2 {
-    margin-bottom: 4px;
-}
-
-/* Stats Grid */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-2);
-    margin-bottom: var(--space-3);
-}
-
-.stat-card {
-    text-align: center;
-    padding: var(--space-3);
-}
-
-.stat-value {
-    font-size: 36px;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-primary);
-    margin-bottom: 4px;
-}
-
-.stat-label {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-}
-
-/* Dashboard Grid */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-}
-
-@media (min-width: 769px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 0 20px;
     }
 
-    .cta-content {
-        padding: var(--space-3);
+    .bento-dashboard {
+        padding-top: 32px;
+        /* More space from header */
     }
 }
 
-/* Sections */
-.dashboard-section {
-    margin-bottom: var(--space-2);
+/* Utils */
+.clickable {
+    cursor: pointer;
 }
 
-/* Attempts List */
-.attempts-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+.clickable:active {
+    transform: scale(0.98);
 }
 
-.attempt-card {
+.text-red {
+    color: #ef4444;
+}
+
+.text-blue {
+    color: #3b82f6;
+}
+
+/* Header */
+.dashboard-header-row {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: var(--space-2);
+    align-items: flex-end;
+    margin-bottom: 24px;
 }
 
-.attempt-info h4 {
-    margin-bottom: 4px;
-}
 
-.attempt-score {
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-bold);
-    padding: 4px 12px;
-    border-radius: var(--radius-sm);
-}
-
-.attempt-score.good {
-    background-color: var(--color-success-light);
-    color: var(--color-success);
-}
-
-.attempt-score.average {
-    background-color: #FEF3C7;
-    color: #D97706;
-}
-
-.attempt-score.poor {
-    background-color: var(--color-warning-light);
-    color: var(--color-warning);
-}
-
-/* Weak Areas */
-.weak-areas-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-}
-
-.weak-area-card {
+.header-welcome-group {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: var(--space-2);
+    gap: 16px;
 }
 
-.weak-area-info {
-    flex: 1;
-    margin-right: var(--space-2);
+.header-avatar-trigger {
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-.weak-area-info h4 {
-    margin-bottom: var(--space-1);
+.header-avatar-trigger:hover {
+    transform: scale(1.05);
 }
 
-/* Recommendations */
-.recommendations-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-2);
+.dashboard-header-row h1 {
+    font-size: 2rem;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.2;
 }
 
-.recommendation-card {
+.dashboard-header-row p {
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+}
+
+.header-stats-pill {
     display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2);
+    gap: 12px;
+    flex-wrap: wrap;
+    /* Allow wrapping on small screens */
 }
 
-.recommendation-icon {
-    font-size: 32px;
-    flex-shrink: 0;
-}
-
-.recommendation-content {
-    flex: 1;
-}
-
-.recommendation-content h4 {
-    margin-bottom: 2px;
-}
-
-/* Empty State */
-.empty-card {
-    padding: var(--space-4);
-}
-
-/* Desktop/Tablet (768px+) */
-@media (min-width: 768px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .cta-content {
-        padding: var(--space-3);
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .stat-value {
-        font-size: 36px;
-    }
-}
-
-/* Large Desktop (1024px+) */
-@media (min-width: 1024px) {
-    .recommendations-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Tablet (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stat-value {
-        font-size: 32px;
-    }
-
-    .cta-icon {
-        font-size: 40px;
-    }
-
-    .recommendations-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Mobile (< 768px) */
-@media (max-width: 767px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cta-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .cta-text {
-        margin-bottom: var(--space-2);
-    }
-
-    .cta-icon {
-        font-size: 40px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stat-value {
-        font-size: 28px;
-    }
-
-    .stat-card {
-        padding: var(--space-2);
-    }
-
-    .recommendations-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .recommendation-card {
-        padding: var(--space-2);
-    }
-}
-
-/* Small Mobile (< 480px) */
-@media (max-width: 479px) {
-    .stat-value {
-        font-size: 24px;
-    }
-
-    .stat-label {
-        font-size: var(--font-size-xs);
-    }
-
-    .cta-icon {
-        font-size: 32px;
-    }
-
-    .attempt-card {
+@media (max-width: 600px) {
+    .dashboard-header-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--space-1);
+        gap: 12px;
+        margin-bottom: 24px;
     }
 
-    .attempt-score {
-        align-self: flex-end;
+    .dashboard-header-row h1 {
+        font-size: 1.7rem;
+        /* Slightly smaller for mobile */
     }
 
-    .weak-area-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-1);
-    }
-
-    .weak-area-info {
-        margin-right: 0;
+    .header-stats-pill {
         width: 100%;
+        gap: 8px;
+        flex-wrap: nowrap;
+        /* Force single line scroll if needed */
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
     }
+
+    /* Hide scrollbar for cleaner look */
+    .header-stats-pill::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.pill-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-card);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+/* BENTO GRID */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    grid-auto-flow: dense;
+    padding-bottom: 40px;
+}
+
+.bento-tile {
+    background: var(--color-card);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.bento-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+    z-index: 2;
+}
+
+.tile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tile-header h3 {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+/* Mobile Bottom Nav - RE-ADDED FIX */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--color-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 10px 20px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 1000;
+    justify-content: space-between;
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.08);
+    /* Stronger shadow */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-width: 60px;
+}
+
+.nav-item.active {
+    color: #4f46e5;
+    background: #eef2ff;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.nav-item:active {
+    transform: scale(0.9);
+}
+
+/* 1. Hero (Span 2) */
+.hero-tile {
+    grid-column: span 2;
+    min-height: 240px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    justify-content: center;
+    padding: 30px;
+}
+
+.hero-bg-overlay {
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero-content-bento {
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exam-countdown .label {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.exam-countdown h2 {
+    font-size: 2.2rem;
+    margin: 8px 0 20px 0;
+    color: white;
+    font-weight: 800;
+}
+
+.countdown-timer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.time-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.time-unit .num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.time-unit .unit {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    opacity: 0.9;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn-action-glow {
+    background: var(--color-card);
+    color: var(--primary);
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+    transition: transform 0.2s;
+}
+
+/* 2. Graph Tile (Span 2) */
+.graph-tile {
+    grid-column: span 2;
+    min-height: 240px;
+}
+
+.graph-bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex: 1;
+    padding-bottom: 10px;
+}
+
+.bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.graph-bar {
+    width: 60%;
+    background: linear-gradient(to top, var(--primary), #a855f7);
+    border-radius: 8px 8px 0 0;
+    min-height: 6px;
+}
+
+.bar-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* 3. AI Thermostat (Span 1) */
+.ai-tile {
+    grid-column: span 1;
+    padding: 20px;
+}
+
+.ai-thermostat-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.ai-thermostat {
+    position: relative;
+    width: 110px;
+    height: 110px;
+}
+
+.ai-thermostat svg {
+    transform: rotate(135deg);
+    /* Gauge Style */
+    width: 100%;
+    height: 100%;
+}
+
+.thermostat-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.t-num {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.t-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.ai-mini-stats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    background: var(--surface-alt);
+    border-radius: 8px;
+}
+
+.stat-row .val.success {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.stat-row .val.danger {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.click-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--primary);
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+/* 4. Stats Tokens (Span 1) */
+.stats-tile-1,
+.stats-tile-2 {
+    justify-content: space-between;
+}
+
+.stats-tile-1 {
+    background: var(--color-card);
+}
+
+.stats-tile-2 {
+    background: var(--color-card);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.trend-up {
+    font-size: 0.8rem;
+    color: #10b981;
+    font-weight: 600;
+    background: #dcfce7;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.stat-bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-num {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+/* 5. Video Tile (New) */
+.video-tile {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+}
+
+.video-tile .tile-header h3 {
+    color: var(--text-main);
+}
+
+.video-card-mini {
+    background: var(--surface-alt);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.video-card-mini .video-info h4 {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.video-card-mini .video-info span {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.play-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 6. Course Tile (New) */
+.course-tile {
+    background: var(--color-card);
+}
+
+.course-item-mini {
+    margin-bottom: 12px;
+}
+
+.course-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.progress-bar-track {
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+/* 7. Todo & Rank */
+.todo-tile {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.rank-tile {
+    grid-column: span 3;
+}
+
+/* Desktop (Fixed Grid) */
+@media (min-width: 1025px) {
+    .bento-grid {
+        grid-template-rows: 280px 220px 320px;
+    }
+
+    .hero-tile {
+        grid-column: 1 / 3;
+        grid-row: 1;
+    }
+
+    .graph-tile {
+        grid-column: 3 / 5;
+        grid-row: 1;
+    }
+
+    .ai-tile {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .stats-tile-1 {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .stats-tile-2 {
+        grid-column: 3;
+        grid-row: 2;
+    }
+
+    .todo-tile {
+        grid-column: 4;
+        grid-row: 2 / 4;
+    }
+
+    .rank-tile {
+        grid-column: 1 / 3;
+        grid-row: 3;
+    }
+
+    .video-tile {
+        grid-column: 3;
+        grid-row: 3;
+    }
+
+    /* Added Video Tile */
+
+    /* Courses can be added maybe below or as a tab, for now adding to row 3 flex logic or replace stats */
+    /* Let's fit Courses and Video in Row 3 alongside Rank? */
+    /* Readjusting: Rank(2) | Video(1) | Course(1) -> Ops no space, we have 3 cols of space left (Todo is col 4) */
+
+    .rank-tile {
+        grid-column: 1 / 3;
+        grid-row: 3;
+    }
+
+    .video-tile {
+        grid-column: 3;
+        grid-row: 3;
+    }
+
+    .course-tile {
+        grid-column: 3;
+        grid-row: 2;
+        display: none;
+    }
+
+    /* Hiding course tile for now on desktop to fit grid or replace stats-2 */
+
+    /* Better Layout: */
+    /* Row 2: AI(1) | Stats1(1) | Video(1) | Todo(1 sidebar) */
+    /* Row 3: Rank(2) | Courses(1) | Todo(sidebar) */
+
+    .ai-tile {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .stats-tile-1 {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .video-tile {
+        grid-column: 3;
+        grid-row: 2;
+    }
+
+    .rank-tile {
+        grid-column: 1 / 3;
+        grid-row: 3;
+    }
+
+    .course-tile {
+        grid-column: 3;
+        grid-row: 3;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stats-tile-2 {
+        display: none;
+    }
+
+    /* Removing Stats2 to make room for content */
+}
+
+/* Back Button */
+.btn-back {
+    margin-top: 20px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+    }
+
+    .hero-tile,
+    .graph-tile,
+    .rank-tile {
+        grid-column: span 2;
+    }
+
+    .ai-tile,
+    .stats-tile-1,
+    .video-tile,
+    .course-tile,
+    .todo-tile {
+        grid-column: span 1;
+        grid-row: auto;
+    }
+
+    .stats-tile-2 {
+        display: flex;
+    }
+}
+
+@media (max-width: 600px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tile-header h3 {
+        font-size: 1rem;
+    }
+
+    .hero-tile,
+    .graph-tile,
+    .ai-tile,
+    .stats-tile-1,
+    .stats-tile-2,
+    .video-tile,
+    .course-tile,
+    .todo-tile,
+    .rank-tile {
+        grid-column: span 1;
+    }
+}
+
+/* ============================================
+   PREMIUM MICRO-ANIMATIONS
+   ============================================ */
+
+/* Keyframe: Subtle Pulse Glow for Streaks/Achievements */
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(138, 117, 186, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 20px 4px rgba(138, 117, 186, 0.3);
+    }
+}
+
+/* Keyframe: Shimmer Effect for Progress Bars */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Keyframe: Soft Bounce for Interactions */
+@keyframes softBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* Keyframe: Scale Up */
+@keyframes scaleUp {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Keyframe: Fade In Up */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Pill Items with Hover Glow */
+.pill-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.pill-item:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(138, 117, 186, 0.15);
+}
+
+.pill-item:active {
+    transform: scale(0.98);
+}
+
+/* Streak Glow Animation */
+.pill-item:first-child {
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Enhanced Bento Tile Hover */
+.bento-tile {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.bento-tile:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: rgba(138, 117, 186, 0.3);
+}
+
+.bento-tile:active {
+    transform: translateY(-2px) scale(0.99);
+}
+
+/* Progress Bar Shimmer Effect */
+.progress-bar-fill {
+    background: linear-gradient(90deg,
+            var(--primary) 0%,
+            #a78bfa 25%,
+            var(--primary) 50%,
+            #a78bfa 75%,
+            var(--primary) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+/* AI Thermostat Glow */
+.ai-thermostat {
+    transition: all 0.3s ease;
+}
+
+.ai-tile:hover .ai-thermostat {
+    filter: drop-shadow(0 0 15px rgba(138, 117, 186, 0.4));
+}
+
+/* Graph Bar Hover Effect */
+.bar-wrapper {
+    transition: all 0.3s ease;
+}
+
+.bar-wrapper:hover .graph-bar {
+    filter: brightness(1.1);
+    box-shadow: 0 0 15px rgba(138, 117, 186, 0.4);
+}
+
+/* Button Hover Effects */
+.btn-action-glow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-action-glow:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+}
+
+.btn-action-glow:active {
+    transform: scale(0.98);
+}
+
+/* Nav Item Active Animation */
+.nav-item.active {
+    animation: softBounce 0.5s ease-out;
+}
+
+/* Video Tile Play Button */
+.play-icon {
+    transition: all 0.3s ease;
+}
+
+.video-card-mini:hover .play-icon {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Course Progress Hover */
+.course-item-mini:hover .progress-bar-fill {
+    filter: brightness(1.2);
+}
+
+/* Stat Number Animation */
+.stat-num {
+    transition: all 0.3s ease;
+}
+
+.stat-card-p:hover .stat-num,
+.stats-tile-1:hover .stat-num,
+.stats-tile-2:hover .stat-num {
+    transform: scale(1.05);
+}
+
+/* Trend Badge Pulse */
+.trend-up {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Mobile Bottom Nav Smooth Transitions */
+.nav-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:hover {
+    transform: translateY(-3px);
+}
+
+/* Skeleton Loading Animation (for future use) */
+@keyframes skeletonLoading {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, var(--color-border) 0%, var(--color-card) 50%, var(--color-border) 100%);
+    background-size: 200px 100%;
+    animation: skeletonLoading 1.5s ease-in-out infinite;
+}
+
+/* Smooth Focus States */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+
+/* Nav item active state for dark mode */
+:root.dark .nav-item.active {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.15);
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
+}
+
+/* Trend badge for dark mode */
+:root.dark .trend-up {
+    background: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+/* Pill item border for dark mode */
+:root.dark .pill-item {
+    border: 1px solid var(--color-border);
+}
+
+/* Bento tile adjustments for dark mode */
+:root.dark .bento-tile:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(138, 117, 186, 0.4);
+}
+
+/* Video tile header text - already white, no change needed */
+
+/* Mobile bottom nav for dark mode */
+:root.dark .mobile-bottom-nav {
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Progress bar track for dark mode */
+:root.dark .progress-bar-track {
+    background: var(--color-border);
+}
+
+/* Graph bars glow for dark mode */
+:root.dark .bar-wrapper:hover .graph-bar {
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
+/* Stat row background for dark mode */
+:root.dark .stat-row {
+    background: var(--color-border);
+}
+
+/* Success/Danger text colors (already correct in variables) */
+
+/* Video card mini background for dark mode */
+:root.dark .video-card-mini {
+    background: var(--color-border);
+}
+
+/* ============================================
+   TODO LIST STYLING
+   ============================================ */
+
+/* Todo item layout */
+.todo-item-bento {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.todo-item-bento:last-child {
+    border-bottom: none;
+}
+
+.todo-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.todo-text p {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.todo-text p.strike {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* Checkbox */
+.todo-item-bento .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.todo-item-bento .checkbox:hover {
+    border-color: var(--primary);
+}
+
+.todo-item-bento .checkbox.checked {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+/* Todo Tags */
+.todo-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tag color variants */
+.todo-tag-math {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+}
+
+.todo-tag-reasoning {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+}
+
+.todo-tag-english {
+    background: rgba(236, 72, 153, 0.15);
+    color: #ec4899;
+}
+
+.todo-tag-banking {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.todo-tag-exam-update {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.todo-tag-general {
+    background: var(--color-border);
+    color: var(--color-text-secondary);
+}
+
+/* Todo list container */
+.todo-list-bento {
+    display: flex;
+    flex-direction: column;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+/* Badge in header */
+.todo-tile .badge {
+    background: var(--primary);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Dark mode for tags - using rgba keeps them visible */
+:root.dark .todo-tag-math {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+:root.dark .todo-tag-reasoning {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+:root.dark .todo-tag-english {
+    background: rgba(236, 72, 153, 0.2);
+}
+
+:root.dark .todo-tag-banking {
+    background: rgba(16, 185, 129, 0.2);
+}
+
+:root.dark .todo-tag-exam-update {
+    background: rgba(239, 68, 68, 0.2);
 }

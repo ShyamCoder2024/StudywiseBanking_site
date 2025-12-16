@@ -1,0 +1,558 @@
+/* ProfilePage.css - Premium & Fully Responsive (Laptop/Tablet/Mobile) */
+.page-profile-premium {
+    min-height: 100vh;
+    background: var(--color-bg);
+    /* Lighter cleaner background */
+    padding-bottom: 80px;
+    padding-top: 40px;
+    /* More top breathing room */
+}
+
+.profile-container-premium {
+    max-width: 1200px;
+    /* WIDER for Laptop */
+    margin: 0 auto;
+    padding: 0 24px;
+
+    /* Grid Layout for Laptop: 40% Left (Profile), 60% Right (Stats + Settings) */
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+/* Glass Panel helper */
+.glass-panel {
+    background: var(--color-card);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+    /* Softer shadow */
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* LEFT COLUMN: Profile Card Main */
+.profile-card-main {
+    position: sticky;
+    top: 40px;
+    text-align: center;
+}
+
+.header-cover {
+    height: 140px;
+    background: linear-gradient(135deg, #4f46e5, #818cf8, #c084fc);
+}
+
+.header-content {
+    padding: 0 24px 32px 24px;
+    margin-top: -70px;
+    /* Pull avatar up */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.avatar-wrapper-premium {
+    position: relative;
+    padding: 6px;
+    background: var(--color-card);
+    border-radius: 50%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.btn-edit-avatar {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #10b981;
+    border: 3px solid white;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+    color: white;
+}
+
+.btn-edit-avatar:hover {
+    transform: scale(1.1);
+}
+
+.user-info-premium h1 {
+    font-size: 1.6rem;
+    color: var(--color-text);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.name-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.meta-badge {
+    background: var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+}
+
+.user-bio-line {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+}
+
+.preference-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef2ff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    color: #4338ca;
+    margin-bottom: 24px;
+}
+
+.btn-edit-profile-action {
+    background: var(--color-card);
+    border: 1px solid #cbd5e1;
+    padding: 10px 32px;
+    border-radius: 30px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-edit-profile-action:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* RIGHT COLUMN: Content Grid */
+.profile-content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 16px;
+}
+
+/* Stats Section */
+.stats-section-premium {
+    /* No bg here, pure grid for stats usually looks better, or card */
+}
+
+.stats-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.stat-card-p {
+    background: var(--color-card);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    border: 1px solid white;
+}
+
+.stat-card-p:hover {
+    transform: translateY(-4px);
+}
+
+.icon-box-p {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.icon-box-p.purple {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.icon-box-p.blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.icon-box-p.orange {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.stat-card-p h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--color-text);
+}
+
+.stat-card-p p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Settings List */
+.settings-section {
+    padding: 24px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.s-icon {
+    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    background: var(--color-bg);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.s-content h4 {
+    font-size: 1.05rem;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* Modals */
+.modal-overlay {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+/* Avatar Modal Specifics */
+/* Reuse common properties if possible, or define explicitly */
+
+/* Universal Modal Card (Used for Edit Profile AND Avatar Picker if shared, but specific classes exist) */
+.modal-card {
+    background: var(--color-card);
+    width: 100%;
+    max-width: 500px;
+    /* Slightly narrower than avatar picker */
+    max-height: 85vh;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    /* contain scroll */
+}
+
+/* Internal Areas */
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: var(--color-bg);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* Exam Selector Grid */
+.exam-selector-scroll {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+    /* for shadow clipping */
+}
+
+.exam-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.exam-option:hover {
+    border-color: var(--color-border);
+    background: var(--color-bg);
+}
+
+.exam-option.selected {
+    border-color: #6366f1;
+    background: #eef2ff;
+    color: #4338ca;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.exam-icon {
+    font-size: 1.1rem;
+}
+
+.check-icon {
+    color: #4f46e5;
+    margin-left: auto;
+}
+
+/* Avatar Modal Specifics (Legacy/Specific overrides) */
+.avatar-modal-card {
+    background: var(--color-card);
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.avatar-grid-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    background: var(--color-bg);
+}
+
+.avatar-grid-large {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 16px;
+    justify-items: center;
+}
+
+.avatar-item-wrapper {
+    transition: transform 0.2s;
+}
+
+.avatar-item-wrapper:hover {
+    transform: scale(1.1);
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* UNIVERSAL MODAL STYLES (Laptop, Tablet, Mobile) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    /* Center Vertically */
+    justify-content: center;
+    /* Center Horizontally */
+    padding: 20px;
+}
+
+.avatar-modal-card {
+    background: var(--color-card);
+    width: 100%;
+    max-width: 600px;
+    /* Comfortable width for laptop */
+    height: 70vh;
+    max-height: 700px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.modal-header p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 4px 0 0 0;
+}
+
+.avatar-grid-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.avatar-grid-large {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 16px;
+    justify-items: center;
+}
+
+
+/* RESPONSIVE BREAKPOINTS */
+
+/* Tablet (Portrait) & Smaller Laptops */
+@media (max-width: 1024px) {
+    .profile-container-premium {
+        grid-template-columns: 1fr;
+        /* Stacked */
+        max-width: 600px;
+    }
+
+    .profile-card-main {
+        position: static;
+        /* Remove sticky on mobile */
+    }
+
+    .stats-grid-premium {
+        grid-template-columns: repeat(3, 1fr);
+        /* Keep 3 in a row for tablet usually ok */
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+
+    /* Mobile specific adjustments if needed, but main modal is now universal */
+    .profile-container-premium {
+        padding: 0 16px;
+    }
+
+    .stats-grid-premium {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card-p {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .row-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .name-badge-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    /* On very small screens, make modal wider */
+    .avatar-modal-card {
+        width: 95%;
+        height: 80vh;
+    }
+}

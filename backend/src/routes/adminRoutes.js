@@ -2,7 +2,10 @@ import express from 'express';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import { Subject, Topic, Quiz, Question, Attempt } from '../models/Content.js';
 import User from '../models/User.js';
+import Task from '../models/Task.js';
 import { NotFoundError } from '../middleware/errorMiddleware.js';
+import Notification from '../models/Notification.js';
+import GlobalTask from '../models/GlobalTask.js';
 
 const router = express.Router();
 
@@ -140,17 +143,132 @@ router.get('/quizzes', async (req, res, next) => {
 
 router.post('/quizzes', async (req, res, next) => {
     try {
-        const quiz = await Quiz.create(req.body);
+        // Map subjectId/topicId to subject/topic for proper schema matching
+        const quizData = {
+            title: req.body.title,
+            subject: req.body.subjectId || req.body.subject,
+            topic: req.body.topicId || req.body.topic,
+            duration: req.body.duration,
+            difficulty: req.body.difficulty,
+            isMockTest: req.body.isMockTest,
+            isBigQuiz: req.body.isBigQuiz,
+            timePerQuestion: req.body.timePerQuestion,
+        };
+        const quiz = await Quiz.create(quizData);
         res.status(201).json({ success: true, data: quiz });
     } catch (error) { next(error); }
 });
 
 router.put('/quizzes/:id', async (req, res, next) => {
     try {
-        const quiz = await Quiz.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        // Map subjectId/topicId to subject/topic for proper schema matching
+        const quizData = {
+            title: req.body.title,
+            subject: req.body.subjectId || req.body.subject,
+            topic: req.body.topicId || req.body.topic,
+            duration: req.body.duration,
+            difficulty: req.body.difficulty,
+            isMockTest: req.body.isMockTest,
+            isBigQuiz: req.body.isBigQuiz,
+            timePerQuestion: req.body.timePerQuestion,
+        };
+        const quiz = await Quiz.findByIdAndUpdate(req.params.id, quizData, { new: true });
         if (!quiz) throw new NotFoundError('Quiz');
         res.json({ success: true, data: quiz });
     } catch (error) { next(error); }
+});
+
+// Quiz Statistics (Toppers, participation)
+router.get('/quizzes/:id/stats', async (req, res, next) => {
+    try {
+        const quiz = await Quiz.findById(req.params.id);
+        if (!quiz) throw new NotFoundError('Quiz');
+
+        const attempts = await Attempt.find({ quiz: req.params.id })
+            .populate('user', 'firstName lastName email')
+            .sort({ score: -1, timeTaken: 1 }); // Sort by score DESC, then time ASC
+
+        const students = await User.find({ role: 'student' });
+        const attemptedUserIds = attempts.map(a => a.user?._id.toString());
+
+        const notAttempted = students.filter(s => !attemptedUserIds.includes(s._id.toString()))
+            .map(s => ({ _id: s._id, firstName: s.firstName, lastName: s.lastName, email: s.email }));
+
+        res.json({
+            success: true,
+            data: {
+                quizTitle: quiz.title,
+                totalAttempts: attempts.length,
+                avgScore: attempts.length > 0 ? Math.round(attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length) : 0,
+                toppers: attempts.slice(0, 5), // Top 5
+                allResults: attempts,
+                notAttempted,
+            }
+        });
+    } catch (error) { next(error); }
+});
+
+// Publish Quiz
+router.post('/quizzes/:id/publish', async (req, res, next) => {
+    try {
+        console.log('=== PUBLISH QUIZ REQUEST ===');
+        console.log('Quiz ID:', req.params.id);
+        console.log('User:', req.user?.email, 'Role:', req.user?.role);
+        console.log('Headers auth:', req.headers.authorization ? 'Present' : 'Missing');
+
+        // First verify quiz exists
+        const existingQuiz = await Quiz.findById(req.params.id);
+        if (!existingQuiz) {
+            console.log('Quiz not found:', req.params.id);
+            throw new NotFoundError('Quiz');
+        }
+
+        // Check if already published
+        if (existingQuiz.isPublished) {
+            console.log('Quiz already published:', req.params.id);
+            return res.json({
+                success: true,
+                message: 'Quiz is already published',
+                data: existingQuiz
+            });
+        }
+
+        // Now update to published
+        const quiz = await Quiz.findByIdAndUpdate(
+            req.params.id,
+            { isPublished: true },
+            { new: true }
+        );
+
+        console.log('Quiz updated, isPublished:', quiz.isPublished);
+
+        // Notify all students (non-blocking - don't let notification failure block publish)
+        try {
+            const students = await User.find({ role: 'student' });
+            console.log('Found students to notify:', students.length);
+
+            if (students.length > 0) {
+                const notifications = students.map(student => ({
+                    user: student._id,
+                    title: 'New Quiz Published!',
+                    message: `A new quiz "${quiz.title}" is now live. Test your skills!`,
+                    type: 'quiz_published',
+                    link: `/quiz/${quiz._id}`
+                }));
+
+                await Notification.insertMany(notifications);
+                console.log('Notifications sent:', notifications.length);
+            }
+        } catch (notifyError) {
+            console.error('Failed to send notifications:', notifyError.message);
+            // Don't throw - continue with success response
+        }
+
+        res.json({ success: true, message: 'Quiz published and students notified', data: quiz });
+    } catch (error) {
+        console.error('Publish error:', error.message);
+        next(error);
+    }
 });
 
 router.delete('/quizzes/:id', async (req, res, next) => {
@@ -199,13 +317,39 @@ router.delete('/questions/:id', async (req, res, next) => {
 router.get('/students', async (req, res, next) => {
     try {
         const students = await User.find({ role: 'student' });
+
+        // Fetch all attempts for ranking calculation
+        const allAttempts = await Attempt.find();
+        const studentScores = {}; // Map: userId -> totalScore
+
+        allAttempts.forEach(a => {
+            if (a.user) {
+                studentScores[a.user.toString()] = (studentScores[a.user.toString()] || 0) + a.score;
+            }
+        });
+
+        // Sort student IDs by score descending to determine rank
+        const sortedStudentIds = Object.keys(studentScores).sort((a, b) => studentScores[b] - studentScores[a]);
+
         const studentsWithStats = await Promise.all(
             students.map(async (s) => {
-                const attempts = await Attempt.find({ user: s._id });
-                const avgScore = attempts.length > 0
-                    ? Math.round(attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length)
+                const sAttempts = allAttempts.filter(a => a.user?.toString() === s._id.toString());
+                const avgScore = sAttempts.length > 0
+                    ? Math.round(sAttempts.reduce((sum, a) => sum + a.score, 0) / sAttempts.length)
                     : 0;
-                return { ...s.toObject(), totalAttempts: attempts.length, avgScore };
+
+                const rankIndex = sortedStudentIds.indexOf(s._id.toString());
+                const rank = rankIndex !== -1 ? rankIndex + 1 : students.length; // Default to last if no attempts
+
+                return {
+                    ...s.toObject(),
+                    totalAttempts: sAttempts.length,
+                    avgScore,
+                    rank,
+                    // Ensure age/gender are returned (User model selects them by default, but verifying)
+                    age: s.age,
+                    gender: s.gender
+                };
             })
         );
         res.json({ success: true, data: studentsWithStats });
@@ -227,6 +371,82 @@ router.get('/students/:id/attempts', async (req, res, next) => {
                 aiAnalysis: a.aiAnalysis?.status === 'completed',
             })),
         });
+    } catch (error) { next(error); }
+});
+
+// ============ Tasks CRUD ============
+
+router.get('/tasks/student/:studentId', async (req, res, next) => {
+    try {
+        const tasks = await Task.find({ assignedTo: req.params.studentId }).sort({ createdAt: -1 });
+        res.json({ success: true, data: tasks });
+    } catch (error) { next(error); }
+});
+
+router.get('/tasks/recent', async (req, res, next) => {
+    try {
+        const tasks = await Task.find()
+            .populate('assignedTo', 'firstName lastName')
+            .sort({ createdAt: -1 })
+            .limit(10);
+        res.json({ success: true, data: tasks });
+    } catch (error) { next(error); }
+});
+
+router.post('/tasks', async (req, res, next) => {
+    try {
+        const task = await Task.create({
+            ...req.body,
+            assignedBy: req.user._id,
+        });
+        res.status(201).json({ success: true, data: task });
+    } catch (error) { next(error); }
+});
+
+router.delete('/tasks/:id', async (req, res, next) => {
+    try {
+        await Task.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Task deleted' });
+    } catch (error) { next(error); }
+});
+
+// ============ Global To-Do List ============
+
+router.get('/global-tasks', async (req, res, next) => {
+    try {
+        const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 });
+        res.json({ success: true, data: tasks });
+    } catch (error) { next(error); }
+});
+
+router.post('/global-tasks', async (req, res, next) => {
+    try {
+        console.log('Creating global task with body:', req.body);
+        console.log('User ID:', req.user?._id);
+
+        const taskData = {
+            content: req.body.content,
+            tag: req.body.tag || 'General',
+            createdBy: req.user._id
+        };
+
+        console.log('Task data to create:', taskData);
+
+        const task = await GlobalTask.create(taskData);
+        console.log('Task created successfully:', task._id);
+
+        res.status(201).json({ success: true, data: task });
+    } catch (error) {
+        console.error('Error creating global task:', error.message);
+        console.error('Full error:', error);
+        next(error);
+    }
+});
+
+router.delete('/global-tasks/:id', async (req, res, next) => {
+    try {
+        await GlobalTask.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Global task deleted' });
     } catch (error) { next(error); }
 });
 

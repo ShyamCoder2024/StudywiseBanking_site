@@ -1,9 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
+import { ThemeProvider } from './context/ThemeContext';
+import { AnimatePresence, motion } from 'framer-motion';
 import './styles/index.css';
+import './App.css';
 
-// Pages
+// Page Imports
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -13,201 +17,134 @@ import TopicsPage from './pages/student/TopicsPage';
 import QuizListPage from './pages/student/QuizListPage';
 import QuizPage from './pages/student/QuizPage';
 import ResultPage from './pages/student/ResultPage';
-import AdminLoginPage from './pages/admin/AdminLoginPage';
+import ProfilePage from './pages/ProfilePage';
+import AboutTutor from './pages/AboutTutor';
+import TutorVideosPage from './pages/student/TutorVideosPage';
+import TasksPage from './pages/student/TasksPage';
+import PerformancePage from './pages/student/PerformancePage';
+import LeaderboardPage from './pages/student/LeaderboardPage';
+import AIAnalysisPage from './pages/student/AIAnalysisPage';
+import TestCenterPage from './pages/student/TestCenterPage';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SubjectManagement from './pages/admin/SubjectManagement';
 import TopicManagement from './pages/admin/TopicManagement';
 import QuizManagement from './pages/admin/QuizManagement';
 import QuestionManagement from './pages/admin/QuestionManagement';
 import StudentMonitoring from './pages/admin/StudentMonitoring';
+import TaskManagementPage from './pages/admin/TaskManagementPage';
+import AllTasksPage from './pages/admin/AllTasksPage';
+import AllInactiveStudentsPage from './pages/admin/AllInactiveStudentsPage';
+import QuizAnalytics from './pages/admin/QuizAnalytics';
 
-// Protected Route Component
+// SIMPLIFIED Protected Route - Direct localStorage check
 function ProtectedRoute({ children, adminOnly = false }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  // Read directly from localStorage for INSTANT check
+  const storedUser = localStorage.getItem('user');
+  const storedToken = localStorage.getItem('token');
 
-  if (loading) {
-    return (
-      <div className="loading-overlay">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  if (!storedUser || !storedToken) {
     return <Navigate to="/login" replace />;
   }
 
-  if (adminOnly && !isAdmin) {
+  const userData = JSON.parse(storedUser);
+
+  if (adminOnly && userData.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }
 
   return children;
 }
 
-// Public Route (redirects authenticated users)
+// SIMPLIFIED Public Route - Direct localStorage check
 function PublicRoute({ children }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const storedUser = localStorage.getItem('user');
+  const storedToken = localStorage.getItem('token');
 
-  if (loading) {
-    return (
-      <div className="loading-overlay">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to={isAdmin ? '/admin' : '/dashboard'} replace />;
+  if (storedUser && storedToken) {
+    const userData = JSON.parse(storedUser);
+    return <Navigate to={userData.role === 'admin' ? '/admin' : '/dashboard'} replace />;
   }
 
   return children;
 }
 
+// Page Transition
+const PageTransition = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
+    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+    exit={{ opacity: 0, y: -10, filter: 'blur(5px)' }}
+    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+    style={{ width: '100%', height: '100%' }}
+  >
+    {children}
+  </motion.div>
+);
+
 function AppContent() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const [AIChatbot, setAIChatbot] = useState(null);
+
+  useEffect(() => {
+    if (isAuthenticated && !isAdmin) {
+      import('./components/ai/AIChatbot').then(module => {
+        setAIChatbot(() => module.AIChatbot);
+      });
+    }
+  }, [isAuthenticated, isAdmin]);
+
+  // Check localStorage for navbar visibility (faster than context)
+  const storedUser = localStorage.getItem('user');
+  const showNavbar = storedUser ? JSON.parse(storedUser).role !== 'admin' : true;
 
   return (
     <>
-      {!isAdmin && <Navbar />}
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <RegisterPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <PublicRoute>
-              <ForgotPasswordPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/admin/login"
-          element={
-            <PublicRoute>
-              <AdminLoginPage />
-            </PublicRoute>
-          }
-        />
+      {showNavbar && <Navbar />}
 
-        {/* Student Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/subjects"
-          element={
-            <ProtectedRoute>
-              <SubjectsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/subjects/:subjectId/topics"
-          element={
-            <ProtectedRoute>
-              <TopicsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/topics/:topicId/quizzes"
-          element={
-            <ProtectedRoute>
-              <QuizListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/quiz/:quizId"
-          element={
-            <ProtectedRoute>
-              <QuizPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/result/:attemptId"
-          element={
-            <ProtectedRoute>
-              <ResultPage />
-            </ProtectedRoute>
-          }
-        />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<PublicRoute><PageTransition><LoginPage /></PageTransition></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><PageTransition><RegisterPage /></PageTransition></PublicRoute>} />
+          <Route path="/forgot-password" element={<PublicRoute><PageTransition><ForgotPasswordPage /></PageTransition></PublicRoute>} />
 
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/subjects"
-          element={
-            <ProtectedRoute adminOnly>
-              <SubjectManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/subjects/:subjectId/topics"
-          element={
-            <ProtectedRoute adminOnly>
-              <TopicManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/quizzes"
-          element={
-            <ProtectedRoute adminOnly>
-              <QuizManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/quizzes/:quizId/questions"
-          element={
-            <ProtectedRoute adminOnly>
-              <QuestionManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/students"
-          element={
-            <ProtectedRoute adminOnly>
-              <StudentMonitoring />
-            </ProtectedRoute>
-          }
-        />
+          {/* Student Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><PageTransition><StudentDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/subjects" element={<ProtectedRoute><PageTransition><SubjectsPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><PageTransition><TopicsPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/topics/:topicId/quizzes" element={<ProtectedRoute><PageTransition><QuizListPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/quiz/:quizId" element={<ProtectedRoute><PageTransition><QuizPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/result/:attemptId" element={<ProtectedRoute><PageTransition><ResultPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
+          <Route path="/about-tutor" element={<ProtectedRoute><PageTransition><AboutTutor /></PageTransition></ProtectedRoute>} />
+          <Route path="/videos" element={<ProtectedRoute><PageTransition><TutorVideosPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/tasks" element={<ProtectedRoute><PageTransition><TasksPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/performance" element={<ProtectedRoute><PageTransition><PerformancePage /></PageTransition></ProtectedRoute>} />
+          <Route path="/leaderboard" element={<ProtectedRoute><PageTransition><LeaderboardPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/analysis" element={<ProtectedRoute><PageTransition><AIAnalysisPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/tests" element={<ProtectedRoute><PageTransition><TestCenterPage /></PageTransition></ProtectedRoute>} />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+          {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute adminOnly><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/subjects" element={<ProtectedRoute adminOnly><PageTransition><SubjectManagement /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/subjects/:subjectId/topics" element={<ProtectedRoute adminOnly><PageTransition><TopicManagement /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/quizzes" element={<ProtectedRoute adminOnly><PageTransition><QuizManagement /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/quizzes/:quizId/questions" element={<ProtectedRoute adminOnly><PageTransition><QuestionManagement /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/quizzes/:id/stats" element={<ProtectedRoute adminOnly><PageTransition><QuizAnalytics /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/students" element={<ProtectedRoute adminOnly><PageTransition><StudentMonitoring /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/tasks" element={<ProtectedRoute adminOnly><PageTransition><TaskManagementPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/tasks/all" element={<ProtectedRoute adminOnly><PageTransition><AllTasksPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/inactive-students" element={<ProtectedRoute adminOnly><PageTransition><AllInactiveStudentsPage /></PageTransition></ProtectedRoute>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AnimatePresence>
+
+      {AIChatbot && <AIChatbot />}
     </>
   );
 }
@@ -216,7 +153,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   );

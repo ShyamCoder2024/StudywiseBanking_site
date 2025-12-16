@@ -1,0 +1,271 @@
+/* Leaderboard.css */
+.leaderboard-container {
+    background: var(--color-card);
+    padding: 24px;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.leaderboard-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    color: var(--text-main);
+}
+
+.period-badge {
+    background: var(--surface-alt);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.top-three {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 40px;
+    height: 180px;
+}
+
+.podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 80px;
+}
+
+.podium-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-secondary);
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.podium-avatar.large {
+    width: 72px;
+    height: 72px;
+    font-size: 1.5rem;
+    border-color: #FCD34D;
+    /* Gold */
+}
+
+.crown-icon {
+    color: #FCD34D;
+    margin-bottom: -10px;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.rank-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    border: 2px solid white;
+}
+
+.rank-badge.gold {
+    background: #F59E0B;
+}
+
+.rank-badge.silver {
+    background: #9CA3AF;
+}
+
+.rank-badge.bronze {
+    background: #B45309;
+}
+
+.podium-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.podium-score {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.podium-item.first {
+    transform: translateY(-20px);
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Header row for list */
+.list-header-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    gap: 16px;
+}
+
+.list-header-row .w-rank {
+    width: 30px;
+    text-align: center;
+}
+
+.list-header-row .w-user {
+    flex: 1;
+}
+
+.list-header-row .w-score {
+    width: 60px;
+    text-align: right;
+}
+
+.list-header-row .w-time {
+    width: 50px;
+    text-align: right;
+}
+
+.leaderboard-row {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--surface-alt);
+    gap: 16px;
+}
+
+.leaderboard-row.highlight {
+    background: rgba(138, 117, 186, 0.1);
+    /* Primary tint */
+    border: 1px solid var(--primary);
+}
+
+.rank-number {
+    font-weight: 700;
+    color: var(--text-secondary);
+    width: 30px;
+    text-align: center;
+}
+
+.user-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.user-score {
+    font-weight: 700;
+    color: var(--primary-dark);
+    width: 60px;
+    text-align: right;
+}
+
+.user-name {
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.user-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    width: 50px;
+    justify-content: flex-end;
+}
+
+.podium-avatar-wrapper {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.podium-time {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+
+/* Leaderboard container for dark mode */
+:root.dark .leaderboard-container {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Podium avatar for dark mode */
+:root.dark .podium-avatar {
+    border-color: var(--color-border);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* User score for dark mode - use lighter purple */
+:root.dark .user-score {
+    color: #a78bfa;
+}
+
+/* Podium score for dark mode */
+:root.dark .podium-score {
+    color: #a78bfa;
+}
+
+/* Highlight row for dark mode */
+:root.dark .leaderboard-row.highlight {
+    background: rgba(138, 117, 186, 0.2);
+}

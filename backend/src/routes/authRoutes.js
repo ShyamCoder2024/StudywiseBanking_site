@@ -6,11 +6,11 @@ import { ValidationError, AuthError, NotFoundError, ConflictError } from '../mid
 const router = express.Router();
 
 // @route   POST /api/auth/register
-// @desc    Register a new student
+// @desc    Register a new student (returns token for auto-login)
 // @access  Public
 router.post('/register', async (req, res, next) => {
     try {
-        const { firstName, lastName, email, mobile, password, gender, age, status } = req.body;
+        const { firstName, lastName, email, mobile, password, gender, age, status, targetExam, city, avatar } = req.body;
 
         // Check if email already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -28,14 +28,21 @@ router.post('/register', async (req, res, next) => {
             gender,
             age,
             status,
+            targetExam,
+            city,
+            avatar: avatar || null,
             role: 'student',
         });
+
+        // Generate token for auto-login after registration
+        const token = generateToken(user._id);
 
         res.status(201).json({
             success: true,
             message: 'Registration successful',
             data: {
                 user: user.getPublicProfile(),
+                token,
             },
         });
     } catch (error) {
@@ -44,7 +51,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // @route   POST /api/auth/login
-// @desc    Login student
+// @desc    Login user (student or admin - admin is hidden)
 // @access  Public
 router.post('/login', async (req, res, next) => {
     try {
@@ -54,8 +61,14 @@ router.post('/login', async (req, res, next) => {
             throw new ValidationError('Email and password are required');
         }
 
-        // Find user with password
-        const user = await User.findOne({ email: email.toLowerCase(), role: 'student' }).select('+password');
+        // First, check if this email belongs to an admin
+        let user = await User.findOne({ email: email.toLowerCase(), role: 'admin' }).select('+password');
+
+        // If not admin, check for student
+        if (!user) {
+            user = await User.findOne({ email: email.toLowerCase(), role: 'student' }).select('+password');
+        }
+
         if (!user) {
             throw new AuthError('Invalid login credentials');
         }
@@ -231,7 +244,17 @@ router.get('/profile', protect, async (req, res) => {
 // @access  Private
 router.put('/profile', protect, async (req, res, next) => {
     try {
-        const allowedUpdates = ['firstName', 'lastName', 'mobile', 'age', 'status'];
+        // ADMIN PROTECTION: Prevent modification of critical admin fields
+        const isAdmin = req.user.role === 'admin';
+
+        // Fields that can be updated (avatar allowed for UX)
+        let allowedUpdates = ['firstName', 'lastName', 'mobile', 'age', 'status', 'avatar', 'targetExam', 'city'];
+
+        // If admin, restrict which fields can be changed (only cosmetic ones)
+        if (isAdmin) {
+            allowedUpdates = ['avatar']; // Admin can only change avatar
+        }
+
         const updates = {};
 
         allowedUpdates.forEach((field) => {

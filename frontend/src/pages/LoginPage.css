@@ -1,0 +1,384 @@
+/* ============================================
+   Split Login Page Styles - Professional Design
+   ============================================ */
+
+.login-split-page {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Left Side - Form */
+.login-form-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--color-bg);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 380px;
+}
+
+/* Logo */
+.login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.logo-icon {
+    font-size: 32px;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.logo-highlight {
+    color: var(--color-primary);
+}
+
+.login-header {
+    margin-bottom: 32px;
+}
+
+.login-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: var(--color-text-secondary);
+    font-size: 15px;
+}
+
+.login-form {
+    margin-bottom: 24px;
+}
+
+.login-forgot {
+    text-align: right;
+    margin-bottom: 24px;
+}
+
+.login-forgot a {
+    font-size: 14px;
+    color: var(--color-primary);
+    transition: color 0.2s;
+}
+
+.login-forgot a:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+.login-footer {
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+}
+
+.login-footer p {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+}
+
+.login-footer a {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.login-admin-link {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.login-admin-link a {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    transition: color 0.2s;
+}
+
+.login-admin-link a:hover {
+    color: var(--color-primary);
+}
+
+/* Right Side - Abstract Animated Design */
+.login-brand-section {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #8A75BA 0%, #6EBCC3 100%);
+    overflow: hidden;
+}
+
+/* Animated Background */
+.animated-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 15s infinite ease-in-out;
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -50px;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -50px;
+    left: -50px;
+    animation-delay: -3s;
+}
+
+.shape-3 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 20%;
+    animation-delay: -6s;
+}
+
+.shape-4 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    right: 20%;
+    animation-delay: -9s;
+}
+
+.shape-5 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    right: 30%;
+    animation-delay: -12s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    25% {
+        transform: translate(20px, -30px) scale(1.05);
+    }
+
+    50% {
+        transform: translate(-20px, 20px) scale(0.95);
+    }
+
+    75% {
+        transform: translate(30px, 10px) scale(1.02);
+    }
+}
+
+/* Brand Content */
+.brand-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+    padding: 40px;
+    max-width: 400px;
+}
+
+.brand-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.brand-content h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.brand-content p {
+    font-size: 16px;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+/* Stats */
+.brand-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+.brand-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.stat-text {
+    font-size: 13px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .brand-content h2 {
+        font-size: 26px;
+    }
+
+    .brand-icon {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-split-page {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .login-brand-section {
+        order: 1;
+        /* Brand on top */
+        padding: 60px 24px;
+        min-height: 400px;
+        /* Reduced height for mobile header */
+        flex: 0 0 auto;
+    }
+
+    .hide-mobile {
+        display: none !important;
+    }
+
+    .decorative-circle {
+        opacity: 0.5;
+    }
+
+    .login-form-section {
+        order: 2;
+        /* Form below */
+        padding: 32px 24px;
+        flex: 1 0 auto;
+        background: var(--color-bg);
+        border-radius: 30px 30px 0 0;
+        /* Rounded top on mobile */
+        margin-top: -30px;
+        /* Overlap slightly */
+        z-index: 30;
+        position: relative;
+    }
+
+    .brand-content {
+        padding: 0;
+    }
+
+    .brand-icon {
+        font-size: 40px;
+        margin-bottom: 16px;
+    }
+
+    .brand-content h2 {
+        font-size: 32px !important;
+        margin-bottom: 12px;
+    }
+
+    .brand-content p {
+        font-size: 16px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .brand-stats {
+        gap: 20px;
+    }
+
+    .stat-number {
+        font-size: 20px !important;
+    }
+
+    .stat-text {
+        font-size: 10px !important;
+    }
+
+    .login-header h1 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-brand-section {
+        min-height: 350px;
+        padding: 40px 20px;
+    }
+
+    .brand-content h2 {
+        font-size: 28px !important;
+    }
+
+    .login-form-section {
+        padding: 24px 20px;
+    }
+}

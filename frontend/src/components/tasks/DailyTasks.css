@@ -1,0 +1,315 @@
+/* Daily Tasks Styles */
+.daily-tasks {
+    padding: 16px 0;
+}
+
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.tasks-header h2 {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.tasks-date {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+}
+
+.tasks-summary {
+    display: flex;
+    gap: 24px;
+}
+
+.summary-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--color-bg);
+    border-radius: 12px;
+}
+
+.summary-stat.points {
+    background: linear-gradient(135deg, #FFD93D 0%, #FF9F43 100%);
+    color: white;
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.summary-label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Progress Card */
+.progress-card {
+    padding: 24px !important;
+    margin-bottom: 24px;
+    border-radius: 16px !important;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.progress-percent {
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.progress-bar-bg {
+    height: 24px;
+    background: var(--color-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8A75BA 0%, #6EBCC3 50%, #4CAF50 100%);
+    border-radius: 12px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+}
+
+.complete-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.progress-message {
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+/* Tasks List Card */
+.tasks-list-card {
+    padding: 24px !important;
+    margin-bottom: 20px;
+    border-radius: 16px !important;
+}
+
+.tasks-list-card h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.tasks-list-card.bonus {
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+}
+
+.bonus-note {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Task Item */
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--color-card);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    animation: fadeInUp 0.3s ease-out both;
+    animation-delay: var(--delay, 0s);
+    border: 2px solid transparent;
+}
+
+.task-item:hover {
+    transform: translateX(4px);
+    border-color: var(--color-primary-light);
+}
+
+.task-item.completed {
+    background: #E8F5E9;
+    opacity: 0.9;
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+}
+
+.task-checkbox {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.task-item.completed .task-checkbox {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.task-content {
+    flex: 1;
+}
+
+.task-title {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.task-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.task-category {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--cat-color, var(--color-primary));
+    color: white;
+}
+
+.task-points {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.task-points.bonus {
+    color: #FF9F43;
+}
+
+.task-status {
+    font-size: 20px;
+}
+
+/* Comparison Card */
+.comparison-card {
+    padding: 24px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.comparison-card h3 {
+    margin-bottom: 24px;
+}
+
+.comparison-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.comp-stat {
+    text-align: center;
+}
+
+.comp-value {
+    font-size: 32px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.comp-label {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .tasks-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tasks-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .comparison-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .task-item {
+        flex-wrap: wrap;
+    }
+
+    .task-status {
+        order: -1;
+    }
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+
+/* Completed task item for dark mode */
+:root.dark .task-item.completed {
+    background: rgba(76, 175, 80, 0.15);
+}
+
+/* Bonus card for dark mode */
+:root.dark .tasks-list-card.bonus {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 193, 7, 0.2) 100%);
+}
+
+/* Leaderboard container shadow for dark mode */
+:root.dark .leaderboard-container {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Podium avatar border for dark mode */
+:root.dark .podium-avatar {
+    border-color: var(--color-border);
+}

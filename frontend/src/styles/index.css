@@ -29,12 +29,12 @@
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
 
-  /* Font Sizes */
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
-  --font-size-md: 16px;
-  --font-size-lg: 20px;
-  --font-size-xl: 28px;
+  /* Font Sizes - Fluid Typography */
+  --font-size-xs: clamp(11px, 1.5vw, 12px);
+  --font-size-sm: clamp(13px, 1.8vw, 14px);
+  --font-size-md: clamp(15px, 2vw, 16px);
+  --font-size-lg: clamp(18px, 2.5vw, 22px);
+  --font-size-xl: clamp(24px, 3.5vw, 32px);
 
   /* Font Weights */
   --font-weight-regular: 400;
@@ -46,13 +46,13 @@
   --line-height-normal: 1.4;
   --line-height-relaxed: 1.6;
 
-  /* Spacing (8px system) */
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 40px;
-  --space-6: 48px;
+  /* Spacing (8px system - fluid) */
+  --space-1: clamp(6px, 1vw, 8px);
+  --space-2: clamp(12px, 2vw, 16px);
+  --space-3: clamp(18px, 3vw, 24px);
+  --space-4: clamp(24px, 4vw, 32px);
+  --space-5: clamp(32px, 5vw, 40px);
+  --space-6: clamp(40px, 6vw, 48px);
 
   /* Border Radius */
   --radius-sm: 8px;
@@ -67,9 +67,58 @@
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 200ms ease-in-out;
 
-  /* Container */
-  --container-max: 1200px;
-  --container-padding: 16px;
+  /* Container - FLUID */
+  --container-max: 100%;
+  --container-padding: clamp(16px, 4vw, 48px);
+}
+
+/* Dark Mode Overrides */
+:root.dark {
+  --color-bg: #121212;
+  --color-card: #1E1E1E;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #6B7280;
+  --color-border: #333333;
+  --color-primary-light: #2D2438;
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.6);
+  --color-success-light: #1A3836;
+  --color-warning-light: #3D1F21;
+
+  /* Legacy variable aliases for compatibility */
+  --text-main: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --primary: #8A75BA;
+  --primary-dark: #6B5A96;
+  --surface-alt: #2A2A2A;
+}
+
+/* Global Smooth Theme Transition */
+*,
+*::before,
+*::after {
+  transition: background-color 0.25s ease-out,
+    color 0.25s ease-out,
+    border-color 0.25s ease-out,
+    box-shadow 0.25s ease-out,
+    fill 0.25s ease-out,
+    stroke 0.25s ease-out;
+}
+
+/* Disable transition for elements that shouldn't animate */
+input,
+textarea,
+button,
+a,
+.no-transition {
+  transition: none;
+}
+
+/* Re-enable specific transitions for buttons/links */
+button,
+a {
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 /* ============================================
@@ -97,6 +146,32 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   min-height: 100vh;
+  /* Smooth scroll behavior */
+  scroll-behavior: smooth;
+}
+
+/* Global smooth transitions for interactive elements */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Page transition animation */
+.page {
+  animation: pageEnter 0.4s ease-out;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 a {
@@ -178,14 +253,18 @@ select {
    ============================================ */
 .container {
   width: 100%;
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
+  max-width: 100%;
+  /* Full width on all screens */
+  margin: 0;
+  padding: 0 clamp(16px, 4vw, 64px);
+  /* Responsive side padding */
+  box-sizing: border-box;
 }
 
 .page {
   min-height: 100vh;
-  padding: var(--space-3) 0;
+  padding: clamp(16px, 3vw, 32px) 0;
+  width: 100%;
 }
 
 .flex {
@@ -1033,7 +1112,7 @@ select {
   }
 
   body {
-    background: white;
+    background: var(--color-card);
   }
 
   .card {

@@ -16,7 +16,7 @@ export function TopicsPage() {
 
     const fetchTopics = async () => {
         try {
-            const response = await api.get(`/subjects/${subjectId}/topics`);
+            const response = await api.get(`/student/subjects/${subjectId}/topics`);
             if (response.data.success) {
                 setSubject(response.data.data.subject);
                 setTopics(response.data.data.topics);

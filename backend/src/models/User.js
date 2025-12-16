@@ -47,10 +47,24 @@ const userSchema = new mongoose.Schema({
         enum: ['preparing_fulltime', 'student', 'working_professional', 'other'],
         required: true,
     },
+    targetExam: {
+        type: String,
+        required: [true, 'Target exam is required'],
+        trim: true,
+    },
+    city: {
+        type: String,
+        required: [true, 'City is required'],
+        trim: true,
+    },
     role: {
         type: String,
         enum: ['student', 'admin'],
         default: 'student',
+    },
+    avatar: {
+        id: String,
+        url: String
     },
     // OTP for password reset
     resetOTP: String,
@@ -84,7 +98,10 @@ userSchema.methods.getPublicProfile = function () {
         gender: this.gender,
         age: this.age,
         status: this.status,
+        targetExam: this.targetExam,
+        city: this.city,
         role: this.role,
+        avatar: this.avatar,
     };
 };
 

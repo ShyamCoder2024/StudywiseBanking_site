@@ -1,42 +1,347 @@
+/* ============================================
+   App-Level Responsive Layout
+   BULLETPROOF RESPONSIVE DESIGN
+   ============================================ */
+
+/* Force full width on all elements */
+html,
+body,
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Main app wrapper */
+.app-wrapper {
+  width: 100% !important;
+  min-height: 100vh;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Force container to be full width */
+.container,
+.page,
+.dashboard-page,
+.content-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Responsive padding based on screen size */
+@media (min-width: 1400px) {
+
+  .container,
+  .page>.container {
+    padding-left: 80px !important;
+    padding-right: 80px !important;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+
+  .container,
+  .page>.container {
+    padding-left: 48px !important;
+    padding-right: 48px !important;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  .container,
+  .page>.container {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
   }
 }
 
-.card {
-  padding: 2em;
+@media (max-width: 767px) {
+
+  .container,
+  .page>.container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 }
 
-.read-the-docs {
-  color: #888;
+/* ============================================
+   Grid Responsive - Stats Grid
+   ============================================ */
+.stats-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 16px !important;
+}
+
+@media (min-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ============================================
+   Dashboard Grid
+   ============================================ */
+.dashboard-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 24px !important;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================
+   Content Grid - Subjects/Topics/Quizzes
+   ============================================ */
+.content-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 16px !important;
+}
+
+@media (min-width: 1400px) {
+  .content-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .content-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .content-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================
+   Recommendations Grid
+   ============================================ */
+.recommendations-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 16px !important;
+}
+
+@media (min-width: 1200px) {
+  .recommendations-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .recommendations-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .recommendations-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================
+   CTA Card - Full Width
+   ============================================ */
+.cta-card {
+  width: 100% !important;
+}
+
+.cta-content {
+  display: flex !important;
+  width: 100% !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+@media (min-width: 768px) {
+  .cta-content {
+    flex-direction: row !important;
+    padding: 24px 32px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .cta-content {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 16px !important;
+  }
+
+  .cta-content .btn {
+    width: 100% !important;
+  }
+}
+
+/* ============================================
+   Auth Pages - Centered Card (CORRECT DESIGN)
+   ============================================ */
+.auth-page {
+  min-height: 100vh !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+}
+
+.auth-container {
+  width: 100% !important;
+  max-width: 420px !important;
+  /* Auth card should be centered */
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    max-width: 100% !important;
+  }
+
+  .auth-card {
+    margin: 0 8px !important;
+  }
+}
+
+/* ============================================
+   Cards - Full Width Within Grid
+   ============================================ */
+.card,
+.stat-card,
+.content-card,
+.attempt-card,
+.recommendation-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================
+   Navbar - Full Width
+   ============================================ */
+.navbar {
+  width: 100% !important;
+}
+
+.navbar-content {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+@media (min-width: 1400px) {
+  .navbar .container {
+    padding-left: 80px !important;
+    padding-right: 80px !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .navbar .container {
+    padding-left: 48px !important;
+    padding-right: 48px !important;
+  }
+}
+
+/* ============================================
+   Admin Layout - Responsive
+   ============================================ */
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    width: 260px !important;
+  }
+
+  .admin-main {
+    margin-left: 260px !important;
+    width: calc(100% - 260px) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .admin-sidebar {
+    width: 200px !important;
+  }
+
+  .admin-main {
+    margin-left: 200px !important;
+    width: calc(100% - 200px) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-sidebar {
+    position: fixed !important;
+    width: 280px !important;
+    transform: translateX(-100%) !important;
+    z-index: 1000 !important;
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .admin-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+.admin-stats-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 16px !important;
+}
+
+@media (min-width: 1024px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }

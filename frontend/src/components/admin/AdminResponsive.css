@@ -1,0 +1,772 @@
+/* Admin Responsive Styles - Mobile, Tablet, Laptop Optimization */
+/* With Smooth Animations and Transitions */
+
+/* ============================================
+   GLOBAL ANIMATIONS & TRANSITIONS
+   ============================================ */
+
+/* Smooth page transitions */
+.admin-page-content {
+    animation: adminFadeIn 0.3s ease-out;
+}
+
+/* Card hover effects */
+.admin-card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.admin-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Button interactions */
+button,
+.admin-btn {
+    transition: all 0.2s ease !important;
+}
+
+button:active,
+.admin-btn:active {
+    transform: scale(0.97);
+}
+
+/* Link transitions */
+a {
+    transition: color 0.15s ease, opacity 0.15s ease !important;
+}
+
+/* Input focus animations */
+input,
+select,
+textarea {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #8A75BA !important;
+    box-shadow: 0 0 0 3px rgba(138, 117, 186, 0.15) !important;
+}
+
+/* Table row hover */
+table tbody tr {
+    transition: background-color 0.15s ease !important;
+}
+
+table tbody tr:hover {
+    background-color: rgba(138, 117, 186, 0.04) !important;
+}
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+@keyframes adminFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes adminSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes adminSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes adminSlideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes adminSlideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes adminScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes adminPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes adminSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes adminShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes adminBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Animation utility classes */
+.admin-animate-fade-in {
+    animation: adminFadeIn 0.3s ease-out;
+}
+
+.admin-animate-slide-up {
+    animation: adminSlideUp 0.3s ease-out;
+}
+
+.admin-animate-slide-down {
+    animation: adminSlideDown 0.3s ease-out;
+}
+
+.admin-animate-scale-in {
+    animation: adminScaleIn 0.2s ease-out;
+}
+
+.admin-animate-pulse {
+    animation: adminPulse 1.5s ease-in-out infinite;
+}
+
+/* Staggered animations for lists */
+.admin-stagger-1 {
+    animation-delay: 0.05s;
+}
+
+.admin-stagger-2 {
+    animation-delay: 0.1s;
+}
+
+.admin-stagger-3 {
+    animation-delay: 0.15s;
+}
+
+.admin-stagger-4 {
+    animation-delay: 0.2s;
+}
+
+.admin-stagger-5 {
+    animation-delay: 0.25s;
+}
+
+/* Loading spinner */
+.admin-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #E5E7EB;
+    border-top-color: #8A75BA;
+    border-radius: 50%;
+    animation: adminSpin 0.8s linear infinite;
+}
+
+/* Skeleton loading */
+.admin-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: adminShimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+/* ============================================
+   BASE RESPONSIVE CLASSES
+   ============================================ */
+
+/* Hide on mobile */
+@media (max-width: 640px) {
+    .admin-hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Hide on tablet and below */
+@media (max-width: 1024px) {
+    .admin-hide-tablet {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   ADMIN LAYOUT - SIDEBAR
+   ============================================ */
+
+/* Mobile: Hide sidebar by default, show as overlay */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        position: fixed !important;
+        left: -280px !important;
+        z-index: 1000 !important;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .admin-sidebar.open {
+        left: 0 !important;
+    }
+
+    .admin-main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 16px !important;
+    }
+
+    .admin-sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .admin-sidebar-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* Tablet: Collapsed sidebar */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .admin-sidebar {
+        width: 80px !important;
+        transition: width 0.3s ease !important;
+    }
+
+    .admin-sidebar:hover {
+        width: 260px !important;
+    }
+
+    .admin-sidebar-text {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .admin-sidebar:hover .admin-sidebar-text {
+        opacity: 1;
+    }
+
+    .admin-main-content {
+        margin-left: 80px !important;
+        padding: 20px !important;
+        transition: margin-left 0.3s ease !important;
+    }
+}
+
+/* ============================================
+   GRID LAYOUTS
+   ============================================ */
+
+/* Two column grid - Stack on mobile */
+.admin-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .admin-grid-2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+}
+
+/* Three column grid - 2 on tablet, 1 on mobile */
+.admin-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .admin-grid-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-grid-3 {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+}
+
+/* Four column grid - Stats cards */
+.admin-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 1200px) {
+    .admin-grid-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-grid-4 {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+}
+
+/* ============================================
+   CARDS WITH ANIMATIONS
+   ============================================ */
+
+.admin-card {
+    animation: adminFadeIn 0.3s ease-out;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+@media (max-width: 640px) {
+    .admin-card {
+        padding: 16px !important;
+        border-radius: 10px !important;
+    }
+
+    .admin-card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+}
+
+/* ============================================
+   TABLES - Horizontal scroll on mobile
+   ============================================ */
+
+.admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+    .admin-table {
+        min-width: 600px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+    }
+
+    /* Hide less important columns on mobile */
+    .admin-table .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   MODALS - Full screen on mobile with animation
+   ============================================ */
+
+.admin-modal {
+    animation: adminScaleIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 640px) {
+    .admin-modal {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        animation: adminSlideUp 0.3s ease-out;
+    }
+
+    .admin-modal-content {
+        padding: 16px !important;
+        max-height: calc(100vh - 140px) !important;
+        overflow-y: auto !important;
+    }
+
+    .admin-modal-header {
+        padding: 16px !important;
+    }
+
+    .admin-modal-footer {
+        padding: 12px 16px !important;
+        position: sticky;
+        bottom: 0;
+        background: inherit;
+    }
+
+    .admin-modal-footer button {
+        flex: 1 !important;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .admin-modal {
+        width: 90% !important;
+        max-width: 600px !important;
+    }
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-form-row {
+        flex-direction: column !important;
+    }
+
+    .admin-form-row>* {
+        width: 100% !important;
+    }
+
+    .admin-input,
+    .admin-select,
+    .admin-textarea {
+        font-size: 16px !important;
+        /* Prevent zoom on iOS */
+        padding: 14px 16px !important;
+    }
+
+    .admin-button-group {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .admin-button-group button {
+        width: 100% !important;
+        padding: 14px !important;
+    }
+}
+
+/* ============================================
+   HEADERS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-page-header {
+        padding: 16px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .admin-page-title {
+        font-size: 20px !important;
+    }
+
+    .admin-page-subtitle {
+        font-size: 13px !important;
+    }
+
+    .admin-header-actions {
+        width: 100% !important;
+        margin-top: 12px !important;
+        display: flex !important;
+        gap: 8px !important;
+    }
+
+    .admin-header-actions button {
+        flex: 1 !important;
+    }
+}
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-section-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .admin-section-header button {
+        width: 100% !important;
+    }
+}
+
+/* ============================================
+   SEARCH & FILTERS
+   ============================================ */
+
+@media (max-width: 768px) {
+    .admin-search-bar {
+        width: 100% !important;
+        min-width: unset !important;
+    }
+
+    .admin-filters {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .admin-filter-item {
+        flex: 1 1 calc(50% - 4px) !important;
+        min-width: 120px !important;
+    }
+}
+
+/* ============================================
+   TASK MANAGEMENT SPECIFIC
+   ============================================ */
+
+@media (max-width: 900px) {
+    .admin-task-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .admin-task-card {
+        padding: 12px !important;
+    }
+
+    .admin-task-content {
+        font-size: 14px !important;
+    }
+}
+
+/* ============================================
+   STUDENT CARDS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-student-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .admin-student-card .student-actions {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+}
+
+/* ============================================
+   TAGS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-tag-list {
+        flex-wrap: wrap !important;
+    }
+
+    .admin-tag {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+    }
+}
+
+/* ============================================
+   TYPOGRAPHY SCALING
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-text-xl {
+        font-size: 18px !important;
+    }
+
+    .admin-text-lg {
+        font-size: 16px !important;
+    }
+
+    .admin-text-md {
+        font-size: 14px !important;
+    }
+
+    .admin-text-sm {
+        font-size: 12px !important;
+    }
+}
+
+/* ============================================
+   SPACING ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 640px) {
+    .admin-gap-24 {
+        gap: 16px !important;
+    }
+
+    .admin-gap-20 {
+        gap: 12px !important;
+    }
+
+    .admin-p-24 {
+        padding: 16px !important;
+    }
+
+    .admin-p-20 {
+        padding: 12px !important;
+    }
+}
+
+/* ============================================
+   MOBILE MENU BUTTON
+   ============================================ */
+
+.admin-mobile-menu-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8A75BA, #6B5A96);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(138, 117, 186, 0.4);
+    cursor: pointer;
+    z-index: 998;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-mobile-menu-btn:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .admin-mobile-menu-btn {
+        display: flex;
+    }
+}
+
+/* ============================================
+   TOUCH OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Larger touch targets */
+    button,
+    a,
+    .admin-clickable {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Smooth scrolling everywhere */
+    * {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Remove 300ms delay on touch */
+    a,
+    button,
+    input,
+    select,
+    textarea {
+        touch-action: manipulation;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+
+    .admin-sidebar,
+    .admin-mobile-menu-btn {
+        display: none !important;
+    }
+
+    .admin-main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION PREFERENCE
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

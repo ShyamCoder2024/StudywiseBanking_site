@@ -1,183 +1,351 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import {
+    Activity, TrendingUp, Award, Target, BookOpen, Clock,
+    CheckCircle2, ArrowRight, Zap, BarChart2, Calendar,
+    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X
+} from 'lucide-react';
+import { AIAnalysis } from '../../components/ai/AIAnalysis';
+import { Leaderboard } from '../../components/leaderboard/Leaderboard';
+import { AvatarDisplay } from '../../components/ui/AvatarDisplay';
 import api from '../../services/api';
 import './StudentDashboard.css';
 
+// Enhanced Mock Data for Bento Grid
+const DASHBOARD_DATA = {
+    // ... existing data ... (I will skip redefining it to save tokens if I can just match lines carefully)
+    // Actually I need to match the start lines.
+    // I will just replace the top up to line 87.
+
+    // ...
+    userStats: {
+        points: 2450,
+        rank: 12,
+        streak: 8,
+        accuracy: 78,
+        examsCleared: 2,
+        weakAreas: ['Time & Work', 'Puzzles']
+    },
+    upcomingExam: {
+        name: "SBI PO Prelims",
+        daysLeft: 14,
+        date: "Oct 24, 2025"
+    },
+    tutorVideos: [
+        { id: 101, title: "Speed Math Tricks - multiply in 5s", thumbnail: "https://img.youtube.com/vi/ABCD123/hqdefault.jpg", views: "12k" },
+        { id: 102, title: "Current Affairs - Dec Week 2", thumbnail: "https://img.youtube.com/vi/XYZ987/hqdefault.jpg", views: "8k" }
+    ],
+    courses: [
+        { id: 'c1', title: "Complete Banking Batch 2025", progress: 45, total: 100 },
+        { id: 'c2', title: "Data Interpretation Pro", progress: 12, total: 50 }
+    ],
+    todo: [
+        { id: 1, text: "Complete Mock Test #5", done: false, tag: "High Priority" },
+        { id: 2, text: "Review Wrong Answers", done: false, tag: "Review" },
+        { id: 3, text: "Read Daily GK Update", done: true, tag: "GK" }
+    ],
+    performance: [65, 72, 58, 80, 75, 82, 78],
+};
+
 export function StudentDashboard() {
     const { user } = useAuth();
-    const [stats, setStats] = useState({
-        totalAttempts: 0,
-        averageScore: 0,
-        weakAreas: [],
-        recentAttempts: [],
-        recommendations: [],
-    });
+    const navigate = useNavigate();
+    const [data] = useState(DASHBOARD_DATA);
+    const [todos, setTodos] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchDashboardData();
+        fetchTodos();
     }, []);
 
-    const fetchDashboardData = async () => {
+    const fetchTodos = async () => {
         try {
-            const response = await api.get('/student/dashboard');
-            if (response.data.success) {
-                setStats(response.data.data);
-            }
+            const res = await api.get('/student/global-tasks');
+            setTodos(res.data.data || []);
         } catch (error) {
-            console.error('Failed to fetch dashboard data:', error);
-            // Use mock data for demo
-            setStats({
-                totalAttempts: 12,
-                averageScore: 72,
-                weakAreas: [
-                    { name: 'Quantitative Aptitude', score: 45 },
-                    { name: 'English Grammar', score: 55 },
-                ],
-                recentAttempts: [
-                    { id: '1', quizName: 'Banking Awareness Mock', score: 85, date: '2024-01-10' },
-                    { id: '2', quizName: 'Reasoning - Syllogism', score: 70, date: '2024-01-09' },
-                    { id: '3', quizName: 'Quant - Number Series', score: 65, date: '2024-01-08' },
-                ],
-                recommendations: [
-                    { id: '1', type: 'quiz', title: 'Practice Number Series', description: 'Based on your weak areas' },
-                    { id: '2', type: 'video', title: 'English Grammar Tips', description: 'Improve your score' },
-                ],
-            });
+            console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="loading-overlay">
-                <div className="spinner"></div>
-            </div>
-        );
-    }
+    const toggleTodo = async (id) => {
+        try {
+            // Optimistic update
+            setTodos(todos.map(t => t._id === id ? { ...t, isCompleted: !t.isCompleted } : t));
+            await api.patch(`/student/global-tasks/${id}/toggle`);
+        } catch (error) {
+            console.error(error);
+            fetchTodos(); // Revert on error
+        }
+    };
+
+    // Grid Animation Variants
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.05 }
+        }
+    };
+
+    const tile = {
+        hidden: { y: 20, opacity: 0 },
+        show: {
+            y: 0,
+            opacity: 1,
+            transition: { type: "spring", stiffness: 120, damping: 12 }
+        }
+    };
 
     return (
-        <div className="page">
-            <div className="container">
-                {/* Welcome Section */}
-                <div className="dashboard-header">
+        <div className="bento-dashboard">
+            <div className="dashboard-container">
+                {/* Header Welcome */}
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dashboard-header-row">
                     <div>
-                        <h1 className="text-page-title">
-                            Welcome, {user?.firstName || 'Student'}
-                        </h1>
-                        <p className="text-secondary">Continue your banking exam preparation</p>
+                        <h1>Hello, {user?.firstName || 'Student'}! 👋</h1>
+                        <p>Keep pushing! Your goal is closer than you think.</p>
                     </div>
-                </div>
-
-                {/* Primary CTA */}
-                <Card className="cta-card">
-                    <div className="cta-content">
-                        <div className="cta-icon">🎯</div>
-                        <div className="cta-text">
-                            <h2 className="text-section-title">Ready to Test Your Knowledge?</h2>
-                            <p className="text-secondary">Take a quiz now and track your progress</p>
+                    <div className="header-stats-pill">
+                        <div className="pill-item">
+                            <Flame size={18} className="text-orange" />
+                            <span>{data.userStats.streak} Day Streak</span>
                         </div>
-                        <Link to="/subjects">
-                            <Button variant="primary" size="lg">
-                                Start Test
-                            </Button>
-                        </Link>
+                        <div className="pill-item">
+                            <Star size={18} className="text-yellow" />
+                            <span>{data.userStats.points} XP</span>
+                        </div>
                     </div>
-                </Card>
+                </motion.div>
 
-                {/* Stats Grid */}
-                <div className="stats-grid">
-                    <Card className="stat-card">
-                        <div className="stat-value">{stats.totalAttempts}</div>
-                        <div className="stat-label">Tests Taken</div>
-                    </Card>
-                    <Card className="stat-card">
-                        <div className="stat-value">{stats.averageScore}%</div>
-                        <div className="stat-label">Average Score</div>
-                    </Card>
-                </div>
-
-                {/* Main Content Grid */}
-                <div className="dashboard-grid">
-                    {/* Recent Attempts */}
-                    <section className="dashboard-section">
-                        <h3 className="text-section-title mb-2">Recent Attempts</h3>
-                        <div className="attempts-list">
-                            {stats.recentAttempts.length > 0 ? (
-                                stats.recentAttempts.map((attempt) => (
-                                    <Link to={`/result/${attempt.id}`} key={attempt.id}>
-                                        <Card className="attempt-card">
-                                            <div className="attempt-info">
-                                                <h4 className="text-card-title">{attempt.quizName}</h4>
-                                                <p className="text-meta">{attempt.date}</p>
-                                            </div>
-                                            <div className={`attempt-score ${attempt.score >= 70 ? 'good' : attempt.score >= 50 ? 'average' : 'poor'}`}>
-                                                {attempt.score}%
-                                            </div>
-                                        </Card>
-                                    </Link>
-                                ))
-                            ) : (
-                                <Card className="empty-card">
-                                    <p className="text-secondary text-center">No attempts yet. Start a test!</p>
-                                </Card>
-                            )}
-                        </div>
-                    </section>
-
-                    {/* Weak Areas */}
-                    <section className="dashboard-section">
-                        <h3 className="text-section-title mb-2">Weak Areas</h3>
-                        <div className="weak-areas-list">
-                            {stats.weakAreas.length > 0 ? (
-                                stats.weakAreas.map((area, index) => (
-                                    <Card key={index} className="weak-area-card">
-                                        <div className="weak-area-info">
-                                            <h4 className="text-card-title">{area.name}</h4>
-                                            <div className="progress">
-                                                <div
-                                                    className="progress-bar warning"
-                                                    style={{ width: `${area.score}%` }}
-                                                ></div>
-                                            </div>
+                {/* BENTO GRID LAYOUT */}
+                <motion.div
+                    className="bento-grid"
+                    variants={container}
+                    initial="hidden"
+                    animate="show"
+                >
+                    {/* 1. Hero / Exam Countdown (Large Tile) */}
+                    <motion.div className="bento-tile hero-tile clickable" variants={tile} onClick={() => navigate('/tests')}>
+                        <div className="hero-bg-overlay"></div>
+                        <div className="hero-content-bento">
+                            <div className="exam-countdown">
+                                <span className="label">Upcoming Exam | {data.upcomingExam.date}</span>
+                                <h2>{data.upcomingExam.name}</h2>
+                                <div className="countdown-timer">
+                                    <div className="time-unit">
+                                        <div className="time-box">
+                                            <span className="num">{data.upcomingExam.daysLeft}</span>
                                         </div>
-                                        <span className="badge badge-warning">{area.score}%</span>
-                                    </Card>
-                                ))
-                            ) : (
-                                <Card className="empty-card">
-                                    <p className="text-secondary text-center">Take more tests to identify weak areas</p>
-                                </Card>
+                                        <span className="unit">Days</span>
+                                    </div>
+                                    <div className="time-sep">:</div>
+                                    <div className="time-unit">
+                                        <div className="time-box">
+                                            <span className="num">--</span>
+                                        </div>
+                                        <span className="unit">Hrs</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="hero-action">
+                                <div className="btn-action-glow">
+                                    Start Test <Play size={16} fill="white" />
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* 2. AI Analysis / Thermostat (Medium Tile) */}
+                    <motion.div className="bento-tile ai-tile clickable" variants={tile} onClick={() => navigate('/analysis')}>
+                        <div className="tile-header">
+                            <h3><Zap size={20} className="text-purple" /> AI Insights</h3>
+                            <ArrowRight size={16} className="arrow-hint" />
+                        </div>
+                        <div className="ai-thermostat-layout">
+                            <div className="ai-thermostat">
+                                <svg viewBox="0 0 100 100">
+                                    <defs>
+                                        <linearGradient id="gradientPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#8b5cf6" />
+                                            <stop offset="100%" stopColor="#d946ef" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-border)" strokeWidth="8" />
+                                    <motion.circle
+                                        cx="50" cy="50" r="45" fill="none" stroke="url(#gradientPurple)"
+                                        strokeWidth="8" strokeDasharray="283" strokeDashoffset="283"
+                                        strokeLinecap="round"
+                                        animate={{ strokeDashoffset: 283 - (283 * data.userStats.accuracy) / 100 }}
+                                        transition={{ duration: 1.5, delay: 0.5 }}
+                                    />
+                                </svg>
+                                <div className="thermostat-value">
+                                    <span className="t-num">{data.userStats.accuracy}%</span>
+                                    <span className="t-label">Score</span>
+                                </div>
+                            </div>
+                            <div className="ai-mini-stats">
+                                <div className="stat-row">
+                                    <span className="label">Strength</span>
+                                    <span className="val success">Reasoning</span>
+                                </div>
+                                <div className="stat-row">
+                                    <span className="label">Weakness</span>
+                                    <span className="val danger">Puzzles</span>
+                                </div>
+                                <div className="click-hint">Click for full report</div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* 3. Stats Rows (Clickable) - Go to Performance */}
+                    <motion.div className="bento-tile stats-tile-1 clickable" variants={tile} onClick={() => navigate('/performance')}>
+                        <div className="stat-top">
+                            <Target size={24} className="text-coral" />
+                            <div className="trend-up">+5% this week</div>
+                        </div>
+                        <div className="stat-bottom">
+                            <span className="stat-num">{data.userStats.accuracy}%</span>
+                            <span className="stat-lbl">Accuracy Rate</span>
+                        </div>
+                    </motion.div>
+
+                    <motion.div className="bento-tile stats-tile-2 clickable" variants={tile} onClick={() => navigate('/tasks')}>
+                        <div className="stat-top">
+                            <BookOpen size={24} className="text-teal" />
+                            <span className="tag-micro">Today</span>
+                        </div>
+                        <div className="stat-bottom">
+                            <span className="stat-num">4.5h</span>
+                            <span className="stat-lbl">Study Time</span>
+                        </div>
+                    </motion.div>
+
+                    {/* 4. Tutor Videos (New Section) */}
+                    <motion.div className="bento-tile video-tile clickable" variants={tile} onClick={() => navigate('/videos')}>
+                        <div className="tile-header">
+                            <h3><Youtube size={20} className="text-red" /> Tutor's Picks</h3>
+                        </div>
+                        <div className="video-list-mini">
+                            <div className="video-card-mini">
+                                <div className="play-icon"><Play size={20} fill="white" /></div>
+                                <div className="video-info">
+                                    <h4>Math Tricks: 5s Multiply</h4>
+                                    <span>Added Today</span>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* 5. My Courses (New Section) */}
+                    <motion.div className="bento-tile course-tile clickable" variants={tile} onClick={() => navigate('/subjects')}>
+                        <div className="tile-header">
+                            <h3><GraduationCap size={20} className="text-blue" /> My Courses</h3>
+                        </div>
+                        <div className="course-progress-list">
+                            {data.courses.map(course => (
+                                <div key={course.id} className="course-item-mini">
+                                    <div className="course-info-row">
+                                        <span className="c-name">{course.title}</span>
+                                        <span className="c-pct">{course.progress}%</span>
+                                    </div>
+                                    <div className="progress-bar-track">
+                                        <div className="progress-bar-fill" style={{ width: `${course.progress}%` }}></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    {/* 6. Todo Sidebar - Interactive */}
+                    <motion.div className="bento-tile todo-tile clickable" variants={tile} onClick={() => navigate('/tasks')}>
+                        <div className="tile-header">
+                            <h3><ClipboardList size={20} /> Today's Plan</h3>
+                            <span className="badge">{todos.filter(t => !t.done).length}</span>
+                        </div>
+                        <div className="todo-list-bento">
+                            {todos.length > 0 ? todos.map(task => (
+                                <div key={task._id} className="todo-item-bento">
+                                    <div
+                                        className={`checkbox ${task.isCompleted ? 'checked' : ''}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent card navigation
+                                            toggleTodo(task._id);
+                                        }}
+                                    >
+                                        {task.isCompleted && <CheckCircle2 size={14} />}
+                                    </div>
+                                    <div className="todo-text">
+                                        <p className={task.isCompleted ? 'strike' : ''}>{task.content}</p>
+                                        <span className={`todo-tag todo-tag-${(task.tag || 'General').toLowerCase().replace(/\s+/g, '-')}`}>
+                                            {task.tag || 'General'}
+                                        </span>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="text-center text-gray-400 text-xs py-4">No tasks assigned.</div>
                             )}
                         </div>
-                    </section>
-                </div>
+                    </motion.div>
 
-                {/* Recommendations */}
-                <section className="dashboard-section mt-4">
-                    <h3 className="text-section-title mb-2">Recommended for You</h3>
-                    <div className="recommendations-grid">
-                        {stats.recommendations.map((rec) => (
-                            <Card key={rec.id} className="recommendation-card">
-                                <div className="recommendation-icon">
-                                    {rec.type === 'quiz' ? '📝' : '🎬'}
+                    {/* 7. Performance Graph */}
+                    <motion.div className="bento-tile graph-tile clickable" variants={tile} onClick={() => navigate('/performance')}>
+                        <div className="tile-header">
+                            <h3><BarChart2 size={20} /> Performance Trend</h3>
+                        </div>
+                        <div className="graph-bars">
+                            {data.performance.map((score, i) => (
+                                <div key={i} className="bar-wrapper">
+                                    <motion.div
+                                        className="graph-bar"
+                                        initial={{ height: 0 }}
+                                        animate={{ height: `${score}%` }}
+                                        transition={{ delay: 0.5 + (i * 0.1) }}
+                                    />
+                                    <span className="bar-label">{['S', 'M', 'T', 'W', 'T', 'F', 'S'][i]}</span>
                                 </div>
-                                <div className="recommendation-content">
-                                    <h4 className="text-card-title">{rec.title}</h4>
-                                    <p className="text-meta">{rec.description}</p>
-                                </div>
-                                <Button variant="secondary" size="sm">
-                                    {rec.type === 'quiz' ? 'Start' : 'Watch'}
-                                </Button>
-                            </Card>
-                        ))}
-                    </div>
-                </section>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    {/* 8. Leaderboard */}
+                    <motion.div className="bento-tile rank-tile clickable" variants={tile} onClick={() => navigate('/leaderboard')}>
+                        <Leaderboard limit={10} />
+                    </motion.div>
+                </motion.div>
             </div>
+
+            <BottomNav />
+        </div>
+    );
+}
+
+function BottomNav() {
+    const navigate = useNavigate();
+    const navItems = [
+        { id: '/dashboard', icon: <Activity size={20} />, label: 'Home' },
+        { id: '/subjects', icon: <BookOpen size={20} />, label: 'Subjects' },
+        { id: '/tasks', icon: <CheckCircle2 size={20} />, label: 'Tasks' },
+        { id: '/analysis', icon: <Zap size={20} />, label: 'AI' },
+        { id: '/leaderboard', icon: <Award size={20} />, label: 'Rank' },
+    ];
+
+    return (
+        <div className="mobile-bottom-nav">
+            {navItems.map((item) => (
+                <button
+                    key={item.id}
+                    className={`nav-item ${window.location.pathname === item.id ? 'active' : ''}`}
+                    onClick={() => navigate(item.id)}
+                >
+                    {item.icon}
+                    <span>{item.label}</span>
+                </button>
+            ))}
         </div>
     );
 }

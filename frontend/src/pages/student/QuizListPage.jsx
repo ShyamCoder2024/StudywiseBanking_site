@@ -18,7 +18,7 @@ export function QuizListPage() {
 
     const fetchQuizzes = async () => {
         try {
-            const response = await api.get(`/topics/${topicId}/quizzes`);
+            const response = await api.get(`/student/topics/${topicId}/quizzes`);
             if (response.data.success) {
                 setTopic(response.data.data.topic);
                 setQuizzes(response.data.data.quizzes);

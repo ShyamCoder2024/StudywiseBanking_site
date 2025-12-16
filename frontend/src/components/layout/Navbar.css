@@ -1,23 +1,383 @@
-.navbar-logo {
-    height: 32px;
-    width: auto;
+/* ============================================
+   DRD-Compliant Navbar
+   Following StudyWiseBanking Design System
+   ============================================ */
+
+/* Navbar Container */
+.drd-navbar {
+    background: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
-.nav-link {
-    padding: 8px 12px;
-    color: var(--color-text-secondary);
+.drd-navbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: var(--space-3);
+}
+
+/* Logo */
+.drd-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.drd-logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.drd-logo-text {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    transition: color var(--transition-normal);
+}
+
+/* Desktop Navigation */
+.drd-desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.drd-nav-link {
+    font-family: var(--font-family);
     font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     transition: all var(--transition-fast);
 }
 
-.nav-link:hover {
+.drd-nav-link:hover {
     color: var(--color-primary);
-    background-color: var(--color-primary-light);
+    background: var(--color-primary-light);
 }
 
+.drd-nav-link.active {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Actions Container */
+.drd-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* Auth Links */
+.drd-auth-link {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.drd-auth-link:hover {
+    color: var(--color-primary);
+}
+
+.drd-auth-btn {
+    background: var(--color-primary);
+    color: white;
+    padding: var(--space-1) var(--space-2);
+    border-radius: 9999px;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(138, 117, 186, 0.3);
+}
+
+.drd-auth-btn:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.4);
+}
+
+/* Premium Theme Toggle */
+.drd-toggle {
+    width: 56px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.drd-toggle-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    transition: background var(--transition-normal);
+}
+
+:root.dark .drd-toggle-track {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.drd-toggle-icon {
+    z-index: 1;
+    transition: opacity var(--transition-fast);
+}
+
+.drd-sun {
+    color: #f59e0b;
+}
+
+.drd-moon {
+    color: #fbbf24;
+}
+
+:root.dark .drd-sun {
+    opacity: 0.3;
+}
+
+:root.light .drd-moon {
+    opacity: 0.3;
+}
+
+.drd-toggle-thumb {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    top: 3px;
+    transition: left 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), background var(--transition-normal);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.drd-toggle-thumb.light {
+    left: 3px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.drd-toggle-thumb.dark {
+    left: 31px;
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+/* Profile Avatar */
+.drd-profile {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Hamburger Menu */
+.drd-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.drd-hamburger:hover {
+    background: var(--color-primary-light);
+}
+
+/* Mobile Dropdown */
+.drd-mobile-menu {
+    display: none;
+    flex-direction: column;
+    padding: var(--space-2) var(--container-padding);
+    background: var(--color-card);
+    border-top: 1px solid var(--color-border);
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.drd-mobile-link {
+    padding: var(--space-2) 0;
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+    border-bottom: 1px solid var(--color-border);
+    transition: color var(--transition-fast);
+}
+
+.drd-mobile-link:last-child {
+    border-bottom: none;
+}
+
+.drd-mobile-link.active {
+    color: var(--color-primary);
+}
+
+/* ============================================
+   TABLET (768px - 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+    .drd-navbar-inner {
+        gap: var(--space-2);
+    }
+
+    .drd-desktop-nav {
+        gap: var(--space-2);
+    }
+
+    .drd-nav-link {
+        padding: 6px 12px;
+    }
+}
+
+/* ============================================
+   MOBILE (< 768px)
+   ============================================ */
 @media (max-width: 768px) {
-    .navbar-nav .nav-link {
+    .drd-navbar-inner {
+        height: 56px;
+        padding: 0 16px;
+    }
+
+    /* Show logo text on mobile with smaller size */
+    .drd-logo-text {
+        display: block;
+        font-size: 14px;
+    }
+
+    .drd-logo-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Hide desktop nav */
+    .drd-desktop-nav {
         display: none;
+    }
+
+    /* Smaller toggle on mobile */
+    .drd-toggle {
+        width: 48px;
+        height: 24px;
+    }
+
+    .drd-toggle-track {
+        padding: 0 6px;
+    }
+
+    .drd-toggle-thumb {
+        width: 18px;
+        height: 18px;
+        top: 3px;
+    }
+
+    .drd-toggle-thumb.light {
+        left: 3px;
+    }
+
+    .drd-toggle-thumb.dark {
+        left: 27px;
+    }
+
+    .drd-toggle-icon {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Smaller actions gap */
+    .drd-actions {
+        gap: 10px;
+    }
+
+    /* Hide auth link on mobile */
+    .drd-auth-link {
+        display: none;
+    }
+
+    .drd-auth-btn {
+        padding: 6px 14px;
+        font-size: 13px;
+    }
+
+    /* Show hamburger */
+    .drd-hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Show mobile menu */
+    .drd-mobile-menu {
+        display: flex;
+    }
+}
+
+/* ============================================
+   SMALL MOBILE (< 400px)
+   ============================================ */
+@media (max-width: 400px) {
+    .drd-navbar-inner {
+        padding: 0 12px;
+    }
+
+    .drd-actions {
+        gap: 8px;
+    }
+
+    .drd-toggle {
+        width: 44px;
+        height: 22px;
+    }
+
+    .drd-toggle-thumb {
+        width: 16px;
+        height: 16px;
+    }
+
+    .drd-toggle-thumb.dark {
+        left: 25px;
+    }
+
+    .drd-auth-btn {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 }

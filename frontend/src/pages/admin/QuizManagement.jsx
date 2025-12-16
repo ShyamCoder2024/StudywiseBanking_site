@@ -1,22 +1,49 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../../components/ui/Button';
-import { Input, Select } from '../../components/ui/Input';
 import api from '../../services/api';
-import './AdminLayout.css';
+import { AdminLayout } from '../../components/admin/AdminLayout';
+import { Plus, X, Clock, BarChart3, Edit2, Trash2, FileText, Check } from 'lucide-react';
+
+// DRD Brand Colors
+const BRAND = {
+    primary: '#8A75BA',
+    primaryHover: '#7A66A8',
+    primaryLight: '#EDE9F6',
+    success: '#6EBCC3',
+    successLight: '#E6F5F7',
+    warning: '#ED6771',
+    warningLight: '#FCE6E8',
+    text: '#131313',
+    textSecondary: '#6B6B6B',
+    textMuted: '#9AA0A6',
+    bg: '#F8F9FA',
+    card: '#FFFFFF',
+    border: '#E5E7EB',
+    shadowCard: '0 4px 12px rgba(0, 0, 0, 0.04)',
+    shadowHover: '0 6px 16px rgba(0, 0, 0, 0.08)',
+    radius: '12px'
+};
 
 export function QuizManagement() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
     const [quizzes, setQuizzes] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingQuiz, setEditingQuiz] = useState(null);
-    const [formData, setFormData] = useState({ title: '', subjectId: '', topicId: '', duration: 15, difficulty: 'Medium', isMockTest: false });
+    const [formData, setFormData] = useState({
+        title: '',
+        subjectId: '',
+        topicId: '',
+        duration: 15,
+        difficulty: 'Medium',
+        isMockTest: false,
+        timePerQuestion: 60,
+        isBigQuiz: false
+    });
     const [saving, setSaving] = useState(false);
 
     useEffect(() => { fetchData(); }, []);
@@ -27,11 +54,8 @@ export function QuizManagement() {
             setQuizzes(quizRes.data.data || []);
             setSubjects(subjectRes.data.data || []);
         } catch {
-            setQuizzes([
-                { _id: '1', title: 'Number Series Basics', subjectName: 'Quantitative', topicName: 'Number Series', duration: 15, difficulty: 'Easy', questionCount: 10 },
-                { _id: '2', title: 'Banking Awareness Mock', subjectName: 'General Awareness', topicName: 'Banking', duration: 30, difficulty: 'Medium', questionCount: 25, isMockTest: true },
-            ]);
-            setSubjects([{ _id: '1', name: 'Quantitative Aptitude' }, { _id: '2', name: 'General Awareness' }]);
+            setQuizzes([]);
+            setSubjects([]);
         } finally { setLoading(false); }
     };
 
@@ -40,18 +64,30 @@ export function QuizManagement() {
         try {
             const res = await api.get(`/admin/subjects/${subjectId}/topics`);
             setTopics(res.data.data?.topics || []);
-        } catch { setTopics([{ _id: '1', name: 'Number Series' }, { _id: '2', name: 'Percentage' }]); }
+        } catch { setTopics([]); }
     };
-
-    const handleLogout = () => { logout(); navigate('/admin/login'); };
 
     const openModal = (quiz = null) => {
         if (quiz) {
             setEditingQuiz(quiz);
-            setFormData({ title: quiz.title, subjectId: quiz.subjectId || '', topicId: quiz.topicId || '', duration: quiz.duration, difficulty: quiz.difficulty, isMockTest: quiz.isMockTest || false });
+            setFormData({
+                title: quiz.title,
+                subjectId: quiz.subjectId || '',
+                topicId: quiz.topicId || '',
+                duration: quiz.duration,
+                difficulty: quiz.difficulty,
+                isMockTest: quiz.isMockTest || false,
+                timePerQuestion: quiz.timePerQuestion || 60,
+                isBigQuiz: quiz.isBigQuiz || false
+            });
+            if (quiz.subjectId) fetchTopics(quiz.subjectId);
         } else {
             setEditingQuiz(null);
-            setFormData({ title: '', subjectId: '', topicId: '', duration: 15, difficulty: 'Medium', isMockTest: false });
+            setFormData({
+                title: '', subjectId: '', topicId: '', duration: 15,
+                difficulty: 'Medium', isMockTest: false, timePerQuestion: 60, isBigQuiz: false
+            });
+            setTopics([]);
         }
         setShowModal(true);
     };
@@ -59,14 +95,15 @@ export function QuizManagement() {
     const handleSave = async () => {
         if (!formData.title.trim()) return;
         setSaving(true);
+        const payload = { ...formData };
+        if (payload.isBigQuiz) payload.topicId = null;
+
         try {
-            if (editingQuiz) await api.put(`/admin/quizzes/${editingQuiz._id}`, formData);
-            else await api.post('/admin/quizzes', formData);
+            if (editingQuiz) await api.put(`/admin/quizzes/${editingQuiz._id}`, payload);
+            else await api.post('/admin/quizzes', payload);
             fetchData();
             setShowModal(false);
         } catch {
-            if (editingQuiz) setQuizzes(quizzes.map(q => q._id === editingQuiz._id ? { ...q, ...formData } : q));
-            else setQuizzes([...quizzes, { _id: Date.now().toString(), ...formData, questionCount: 0 }]);
             setShowModal(false);
         } finally { setSaving(false); }
     };
@@ -77,66 +114,384 @@ export function QuizManagement() {
         catch { setQuizzes(quizzes.filter(q => q._id !== id)); }
     };
 
-    const navItems = [
-        { path: '/admin', label: 'Dashboard', icon: '📊' },
-        { path: '/admin/subjects', label: 'Subjects', icon: '📚' },
-        { path: '/admin/quizzes', label: 'Quizzes', icon: '📝' },
-        { path: '/admin/students', label: 'Students', icon: '👥' },
-    ];
-
     return (
-        <div className="admin-layout">
-            <aside className="admin-sidebar">
-                <div className="sidebar-header"><h2 className="text-card-title">StudyWiseBanking</h2><span className="badge badge-primary">Admin</span></div>
-                <nav className="sidebar-nav">
-                    {navItems.map((item) => (<Link key={item.path} to={item.path} className={`sidebar-link ${location.pathname === item.path ? 'active' : ''}`}><span className="sidebar-icon">{item.icon}</span><span>{item.label}</span></Link>))}
-                </nav>
-                <div className="sidebar-footer"><div className="admin-user"><span className="text-meta">Logged in as</span><span className="text-card-title">{user?.firstName || 'Admin'}</span></div><button onClick={handleLogout} className="btn btn-ghost btn-block btn-sm">Logout</button></div>
-            </aside>
+        <AdminLayout>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-            <main className="admin-main">
-                <header className="admin-header"><div className="admin-page-header"><h1 className="text-page-title">Quiz Management</h1><Button variant="primary" onClick={() => openModal()}>+ Create Quiz</Button></div></header>
-                <div className="admin-content">
-                    {loading ? <div className="loading-overlay"><div className="spinner"></div></div> : (
-                        <div className="table-wrapper">
-                            <table className="table">
-                                <thead><tr><th>Title</th><th>Subject</th><th>Topic</th><th>Duration</th><th>Difficulty</th><th>Questions</th><th>Actions</th></tr></thead>
+                {/* Header */}
+                <div style={{
+                    backgroundColor: BRAND.card,
+                    padding: '24px',
+                    borderRadius: BRAND.radius,
+                    border: `1px solid ${BRAND.border}`,
+                    boxShadow: BRAND.shadowCard,
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '16px'
+                }}>
+                    <div>
+                        <h1 style={{ fontSize: '24px', fontWeight: '700', color: BRAND.text, margin: 0 }}>Quiz Management</h1>
+                        <p style={{ fontSize: '14px', color: BRAND.textSecondary, marginTop: '4px' }}>Create, edit, and manage all assessments.</p>
+                    </div>
+                    <button
+                        onClick={() => openModal()}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            backgroundColor: BRAND.primary,
+                            color: '#ffffff',
+                            padding: '12px 24px',
+                            borderRadius: '10px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            boxShadow: '0 4px 12px rgba(138, 117, 186, 0.3)'
+                        }}
+                    >
+                        <Plus size={18} />
+                        Create Quiz
+                    </button>
+                </div>
+
+                {/* Quizzes Table */}
+                <div style={{
+                    backgroundColor: BRAND.card,
+                    borderRadius: BRAND.radius,
+                    border: `1px solid ${BRAND.border}`,
+                    boxShadow: BRAND.shadowCard,
+                    overflow: 'hidden'
+                }}>
+                    {loading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px' }}>
+                            <div style={{ width: 40, height: 40, border: `4px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                        </div>
+                    ) : (
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                                <thead>
+                                    <tr style={{ backgroundColor: BRAND.bg, borderBottom: `1px solid ${BRAND.border}` }}>
+                                        <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: '600', color: BRAND.textSecondary, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quiz Details</th>
+                                        <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: '600', color: BRAND.textSecondary, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Subject / Topic</th>
+                                        <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '600', color: BRAND.textSecondary, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Settings</th>
+                                        <th style={{ padding: '16px 20px', textAlign: 'right', fontWeight: '600', color: BRAND.textSecondary, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actions</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     {quizzes.map((quiz) => (
-                                        <tr key={quiz._id}>
-                                            <td className="text-card-title">{quiz.title}{quiz.isMockTest && <span className="badge badge-warning ml-1">Mock</span>}</td>
-                                            <td>{quiz.subjectName}</td>
-                                            <td>{quiz.topicName}</td>
-                                            <td>{quiz.duration} min</td>
-                                            <td><span className={`badge badge-${quiz.difficulty === 'Easy' ? 'success' : quiz.difficulty === 'Medium' ? 'primary' : 'warning'}`}>{quiz.difficulty}</span></td>
-                                            <td><Link to={`/admin/quizzes/${quiz._id}/questions`}><span className="badge badge-primary">{quiz.questionCount} Questions</span></Link></td>
-                                            <td><div className="flex gap-1"><Button variant="ghost" size="sm" onClick={() => openModal(quiz)}>Edit</Button><Button variant="ghost" size="sm" onClick={() => handleDelete(quiz._id)}>Delete</Button></div></td>
+                                        <tr key={quiz._id} style={{ borderBottom: `1px solid ${BRAND.border}` }}>
+                                            <td style={{ padding: '16px 20px' }}>
+                                                <div style={{ fontWeight: '600', color: BRAND.text, marginBottom: '4px' }}>{quiz.title}</div>
+                                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                                    {quiz.isMockTest && (
+                                                        <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: '700', backgroundColor: '#FEF3C7', color: '#92400E', textTransform: 'uppercase' }}>Mock Test</span>
+                                                    )}
+                                                    {quiz.isBigQuiz && (
+                                                        <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: '700', backgroundColor: BRAND.primaryLight, color: BRAND.primary, textTransform: 'uppercase' }}>Big Quiz</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '16px 20px' }}>
+                                                <div style={{ color: BRAND.text, fontWeight: '500' }}>{quiz.subjectName || 'No Subject'}</div>
+                                                <div style={{ color: BRAND.textMuted, fontSize: '13px' }}>{quiz.isBigQuiz ? 'All Topics' : (quiz.topicName || 'No Topic')}</div>
+                                            </td>
+                                            <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: BRAND.textSecondary }}>
+                                                            <Clock size={14} />
+                                                            <span>{quiz.duration}m</span>
+                                                        </div>
+                                                        <div style={{ fontSize: '12px', color: BRAND.textMuted }}>{quiz.timePerQuestion || 60}s/Q</div>
+                                                    </div>
+                                                    <span style={{
+                                                        padding: '4px 12px',
+                                                        borderRadius: '20px',
+                                                        fontSize: '12px',
+                                                        fontWeight: '600',
+                                                        backgroundColor: quiz.difficulty === 'Easy' ? BRAND.successLight : quiz.difficulty === 'Medium' ? '#FEF9C3' : BRAND.warningLight,
+                                                        color: quiz.difficulty === 'Easy' ? '#0d6652' : quiz.difficulty === 'Medium' ? '#854d0e' : '#991b1b'
+                                                    }}>
+                                                        {quiz.difficulty}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', flexWrap: 'wrap' }}>
+                                                    <Link to={`/admin/quizzes/${quiz._id}/questions`} style={{ textDecoration: 'none' }}>
+                                                        <button style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>
+                                                            <FileText size={14} />
+                                                            Questions ({quiz.questionCount || 0})
+                                                        </button>
+                                                    </Link>
+                                                    <button onClick={() => openModal(quiz)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.primaryLight, color: BRAND.primary, fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>
+                                                        <Edit2 size={14} />
+                                                        Edit
+                                                    </button>
+                                                    <button onClick={() => handleDelete(quiz._id)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.warningLight, color: BRAND.warning, fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))}
+                                    {quizzes.length === 0 && (
+                                        <tr>
+                                            <td colSpan="4" style={{ padding: '60px 20px', textAlign: 'center', color: BRAND.textMuted }}>
+                                                <FileText size={40} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                                                <p style={{ margin: 0, fontWeight: '500' }}>No quizzes yet</p>
+                                                <p style={{ margin: '4px 0 0', fontSize: '13px' }}>Click "Create Quiz" to get started</p>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                     )}
                 </div>
-            </main>
+            </div>
 
+            {/* Create/Edit Modal */}
             {showModal && (
-                <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="admin-modal-header"><h2 className="text-section-title">{editingQuiz ? 'Edit Quiz' : 'Create Quiz'}</h2><button className="admin-modal-close" onClick={() => setShowModal(false)}>×</button></div>
-                        <Input label="Quiz Title" name="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="e.g., Number Series Basics" required />
-                        <Select label="Subject" name="subjectId" value={formData.subjectId} onChange={(e) => { setFormData({ ...formData, subjectId: e.target.value, topicId: '' }); fetchTopics(e.target.value); }} options={subjects.map(s => ({ value: s._id, label: s.name }))} />
-                        <Select label="Topic" name="topicId" value={formData.topicId} onChange={(e) => setFormData({ ...formData, topicId: e.target.value })} options={topics.map(t => ({ value: t._id, label: t.name }))} />
-                        <div className="flex gap-2">
-                            <Input label="Duration (mins)" type="number" name="duration" value={formData.duration} onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })} min="5" max="180" />
-                            <Select label="Difficulty" name="difficulty" value={formData.difficulty} onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })} options={[{ value: 'Easy', label: 'Easy' }, { value: 'Medium', label: 'Medium' }, { value: 'Hard', label: 'Hard' }]} />
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '20px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        backdropFilter: 'blur(4px)'
+                    }}
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        style={{
+                            backgroundColor: BRAND.card,
+                            borderRadius: '16px',
+                            width: '100%',
+                            maxWidth: '560px',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                            overflow: 'hidden'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '20px 24px',
+                            borderBottom: `1px solid ${BRAND.border}`,
+                            backgroundColor: BRAND.bg
+                        }}>
+                            <h2 style={{ fontSize: '18px', fontWeight: '700', color: BRAND.text, margin: 0 }}>
+                                {editingQuiz ? 'Edit Quiz' : 'Create New Quiz'}
+                            </h2>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                style={{ padding: '8px', borderRadius: '8px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', color: BRAND.textMuted }}
+                            >
+                                <X size={20} />
+                            </button>
                         </div>
-                        <label className="form-radio mt-2"><input type="checkbox" checked={formData.isMockTest} onChange={(e) => setFormData({ ...formData, isMockTest: e.target.checked })} /><span>Mark as Mock Test</span></label>
-                        <div className="admin-modal-actions"><Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button><Button variant="primary" onClick={handleSave} loading={saving}>{editingQuiz ? 'Update' : 'Create'}</Button></div>
+
+                        {/* Modal Form */}
+                        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                            {/* Quiz Title */}
+                            <div>
+                                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>
+                                    Quiz Title <span style={{ color: BRAND.warning }}>*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="e.g., Number Series Basics"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 16px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${BRAND.border}`,
+                                        fontSize: '14px',
+                                        outline: 'none',
+                                        boxSizing: 'border-box',
+                                        color: BRAND.text,
+                                        backgroundColor: BRAND.card
+                                    }}
+                                />
+                            </div>
+
+                            {/* Subject & Topic Row */}
+                            <div style={{ display: 'grid', gridTemplateColumns: formData.isBigQuiz ? '1fr' : '1fr 1fr', gap: '16px' }}>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>Subject</label>
+                                    <select
+                                        value={formData.subjectId}
+                                        onChange={(e) => { setFormData({ ...formData, subjectId: e.target.value, topicId: '' }); fetchTopics(e.target.value); }}
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, fontSize: '14px', outline: 'none', backgroundColor: BRAND.card, boxSizing: 'border-box', color: BRAND.text }}
+                                    >
+                                        <option value="">Select Subject...</option>
+                                        {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
+                                    </select>
+                                </div>
+                                {!formData.isBigQuiz && (
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>Topic</label>
+                                        <select
+                                            value={formData.topicId}
+                                            onChange={(e) => setFormData({ ...formData, topicId: e.target.value })}
+                                            disabled={!formData.subjectId}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, fontSize: '14px', outline: 'none', backgroundColor: formData.subjectId ? BRAND.card : BRAND.bg, boxSizing: 'border-box', opacity: formData.subjectId ? 1 : 0.6, color: BRAND.text }}
+                                        >
+                                            <option value="">Select Topic...</option>
+                                            {topics.map(t => <option key={t._id} value={t._id}>{t.name}</option>)}
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Duration, Time/Q, Difficulty Row */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>Duration (mins)</label>
+                                    <input
+                                        type="number"
+                                        value={formData.duration}
+                                        onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 15 })}
+                                        min="5"
+                                        max="180"
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, fontSize: '14px', outline: 'none', boxSizing: 'border-box', color: BRAND.text, backgroundColor: BRAND.card }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>Time/Question (sec)</label>
+                                    <input
+                                        type="number"
+                                        value={formData.timePerQuestion}
+                                        onChange={(e) => setFormData({ ...formData, timePerQuestion: parseInt(e.target.value) || 60 })}
+                                        min="10"
+                                        max="300"
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, fontSize: '14px', outline: 'none', boxSizing: 'border-box', color: BRAND.text, backgroundColor: BRAND.card }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px' }}>Difficulty</label>
+                                    <select
+                                        value={formData.difficulty}
+                                        onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, fontSize: '14px', outline: 'none', backgroundColor: BRAND.card, boxSizing: 'border-box', color: BRAND.text }}
+                                    >
+                                        <option value="Easy">Easy</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Hard">Hard</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Checkboxes */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <label
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '14px 16px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${formData.isMockTest ? BRAND.primary : BRAND.border}`,
+                                        backgroundColor: formData.isMockTest ? BRAND.primaryLight : BRAND.card,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    <div style={{
+                                        width: 22, height: 22, borderRadius: 6,
+                                        border: `2px solid ${formData.isMockTest ? BRAND.primary : BRAND.border}`,
+                                        backgroundColor: formData.isMockTest ? BRAND.primary : 'transparent',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        {formData.isMockTest && <Check size={14} color="#fff" />}
+                                    </div>
+                                    <input type="checkbox" checked={formData.isMockTest} onChange={(e) => setFormData({ ...formData, isMockTest: e.target.checked })} style={{ display: 'none' }} />
+                                    <span style={{ fontSize: '14px', fontWeight: '500', color: BRAND.text }}>Mark as Mock Test</span>
+                                </label>
+
+                                <label
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: '12px',
+                                        padding: '14px 16px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${formData.isBigQuiz ? BRAND.primary : BRAND.border}`,
+                                        backgroundColor: formData.isBigQuiz ? BRAND.primaryLight : BRAND.card,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    <div style={{
+                                        width: 22, height: 22, borderRadius: 6, marginTop: 2,
+                                        border: `2px solid ${formData.isBigQuiz ? BRAND.primary : BRAND.border}`,
+                                        backgroundColor: formData.isBigQuiz ? BRAND.primary : 'transparent',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                    }}>
+                                        {formData.isBigQuiz && <Check size={14} color="#fff" />}
+                                    </div>
+                                    <input type="checkbox" checked={formData.isBigQuiz} onChange={(e) => setFormData({ ...formData, isBigQuiz: e.target.checked, topicId: '' })} style={{ display: 'none' }} />
+                                    <div>
+                                        <span style={{ fontSize: '14px', fontWeight: '500', color: BRAND.text, display: 'block' }}>Create Big Quiz</span>
+                                        <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Include questions from ALL topics in this subject</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            gap: '12px',
+                            padding: '20px 24px',
+                            borderTop: `1px solid ${BRAND.border}`,
+                            backgroundColor: BRAND.bg
+                        }}>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                style={{ padding: '12px 24px', borderRadius: '10px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={saving || !formData.title.trim()}
+                                style={{
+                                    padding: '12px 24px',
+                                    borderRadius: '10px',
+                                    border: 'none',
+                                    backgroundColor: saving || !formData.title.trim() ? BRAND.textMuted : BRAND.primary,
+                                    color: '#ffffff',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    cursor: saving || !formData.title.trim() ? 'not-allowed' : 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                {saving ? 'Saving...' : (editingQuiz ? 'Update Quiz' : 'Create Quiz')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </AdminLayout>
     );
 }
 

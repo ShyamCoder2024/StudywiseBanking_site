@@ -1,0 +1,141 @@
+/* ============================================
+   Theme Toggle - Sliding Switch
+   ============================================ */
+
+.theme-toggle-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 56px;
+    height: 28px;
+    padding: 2px;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+/* Light mode track */
+.theme-toggle-switch.light {
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode track */
+.theme-toggle-switch.dark {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Track with icons container */
+.toggle-track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    pointer-events: none;
+}
+
+/* Icons */
+.toggle-icon {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sun-icon {
+    color: #f59e0b;
+}
+
+.moon-icon {
+    color: #fbbf24;
+}
+
+/* Light mode: sun visible, moon faded */
+.theme-toggle-switch.light .sun-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.theme-toggle-switch.light .moon-icon {
+    opacity: 0.3;
+    transform: scale(0.8);
+}
+
+/* Dark mode: moon visible, sun faded */
+.theme-toggle-switch.dark .sun-icon {
+    opacity: 0.3;
+    transform: scale(0.8);
+}
+
+.theme-toggle-switch.dark .moon-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Sliding knob */
+.toggle-knob {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    top: 3px;
+    transition: left 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        background-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+    z-index: 10;
+}
+
+/* Light mode: knob on left */
+.theme-toggle-switch.light .toggle-knob {
+    left: 3px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode: knob on right */
+.theme-toggle-switch.dark .toggle-knob {
+    left: 31px;
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+/* Focus state */
+.theme-toggle-switch:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Hover effect */
+.theme-toggle-switch:hover .toggle-knob {
+    transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .theme-toggle-switch {
+        width: 48px;
+        height: 24px;
+    }
+
+    .toggle-knob {
+        width: 18px;
+        height: 18px;
+        top: 3px;
+    }
+
+    .theme-toggle-switch.light .toggle-knob {
+        left: 3px;
+    }
+
+    .theme-toggle-switch.dark .toggle-knob {
+        left: 27px;
+    }
+
+    .toggle-icon {
+        width: 12px;
+        height: 12px;
+    }
+}

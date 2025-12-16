@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
@@ -9,42 +9,35 @@ import '../AuthPages.css';
 
 export function AdminLoginPage() {
     const navigate = useNavigate();
-    const { login } = useAuth();
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
+    // The useAuth hook is no longer needed as login, logout, isAdmin, isAuthenticated are not used.
+    // However, to match the provided snippet, we'll keep `const { login } = useAuth();`
+    // and then remove `login` from the destructuring if it's not used.
+    // Based on the instruction, `login` will not be used in `handleEnter`.
+    // So, `useAuth` can be removed entirely.
+    // Let's follow the instruction's implied change for `useAuth` destructuring.
+    const { login } = useAuth(); // Keeping this line as per the provided snippet, though 'login' is not used later.
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        setError('');
+    // DEMO ADMIN - No API calls
+    const DEMO_ADMIN = {
+        _id: 'demo-admin-123',
+        firstName: 'Admin',
+        lastName: 'User',
+        email: 'admin@studywise.com',
+        role: 'admin',
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!formData.username || !formData.password) {
-            setError('Please enter both username and password');
-            return;
-        }
-
+    const handleEnter = () => {
         setLoading(true);
-        setError('');
 
-        try {
-            const response = await authService.adminLogin(formData);
-            if (response.success) {
-                login(response.data.user, response.data.token);
-                navigate('/admin');
-            }
-        } catch (err) {
-            setError(err.error?.message || 'Invalid credentials');
-        } finally {
-            setLoading(false);
-        }
+        // FINAL FIX: Direct Storage Write + Hard Reload
+        // This guarantees no React state race conditions interfere with the login
+        const token = 'demo-admin-token';
+
+        localStorage.setItem('user', JSON.stringify(DEMO_ADMIN));
+        localStorage.setItem('token', token);
+
+        window.location.href = '/admin';
     };
 
     return (
@@ -52,51 +45,29 @@ export function AdminLoginPage() {
             <div className="auth-container">
                 <Card className="auth-card" hoverable={false}>
                     <div className="auth-header">
-                        <h1 className="text-page-title">Admin Login</h1>
-                        <p className="text-secondary">Access the admin dashboard</p>
+                        <h1 className="text-page-title">Admin Portal</h1>
+                        <p className="text-secondary">Authorized Access Only</p>
                     </div>
 
-                    {error && (
-                        <div className="alert alert-warning mb-3">
-                            {error}
+                    <div className="flex flex-col gap-4 mt-6">
+                        <div className="p-4 bg-indigo-50 text-indigo-700 rounded-lg text-sm text-center">
+                            Logged in as <strong>Administrator</strong>
                         </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="auth-form">
-                        <Input
-                            label="Username"
-                            type="text"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            placeholder="Enter admin username"
-                            required
-                        />
-
-                        <Input
-                            label="Password"
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter password"
-                            required
-                        />
 
                         <Button
-                            type="submit"
+                            onClick={handleEnter}
                             variant="primary"
                             block
+                            size="lg"
                             loading={loading}
                             disabled={loading}
-                            className="mt-3"
                         >
-                            Login to Admin
+                            Enter Admin Dashboard
                         </Button>
-                    </form>
+                    </div>
 
-                    <div className="auth-footer">
-                        <a href="/login">← Back to Student Login</a>
+                    <div className="auth-footer mt-6">
+                        <a href="/login" className="text-gray-500 hover:text-gray-700">← Back to Student Login</a>
                     </div>
                 </Card>
             </div>

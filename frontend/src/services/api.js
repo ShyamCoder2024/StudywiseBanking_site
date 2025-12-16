@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -27,6 +27,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        console.error('API Error:', {
+            url: error.config?.url,
+            method: error.config?.method,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message
+        });
+
         if (error.response) {
             // Handle specific error codes
             if (error.response.status === 401) {
@@ -36,24 +44,21 @@ api.interceptors.response.use(
                 window.location.href = '/login';
             }
 
-            // Return formatted error
-            return Promise.reject({
-                success: false,
-                error: error.response.data.error || {
-                    code: 'UNKNOWN_ERROR',
-                    message: 'An unexpected error occurred',
-                },
-            });
+            // Preserve original error for better debugging
+            const enhancedError = new Error(
+                error.response.data?.message ||
+                error.response.data?.error?.message ||
+                'An unexpected error occurred'
+            );
+            enhancedError.response = error.response;
+            enhancedError.status = error.response.status;
+            return Promise.reject(enhancedError);
         }
 
         // Network error
-        return Promise.reject({
-            success: false,
-            error: {
-                code: 'NETWORK_ERROR',
-                message: 'Unable to connect to server. Please check your internet connection.',
-            },
-        });
+        const networkError = new Error('Unable to connect to server. Please check your internet connection.');
+        networkError.isNetworkError = true;
+        return Promise.reject(networkError);
     }
 );
 

@@ -14,6 +14,14 @@ router.get('/quizzes/:id/start', protect, async (req, res, next) => {
         const quiz = await Quiz.findById(req.params.id);
         if (!quiz) throw new NotFoundError('Quiz');
 
+        // Security: Only allow starting published quizzes (unless admin)
+        if (!quiz.isPublished && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'This quiz is not available yet. Please wait for it to be published.'
+            });
+        }
+
         const questions = await Question.find({ quiz: req.params.id }).sort({ order: 1 });
 
         // Return questions without answers
