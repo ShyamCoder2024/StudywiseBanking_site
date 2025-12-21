@@ -450,67 +450,10 @@ router.delete('/global-tasks/:id', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
-// ============ Videos Management ============
-
-import Video from '../models/Video.js';
-
-// Get all videos
-router.get('/videos', async (req, res, next) => {
-    try {
-        const videos = await Video.find().sort({ createdAt: -1 });
-        res.json({ success: true, data: videos });
-    } catch (error) { next(error); }
-});
-
-// Add new video
-router.post('/videos', async (req, res, next) => {
-    try {
-        // Extract YouTube ID from URL if full URL provided
-        let youtubeId = req.body.youtubeId;
-        if (youtubeId && youtubeId.includes('youtube.com')) {
-            const url = new URL(youtubeId);
-            youtubeId = url.searchParams.get('v') || youtubeId;
-        } else if (youtubeId && youtubeId.includes('youtu.be')) {
-            youtubeId = youtubeId.split('/').pop().split('?')[0];
-        }
-
-        const video = await Video.create({
-            ...req.body,
-            youtubeId
-        });
-        res.status(201).json({ success: true, data: video });
-    } catch (error) { next(error); }
-});
-
-// Update video
-router.put('/videos/:id', async (req, res, next) => {
-    try {
-        // Extract YouTube ID from URL if full URL provided
-        let youtubeId = req.body.youtubeId;
-        if (youtubeId && youtubeId.includes('youtube.com')) {
-            const url = new URL(youtubeId);
-            youtubeId = url.searchParams.get('v') || youtubeId;
-        } else if (youtubeId && youtubeId.includes('youtu.be')) {
-            youtubeId = youtubeId.split('/').pop().split('?')[0];
-        }
-
-        const video = await Video.findByIdAndUpdate(
-            req.params.id,
-            { ...req.body, youtubeId },
-            { new: true }
-        );
-        if (!video) throw new NotFoundError('Video');
-        res.json({ success: true, data: video });
-    } catch (error) { next(error); }
-});
-
-// Delete video
-router.delete('/videos/:id', async (req, res, next) => {
-    try {
-        await Video.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'Video deleted' });
-    } catch (error) { next(error); }
-});
+// Note: Video management has been replaced with AI-powered YouTube integration
+// Videos are now automatically fetched from the tutor's YouTube channel
+// and personalized based on student performance
 
 export default router;
+
 

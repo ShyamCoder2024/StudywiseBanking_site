@@ -1,25 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, User, Eye, Sparkles, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Play, User, Sparkles, RefreshCw, Youtube, Zap } from 'lucide-react';
 import api from '../../services/api';
 import './TutorVideosPage.css';
-
-// Mock data for fallback when no videos in database
-const MOCK_VIDEOS = [
-    { id: 101, title: "Speed Math Tricks - Multiply in 5s", tutorName: "Rahul Sir", views: "12k", duration: "10:05", youtubeId: "dQw4w9WgXcQ", subject: "MATH" },
-    { id: 102, title: "Current Affairs - Dec Week 2", tutorName: "Priya Mam", views: "8.5k", duration: "15:30", youtubeId: "dQw4w9WgXcQ", subject: "GK" },
-    { id: 103, title: "Reasoning Puzzles for SBI PO", tutorName: "Amit Sir", views: "22k", duration: "45:00", youtubeId: "dQw4w9WgXcQ", subject: "REASONING" },
-    { id: 104, title: "English Grammar - 50 Golden Rules", tutorName: "Neastu Mam", views: "15k", duration: "30:20", youtubeId: "dQw4w9WgXcQ", subject: "ENGLISH" },
-    { id: 105, title: "Data Interpretation Expert Level", tutorName: "Rahul Sir", views: "9k", duration: "28:15", youtubeId: "dQw4w9WgXcQ", subject: "QUANT" },
-    { id: 106, title: "Banking Awareness - RBI Policies", tutorName: "Suresh Sir", views: "18k", duration: "35:10", youtubeId: "dQw4w9WgXcQ", subject: "BANKING" },
-];
 
 export default function TutorVideosPage() {
     const navigate = useNavigate();
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [recommendedCount, setRecommendedCount] = useState(0);
+    const [aiPowered, setAiPowered] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchVideos();
@@ -27,35 +20,48 @@ export default function TutorVideosPage() {
 
     const fetchVideos = async () => {
         try {
+            setError(null);
             const res = await api.get('/student/videos');
-            if (res.data.success && res.data.data.videos.length > 0) {
-                setVideos(res.data.data.videos);
+            if (res.data.success && res.data.data) {
+                setVideos(res.data.data.videos || []);
                 setRecommendedCount(res.data.data.recommendedCount || 0);
-            } else {
-                // Use mock data if no videos in database
-                setVideos(MOCK_VIDEOS.map(v => ({
-                    ...v,
-                    thumbnailUrl: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
-                    watchUrl: `https://www.youtube.com/watch?v=${v.youtubeId}`,
-                    isRecommended: false
-                })));
+                setAiPowered(res.data.data.aiPowered || false);
             }
-        } catch (error) {
-            console.error('Failed to fetch videos:', error);
-            // Use mock data on error
-            setVideos(MOCK_VIDEOS.map(v => ({
-                ...v,
-                thumbnailUrl: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
-                watchUrl: `https://www.youtube.com/watch?v=${v.youtubeId}`,
-                isRecommended: false
-            })));
+        } catch (err) {
+            console.error('Failed to fetch videos:', err);
+            setError('Failed to load videos. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            // Clear cache and refetch
+            await api.post('/student/videos/refresh');
+            await fetchVideos();
+        } catch (err) {
+            console.error('Failed to refresh:', err);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
     const handleVideoClick = (video) => {
         window.open(video.watchUrl, '_blank');
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+        return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
     };
 
     return (
@@ -70,50 +76,120 @@ export default function TutorVideosPage() {
                     <button onClick={() => navigate('/dashboard')} className="btn-back">
                         <ArrowLeft size={24} />
                     </button>
-                    <div>
+                    <div style={{ flex: 1 }}>
                         <h1>Tutor's Desk 🎓</h1>
-                        {recommendedCount > 0 && (
-                            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', margin: '4px 0 0 0' }}>
-                                <Sparkles size={14} style={{ color: '#f59e0b', marginRight: '4px' }} />
-                                {recommendedCount} videos recommended based on your performance
-                            </p>
-                        )}
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '4px 0 0 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Youtube size={14} style={{ color: '#FF0000' }} />
+                            Videos from Study Wise Banking
+                            {aiPowered && (
+                                <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600, marginLeft: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <Zap size={10} /> AI Personalized
+                                </span>
+                            )}
+                        </p>
                     </div>
+                    <button
+                        onClick={handleRefresh}
+                        className="btn-refresh"
+                        disabled={refreshing}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '8px 16px',
+                            background: 'var(--color-card)',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '10px',
+                            color: 'var(--color-text)',
+                            cursor: refreshing ? 'wait' : 'pointer',
+                            fontSize: '0.85rem',
+                            fontWeight: 500
+                        }}
+                    >
+                        <RefreshCw size={16} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+                        {refreshing ? 'Refreshing...' : 'Refresh'}
+                    </button>
                 </div>
 
+                {recommendedCount > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="recommendation-banner"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05))',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            borderRadius: '12px',
+                            padding: '12px 16px',
+                            marginBottom: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                        }}
+                    >
+                        <Sparkles size={18} style={{ color: '#f59e0b' }} />
+                        <span style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>
+                            <strong>{recommendedCount} videos</strong> personalized for your weak areas. Watch these first!
+                        </span>
+                    </motion.div>
+                )}
+
                 {loading ? (
-                    <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--color-text-secondary)' }}>
-                        Loading videos...
+                    <div style={{ textAlign: 'center', padding: '80px 0' }}>
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            style={{ display: 'inline-block', marginBottom: '16px' }}
+                        >
+                            <RefreshCw size={32} style={{ color: 'var(--color-primary)' }} />
+                        </motion.div>
+                        <p style={{ color: 'var(--color-text-secondary)' }}>
+                            Fetching videos from YouTube channel...
+                        </p>
+                        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem', marginTop: '8px' }}>
+                            AI is categorizing videos for your personalized recommendations
+                        </p>
+                    </div>
+                ) : error ? (
+                    <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                        <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
+                        <button onClick={fetchVideos} style={{ padding: '10px 20px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+                            Try Again
+                        </button>
+                    </div>
+                ) : videos.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                        <Youtube size={48} style={{ color: 'var(--color-text-secondary)', marginBottom: '16px' }} />
+                        <p style={{ color: 'var(--color-text-secondary)' }}>
+                            No videos available at the moment. Click refresh to try again.
+                        </p>
                     </div>
                 ) : (
                     <div className="video-grid-premium">
                         {videos.map((video, index) => (
                             <motion.div
-                                key={video._id || video.id}
+                                key={video.youtubeId || index}
                                 className={`video-card-premium ${video.isRecommended ? 'recommended' : ''}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.08 }}
+                                transition={{ delay: index * 0.05 }}
                                 onClick={() => handleVideoClick(video)}
-                                style={{ cursor: 'pointer' }}
+                                whileHover={{ y: -4 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 <div className="thumbnail-wrapper">
                                     <img
                                         src={video.thumbnailUrl}
                                         alt={video.title}
                                         onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.nextSibling.style.display = 'flex';
+                                            // Try lower quality thumbnail on error
+                                            e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
                                         }}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
-                                    <div style={{ display: 'none', width: '100%', height: '100%', background: 'linear-gradient(45deg, #1e293b, #334155)', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Play size={40} style={{ color: 'rgba(255,255,255,0.5)' }} />
-                                    </div>
                                     <div className="play-overlay">
                                         <Play size={20} fill="white" className="text-white" />
                                     </div>
-                                    <span className="duration-badge">{video.duration}</span>
                                     {video.isRecommended && (
                                         <span className="recommended-badge">
                                             <Sparkles size={10} /> Recommended
@@ -123,14 +199,17 @@ export default function TutorVideosPage() {
                                 <div className="video-content">
                                     <div className="video-tags">
                                         <span className={`tag ${video.subject?.toLowerCase()}`}>{video.subject}</span>
+                                        {video.isRecommended && (
+                                            <span className="tag ai-tag">AI Pick</span>
+                                        )}
                                     </div>
                                     <h3>{video.title}</h3>
                                     <div className="meta-row">
                                         <div className="author-info">
-                                            <User size={14} /> {video.tutorName}
+                                            <User size={14} /> {video.tutorName || 'Bharat Sir'}
                                         </div>
                                         <div className="author-info">
-                                            <Eye size={14} /> {video.views}
+                                            {formatDate(video.publishedAt)}
                                         </div>
                                     </div>
                                 </div>
@@ -142,4 +221,3 @@ export default function TutorVideosPage() {
         </motion.div>
     );
 }
-

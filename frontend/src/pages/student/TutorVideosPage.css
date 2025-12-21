@@ -338,3 +338,45 @@
 :root.dark .video-card-premium.recommended:hover {
     box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4);
 }
+
+/* AI Tag */
+.tag.ai-tag {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    font-weight: 600;
+}
+
+/* Spin animation for refresh */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Page header improvements */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .page-header {
+        flex-wrap: wrap;
+    }
+
+    .btn-refresh {
+        margin-left: auto;
+    }
+
+    .recommendation-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+}

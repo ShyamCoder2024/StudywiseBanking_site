@@ -391,12 +391,12 @@ router.get('/leaderboard', async (req, res, next) => {
     }
 });
 
-// ============ Personalized Video Recommendations ============
+// ============ AI-Powered Video Recommendations ============
 
-import Video from '../models/Video.js';
+import { getPersonalizedVideos, clearVideoCache } from '../services/youtubeService.js';
 
 // @route   GET /api/student/videos
-// @desc    Get personalized video recommendations based on weak areas
+// @desc    Get AI-personalized video recommendations from tutor's YouTube channel
 // @access  Private
 router.get('/videos', async (req, res, next) => {
     try {
@@ -429,52 +429,50 @@ router.get('/videos', async (req, res, next) => {
             }
         });
 
-        // Fetch all active videos
-        const allVideos = await Video.find({ isActive: true });
-
-        // Separate into recommended and other videos
-        const recommendedVideos = [];
-        const otherVideos = [];
-
-        allVideos.forEach(video => {
-            const videoData = {
-                ...video.toObject(),
-                thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
-                watchUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
-                isRecommended: false
-            };
-
-            // Check if video subject matches any weak area
-            if (weakSubjects.includes(video.subject.toUpperCase())) {
-                videoData.isRecommended = true;
-                videoData.recommendedReason = `Recommended for your ${video.subject} improvement`;
-                recommendedVideos.push(videoData);
-            } else {
-                otherVideos.push(videoData);
+        // Also check AI analysis for weak areas
+        const aiWeakAreas = [];
+        allAttempts.slice(0, 5).forEach(attempt => {
+            if (attempt.aiAnalysis?.weaknesses) {
+                aiWeakAreas.push(...attempt.aiAnalysis.weaknesses);
             }
         });
 
-        // Sort recommended by date, others by date
-        recommendedVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        otherVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        // Combine weak subjects from scores and AI analysis
+        const allWeakAreas = [...new Set([...weakSubjects, ...aiWeakAreas.map(w => w.toUpperCase())])];
 
-        // Combine: recommended first, then others
-        const sortedVideos = [...recommendedVideos, ...otherVideos];
+        // Get personalized videos from YouTube using AI
+        const result = await getPersonalizedVideos(allWeakAreas, 20);
 
         res.json({
             success: true,
             data: {
-                videos: sortedVideos,
-                totalVideos: sortedVideos.length,
-                recommendedCount: recommendedVideos.length,
-                weakSubjects
+                videos: result.videos,
+                totalVideos: result.totalVideos || result.videos.length,
+                recommendedCount: result.recommendedCount,
+                weakSubjects: allWeakAreas,
+                source: 'YouTube Channel: Study Wise Banking',
+                aiPowered: true
             }
         });
+    } catch (error) {
+        console.error('Error fetching personalized videos:', error);
+        next(error);
+    }
+});
+
+// @route   POST /api/student/videos/refresh
+// @desc    Force refresh of video cache
+// @access  Private
+router.post('/videos/refresh', async (req, res, next) => {
+    try {
+        clearVideoCache();
+        res.json({ success: true, message: 'Video cache cleared. Next request will fetch fresh videos.' });
     } catch (error) {
         next(error);
     }
 });
 
 export default router;
+
 
 
