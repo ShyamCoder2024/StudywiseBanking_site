@@ -178,98 +178,60 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 2. AI Insights Card - Clean Design Matching Other Cards */}
+                    {/* 2. AI Insights Card - Unique Gradient Border Design */}
                     <motion.div
-                        className="bento-tile ai-insights-tile clickable"
+                        className="bento-tile ai-insights-card clickable"
                         variants={tile}
                         onClick={() => navigate('/analysis')}
-                        whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
+                        whileHover={{ y: -4, scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        <div className="tile-header">
-                            <h3>
-                                <motion.span
-                                    animate={{ rotate: [0, 10, -10, 0] }}
-                                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                                    style={{ display: 'inline-block' }}
-                                >
-                                    <Zap size={20} className="text-purple" />
-                                </motion.span>
-                                {' '}AI Insights
-                            </h3>
-                            <motion.div
-                                whileHover={{ x: 4 }}
-                                transition={{ type: 'spring', stiffness: 400 }}
-                            >
-                                <ArrowRight size={16} className="arrow-hint" />
-                            </motion.div>
-                        </div>
+                        <div className="ai-card-inner">
+                            <div className="ai-header-row">
+                                <div className="ai-icon-badge">
+                                    <Zap size={16} />
+                                </div>
+                                <span className="ai-title">AI Insights</span>
+                                <ArrowRight size={16} className="ai-arrow" />
+                            </div>
 
-                        <div className="ai-insights-content">
-                            {/* Accuracy Ring */}
-                            <div className="accuracy-ring-wrapper">
-                                <svg viewBox="0 0 100 100" className="accuracy-ring">
-                                    <circle cx="50" cy="50" r="40" className="ring-bg" />
-                                    <motion.circle
-                                        cx="50" cy="50" r="40"
-                                        className="ring-progress"
-                                        strokeDasharray={251}
-                                        initial={{ strokeDashoffset: 251 }}
-                                        animate={{ strokeDashoffset: 251 - (251 * stats.accuracy) / 100 }}
-                                        transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
-                                    />
-                                </svg>
-                                <div className="accuracy-value">
-                                    <motion.span
-                                        className="accuracy-num"
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ type: 'spring', delay: 0.5 }}
-                                    >
-                                        {stats.accuracy}%
-                                    </motion.span>
-                                    <span className="accuracy-label">Accuracy</span>
+                            <div className="ai-score-section">
+                                <div className="ai-score-ring">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="38" className="ring-track" />
+                                        <motion.circle
+                                            cx="50" cy="50" r="38"
+                                            className="ring-fill"
+                                            strokeDasharray={239}
+                                            initial={{ strokeDashoffset: 239 }}
+                                            animate={{ strokeDashoffset: 239 - (239 * stats.accuracy) / 100 }}
+                                            transition={{ duration: 1.5, delay: 0.3 }}
+                                        />
+                                    </svg>
+                                    <div className="ring-center">
+                                        <span className="ring-value">{stats.accuracy}%</span>
+                                        <span className="ring-label">Score</span>
+                                    </div>
+                                </div>
+
+                                <div className="ai-stats-list">
+                                    <div className="ai-stat-item">
+                                        <span className="dot green"></span>
+                                        <span className="label">Strong:</span>
+                                        <span className="value green">Reasoning</span>
+                                    </div>
+                                    <div className="ai-stat-item">
+                                        <span className="dot orange"></span>
+                                        <span className="label">Focus:</span>
+                                        <span className="value orange">Math</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Quick Stats */}
-                            <div className="ai-quick-stats">
-                                <motion.div
-                                    className="quick-stat success"
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.6 }}
-                                    whileHover={{ scale: 1.02 }}
-                                >
-                                    <div className="stat-indicator"></div>
-                                    <div className="stat-content">
-                                        <span className="stat-label">Strength</span>
-                                        <span className="stat-value">Reasoning</span>
-                                    </div>
-                                </motion.div>
-                                <motion.div
-                                    className="quick-stat warning"
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.7 }}
-                                    whileHover={{ scale: 1.02 }}
-                                >
-                                    <div className="stat-indicator"></div>
-                                    <div className="stat-content">
-                                        <span className="stat-label">Focus On</span>
-                                        <span className="stat-value">Math</span>
-                                    </div>
-                                </motion.div>
+                            <div className="ai-cta-btn">
+                                View Analysis <ArrowRight size={12} />
                             </div>
                         </div>
-
-                        <motion.div
-                            className="ai-view-report"
-                            whileHover={{ gap: '10px' }}
-                        >
-                            <span>View Full Report</span>
-                            <ArrowRight size={14} />
-                        </motion.div>
                     </motion.div>
 
 
