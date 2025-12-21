@@ -273,19 +273,20 @@
    ============================================ */
 @media (max-width: 768px) {
     .drd-navbar-inner {
-        height: 56px;
+        height: 62px;
         padding: 0 16px;
     }
 
-    /* Show logo text on mobile with smaller size */
+    /* Show logo text on mobile with better size */
     .drd-logo-text {
         display: block;
-        font-size: 14px;
+        font-size: 15px;
+        font-weight: 700;
     }
 
     .drd-logo-img {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
     }
 
     /* Hide desktop nav */
@@ -348,6 +349,12 @@
     .drd-mobile-menu {
         display: flex;
     }
+
+    /* Larger hamburger icon */
+    .drd-hamburger svg {
+        width: 26px;
+        height: 26px;
+    }
 }
 
 /* ============================================
@@ -356,10 +363,20 @@
 @media (max-width: 400px) {
     .drd-navbar-inner {
         padding: 0 12px;
+        height: 58px;
+    }
+
+    .drd-logo-img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .drd-logo-text {
+        font-size: 14px;
     }
 
     .drd-actions {
-        gap: 8px;
+        gap: 10px;
     }
 
     .drd-toggle {
@@ -377,7 +394,12 @@
     }
 
     .drd-auth-btn {
-        padding: 5px 10px;
+        padding: 6px 12px;
         font-size: 12px;
+    }
+
+    .drd-hamburger svg {
+        width: 24px;
+        height: 24px;
     }
 }

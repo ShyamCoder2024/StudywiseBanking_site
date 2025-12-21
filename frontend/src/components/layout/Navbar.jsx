@@ -103,7 +103,7 @@ export function Navbar() {
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             aria-label="Menu"
                         >
-                            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
                         </button>
                     )}
                 </div>
