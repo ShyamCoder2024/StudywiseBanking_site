@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
     Activity, TrendingUp, Award, Target, BookOpen, Clock,
     CheckCircle2, ArrowRight, Zap, BarChart2, Calendar,
-    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X
+    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X, Sparkles
 } from 'lucide-react';
 import { AIAnalysis } from '../../components/ai/AIAnalysis';
 import { Leaderboard } from '../../components/leaderboard/Leaderboard';
