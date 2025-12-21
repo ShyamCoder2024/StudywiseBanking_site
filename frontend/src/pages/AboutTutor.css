@@ -345,3 +345,34 @@
         margin-right: auto;
     }
 }
+
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+
+/* Fix tutor name visibility in dark mode */
+:root.dark .about-hero h1 {
+    background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+:root.dark .about-hero h2 {
+    color: var(--color-text-secondary);
+}
+
+:root.dark .badge-highlight {
+    background: rgba(138, 117, 186, 0.2);
+    color: #a78bfa;
+}
+
+:root.dark .tutor-img-placeholder {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    box-shadow: 20px -20px 0px rgba(138, 117, 186, 0.2);
+}
+
+:root.dark .bio-container h2 {
+    background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

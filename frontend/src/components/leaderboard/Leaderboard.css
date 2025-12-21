@@ -269,3 +269,28 @@
 :root.dark .leaderboard-row.highlight {
     background: rgba(138, 117, 186, 0.2);
 }
+
+/* ============================================
+   CURRENT USER HIGHLIGHTING
+   ============================================ */
+
+/* Highlight current user's row */
+.leaderboard-row.current-user-row {
+    background: linear-gradient(135deg, rgba(138, 117, 186, 0.15), rgba(110, 188, 195, 0.15));
+    border: 1px solid var(--primary);
+}
+
+/* Highlight current user's name */
+.current-user-highlight {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+}
+
+:root.dark .current-user-highlight {
+    color: #a78bfa !important;
+}
+
+:root.dark .leaderboard-row.current-user-row {
+    background: linear-gradient(135deg, rgba(138, 117, 186, 0.25), rgba(110, 188, 195, 0.2));
+    border-color: #a78bfa;
+}

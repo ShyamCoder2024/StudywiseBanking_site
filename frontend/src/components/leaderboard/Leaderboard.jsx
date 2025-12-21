@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Crown, Timer } from 'lucide-react';
 import { AvatarDisplay } from '../ui/AvatarDisplay';
+import { useAuth } from '../../context/AuthContext';
+import { getAvatarByIndex } from '../../utils/avatars';
 import './Leaderboard.css';
 
-// Parameters: Score (High is good), Time (Low is good)
+// Generate mock leaderboard data using consistent avatars
 const generateLeaderboardData = () => {
     const names = [
         "Priya Sharma", "Rahul Verma", "Amit Patel", "Sneha Gupta", "Vikram Singh",
@@ -25,24 +27,24 @@ const generateLeaderboardData = () => {
         // Random Time between 10 mins (600s) and 60 mins (3600s)
         const timeTaken = Math.floor(Math.random() * (3600 - 600) + 600);
 
-        // Generate a consistent avatar seed
-        const avatarSeed = `student-${index}-${name.replace(/\s/g, '').toLowerCase()}`;
+        // Use avatar from shared utility for consistency
+        const avatar = getAvatarByIndex(index);
 
         return {
-            id: index,
+            id: `mock-${index}`,
             name,
             score,
-            timeTaken, // in seconds
-            avatar: { url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc&radius=50` }
+            timeTaken,
+            avatar
         };
     });
 
     // Sort: 1. Score (Desc), 2. Time (Asc)
     students.sort((a, b) => {
         if (b.score !== a.score) {
-            return b.score - a.score; // Higher score first
+            return b.score - a.score;
         }
-        return a.timeTaken - b.timeTaken; // Lower time first (faster)
+        return a.timeTaken - b.timeTaken;
     });
 
     // Assign Rank
@@ -52,15 +54,59 @@ const generateLeaderboardData = () => {
     }));
 };
 
-const LEADERBOARD_DATA = generateLeaderboardData();
+// Generate once
+const MOCK_LEADERBOARD_DATA = generateLeaderboardData();
 
 export function Leaderboard({ limit }) {
-    // Determine data to show
-    // If limit is provided, we still need top 3 (index 0-2) + remaining up to limit.
-    // LEADERBOARD_DATA is already sorted.
-    // Podium uses 0, 1, 2. List uses slice(3, limit).
+    const { user } = useAuth();
 
-    const listData = limit ? LEADERBOARD_DATA.slice(3, limit) : LEADERBOARD_DATA.slice(3, 50);
+    // Merge user into leaderboard if logged in
+    const leaderboardData = React.useMemo(() => {
+        if (!user) return MOCK_LEADERBOARD_DATA;
+
+        // Check if user is already in the mock data (by name or a unique identifier)
+        const existingIndex = MOCK_LEADERBOARD_DATA.findIndex(
+            s => s.name === `${user.firstName} ${user.lastName}`
+        );
+
+        let data;
+        if (existingIndex >= 0) {
+            // User already exists, update their avatar
+            data = MOCK_LEADERBOARD_DATA.map((s, idx) => {
+                if (idx === existingIndex) {
+                    return { ...s, avatar: user.avatar, isCurrentUser: true };
+                }
+                return s;
+            });
+        } else {
+            // Add user to the list with a realistic score
+            const userEntry = {
+                id: 'current-user',
+                name: `${user.firstName || 'You'} ${user.lastName || ''}`.trim(),
+                score: Math.floor(Math.random() * (9000 - 5000) + 5000),
+                timeTaken: Math.floor(Math.random() * (2500 - 800) + 800),
+                avatar: user.avatar,
+                isCurrentUser: true
+            };
+            data = [...MOCK_LEADERBOARD_DATA, userEntry];
+        }
+
+        // Re-sort and re-rank
+        data.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.timeTaken - b.timeTaken;
+        });
+
+        return data.map((student, index) => ({
+            ...student,
+            rank: index + 1
+        }));
+    }, [user]);
+
+    const listData = limit ? leaderboardData.slice(3, limit) : leaderboardData.slice(3, 50);
+
+    // Helper to get top 3 with fallback
+    const getTopStudent = (index) => leaderboardData[index] || { name: '-', score: 0, timeTaken: 0, avatar: null };
 
     return (
         <div className="leaderboard-container">
@@ -74,35 +120,35 @@ export function Leaderboard({ limit }) {
                 {/* 2nd Place */}
                 <motion.div className="podium-item second" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} transition={{ delay: 0.2 }}>
                     <div className="podium-avatar-wrapper">
-                        <AvatarDisplay avatar={LEADERBOARD_DATA[1].avatar} size={64} />
+                        <AvatarDisplay avatar={getTopStudent(1).avatar} size={64} />
                         <div className="rank-badge silver">2</div>
                     </div>
-                    <span className="podium-name">{LEADERBOARD_DATA[1].name}</span>
-                    <span className="podium-score">{LEADERBOARD_DATA[1].score} XP</span>
-                    <span className="podium-time">{Math.floor(LEADERBOARD_DATA[1].timeTaken / 60)}m</span>
+                    <span className={`podium-name ${getTopStudent(1).isCurrentUser ? 'current-user-highlight' : ''}`}>{getTopStudent(1).name}</span>
+                    <span className="podium-score">{getTopStudent(1).score} XP</span>
+                    <span className="podium-time">{Math.floor(getTopStudent(1).timeTaken / 60)}m</span>
                 </motion.div>
 
                 {/* 1st Place */}
                 <motion.div className="podium-item first" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} transition={{ delay: 0.1 }}>
                     <Crown className="crown-icon" size={32} />
                     <div className="podium-avatar-wrapper">
-                        <AvatarDisplay avatar={LEADERBOARD_DATA[0].avatar} size={88} selected={true} />
+                        <AvatarDisplay avatar={getTopStudent(0).avatar} size={88} selected={true} />
                         <div className="rank-badge gold">1</div>
                     </div>
-                    <span className="podium-name">{LEADERBOARD_DATA[0].name}</span>
-                    <span className="podium-score">{LEADERBOARD_DATA[0].score} XP</span>
-                    <span className="podium-time">{Math.floor(LEADERBOARD_DATA[0].timeTaken / 60)}m</span>
+                    <span className={`podium-name ${getTopStudent(0).isCurrentUser ? 'current-user-highlight' : ''}`}>{getTopStudent(0).name}</span>
+                    <span className="podium-score">{getTopStudent(0).score} XP</span>
+                    <span className="podium-time">{Math.floor(getTopStudent(0).timeTaken / 60)}m</span>
                 </motion.div>
 
                 {/* 3rd Place */}
                 <motion.div className="podium-item third" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} transition={{ delay: 0.3 }}>
                     <div className="podium-avatar-wrapper">
-                        <AvatarDisplay avatar={LEADERBOARD_DATA[2].avatar} size={64} />
+                        <AvatarDisplay avatar={getTopStudent(2).avatar} size={64} />
                         <div className="rank-badge bronze">3</div>
                     </div>
-                    <span className="podium-name">{LEADERBOARD_DATA[2].name}</span>
-                    <span className="podium-score">{LEADERBOARD_DATA[2].score} XP</span>
-                    <span className="podium-time">{Math.floor(LEADERBOARD_DATA[2].timeTaken / 60)}m</span>
+                    <span className={`podium-name ${getTopStudent(2).isCurrentUser ? 'current-user-highlight' : ''}`}>{getTopStudent(2).name}</span>
+                    <span className="podium-score">{getTopStudent(2).score} XP</span>
+                    <span className="podium-time">{Math.floor(getTopStudent(2).timeTaken / 60)}m</span>
                 </motion.div>
             </div>
 
@@ -117,7 +163,7 @@ export function Leaderboard({ limit }) {
                 {listData.map((student, index) => (
                     <motion.div
                         key={student.id}
-                        className="leaderboard-row"
+                        className={`leaderboard-row ${student.isCurrentUser ? 'current-user-row' : ''}`}
                         initial={{ x: -20, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
                         viewport={{ once: true }}
@@ -126,7 +172,7 @@ export function Leaderboard({ limit }) {
                         <span className="rank-number">#{student.rank}</span>
                         <div className="user-info">
                             <AvatarDisplay avatar={student.avatar} size={40} />
-                            <span className="user-name">{student.name}</span>
+                            <span className={`user-name ${student.isCurrentUser ? 'current-user-highlight' : ''}`}>{student.name}</span>
                         </div>
                         <span className="user-score font-bold">{student.score}</span>
                         <div className="user-time">

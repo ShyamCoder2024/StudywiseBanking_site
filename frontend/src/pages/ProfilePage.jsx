@@ -6,48 +6,13 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { AvatarDisplay } from '../components/ui/AvatarDisplay';
 import { CheckCircle2, Target, BookOpen } from 'lucide-react';
+import { CARTOON_AVATARS } from '../utils/avatars';
 import api from '../services/api';
 import './ProfilePage.css';
 
-// Generating Premium "Cartoonish" Avatars
-// 40 High-quality, expressive cartoon avatars (Adventurer Style)
-const generateAvatars = () => {
-    const avatars = [];
+// Use AVATARS from shared utility for consistency
+const AVATARS = CARTOON_AVATARS;
 
-    // Curated seeds for diverse, premium-looking characters
-    const avatarSeeds = [
-        'Felix', 'Aneka', 'Yo', 'Precious', 'Cuddles',
-        'Shadow', 'Misty', 'Whiskers', 'Coco', 'Sparky',
-        'Bailey', 'Ginger', 'Snowball', 'Dusty', 'Lucky',
-        'Simon', 'Garfield', 'Oreo', 'Sassy', 'Abby',
-        'Bandit', 'Jasper', 'Tigger', 'Simba', 'Peanut',
-        'Casper', 'Midnight', 'Rocky', 'Toby', 'Lola',
-        'Bella', 'Max', 'Charlie', 'Jack', 'Daisy',
-        'Luna', 'Milo', 'Oliver', 'Leo', 'Buddy'
-    ];
-
-    // Premium pastel background colors
-    const bgColors = [
-        'b6e3f4', 'c0aede', 'd1d4f9', 'ffdfbf', 'ffd5dc',
-        'f0f4f8', 'e2e8f0', 'fed7aa', 'fbcfe8', 'bfdbfe'
-    ];
-
-    for (let i = 0; i < 40; i++) {
-        // Use mod to cycle through seeds if we run out, though we have 40
-        const seed = avatarSeeds[i % avatarSeeds.length];
-        const bg = bgColors[i % bgColors.length];
-
-        avatars.push({
-            id: `k-avatar-${i + 1}`,
-            // Using 'adventurer' style for a premium, cartoonish look
-            url: `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&backgroundColor=${bg}&radius=10`
-        });
-    }
-
-    return avatars;
-};
-
-const AVATARS = generateAvatars();
 
 const TARGET_EXAMS = [
     { id: 'ibps-po', label: 'IBPS PO', icon: '🏦' },
