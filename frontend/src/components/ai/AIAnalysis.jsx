@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
     BookOpen, Target, Zap, Star, Lightbulb, RefreshCw,
     TrendingUp, Award, AlertTriangle, ArrowRight, BarChart2,
-    CheckCircle2, Crown, Sparkles, LayoutDashboard
+    CheckCircle2, Crown, LayoutDashboard
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -107,143 +107,137 @@ export function AIAnalysis() {
             initial="hidden"
             animate="visible"
         >
-            {/* Header - Simple & Clean */}
+            {/* Header */}
             <motion.div
-                className="flex flex-col md:flex-row items-center justify-between gap-4 px-1"
+                className="flex items-center justify-between p-6 bg-[var(--color-card)] rounded-xl border border-[var(--color-border)] shadow-sm"
                 variants={itemVariants}
             >
                 <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] shadow-sm">
-                        <LayoutDashboard size={24} className="text-[var(--color-primary)]" />
+                    <div className="p-3 bg-[var(--color-bg)] rounded-lg">
+                        <LayoutDashboard className="text-[var(--color-primary)]" size={24} />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-[var(--color-text)]">AI Performance Analysis</h2>
-                        <p className="text-[var(--color-text-secondary)] text-sm">Real-time insights for your preparation</p>
+                        <h2 className="text-xl font-bold text-[var(--color-text)]">AI Performance Analysis</h2>
+                        <p className="text-sm text-[var(--color-text-secondary)]">Your personalized learning insights</p>
                     </div>
                 </div>
                 <button
                     onClick={handleRefresh}
                     disabled={analyzing}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all hover:brightness-105 active:scale-95 text-white shadow-md bg-[var(--color-primary)]"
+                    className="flex items-center gap-2 px-6 py-2 rounded-lg font-bold text-sm text-white transition-transform active:scale-95 shadow-md"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
                 >
                     <RefreshCw size={18} className={analyzing ? "animate-spin" : ""} />
-                    {analyzing ? "Analyzing..." : "Refresh Insights"}
+                    {analyzing ? "Analyzing..." : "Refresh"}
                 </button>
             </motion.div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
 
-                {/* 1. LEFT PROFILE SIDEBAR */}
-                <motion.div className="col-span-1 xl:col-span-4 h-full" variants={itemVariants}>
-                    <div className="h-full p-8 rounded-[24px] border border-[var(--color-border)] shadow-[var(--shadow-card)] bg-[var(--color-card)] flex flex-col items-center text-center relative overflow-hidden">
-
-                        {/* Gradient Accent */}
-                        <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[var(--color-primary)]/5 to-transparent pointer-events-none"></div>
-
-                        <h3 className="relative z-10 text-xs font-bold uppercase tracking-widest text-[var(--color-text-secondary)] mb-6">Overall Assessment</h3>
+                {/* 1. LEFT SIDEBAR - SCORE & TREND (4 Columns) */}
+                <div className="col-span-1 xl:col-span-4 flex flex-col gap-6">
+                    <motion.div
+                        className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-card)] p-8 flex flex-col items-center text-center"
+                        variants={itemVariants}
+                    >
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mb-6">Overall Score</h3>
 
                         {/* Score Ring */}
-                        <div className="relative z-10 w-56 h-56 mb-8 transform transition-transform hover:scale-105">
-                            <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90 drop-shadow-2xl">
-                                <circle cx="60" cy="60" r="50" stroke="var(--color-border)" strokeWidth="8" fill="none" className="opacity-30" />
+                        <div className="relative w-48 h-48 mb-6">
+                            <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+                                <circle cx="60" cy="60" r="52" stroke="var(--color-border)" strokeWidth="8" fill="none" opacity="0.3" />
                                 <motion.circle
-                                    cx="60" cy="60" r="50"
+                                    cx="60" cy="60" r="52"
                                     stroke="var(--color-primary)" strokeWidth="8" fill="none"
-                                    initial={{ strokeDasharray: 314, strokeDashoffset: 314 }}
-                                    animate={{ strokeDashoffset: 314 - (314 * score) / 100 }}
+                                    initial={{ strokeDasharray: 327, strokeDashoffset: 327 }}
+                                    animate={{ strokeDashoffset: 327 - (327 * score) / 100 }}
                                     transition={{ duration: 1.5, ease: "easeOut" }}
                                     strokeLinecap="round"
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-6xl font-black text-[var(--color-text)] tracking-tight">{score}</span>
-                                <div className="px-3 py-1 bg-[var(--color-bg)] rounded-full border border-[var(--color-border)] mt-2">
-                                    <span className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-wide">AI Score</span>
-                                </div>
+                                <span className="text-5xl font-black text-[var(--color-text)]">{score}</span>
+                                <span className="text-xs font-bold text-[var(--color-primary)] uppercase mt-1">AI Score</span>
                             </div>
                         </div>
 
-                        {/* Stats Summary */}
-                        <div className="relative z-10 w-full grid grid-cols-2 gap-3 mb-8">
-                            <div className="p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] text-center">
-                                <div className="text-[10px] uppercase text-[var(--color-text-secondary)] font-bold">Class Rank</div>
-                                <div className="text-lg font-bold text-[var(--color-text)] flex justify-center items-center gap-1">
+                        <div className="w-full grid grid-cols-2 gap-4 mb-6">
+                            <div className="p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+                                <span className="block text-[10px] font-bold text-[var(--color-text-secondary)] uppercase">Rank</span>
+                                <span className="block text-lg font-bold text-[var(--color-text)] flex justify-center items-center gap-1">
                                     <Crown size={14} className="text-yellow-500 fill-current" /> Top 15%
-                                </div>
+                                </span>
                             </div>
-                            <div className="p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] text-center">
-                                <div className="text-[10px] uppercase text-[var(--color-text-secondary)] font-bold">Accuracy</div>
-                                <div className="text-lg font-bold text-[var(--color-text)]">
-                                    {data.accuracy || 0}%
-                                </div>
+                            <div className="p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+                                <span className="block text-[10px] font-bold text-[var(--color-text-secondary)] uppercase">Accuracy</span>
+                                <span className="block text-lg font-bold text-[var(--color-text)]">{data.accuracy || 0}%</span>
                             </div>
                         </div>
 
-                        {/* Trend Graph */}
-                        <div className="relative z-10 w-full mt-auto">
-                            <div className="flex justify-between items-center mb-4 px-1">
-                                <span className="text-xs font-bold text-[var(--color-text)] uppercase">Weekly Trend</span>
-                            </div>
-                            <div className="h-32 w-full flex items-end justify-between gap-2 px-2 pb-2">
+                        <div className="w-full pt-4 border-t border-[var(--color-border)]">
+                            <div className="text-left text-xs font-bold text-[var(--color-text-secondary)] uppercase mb-4">7 Day Trend</div>
+                            <div className="flex items-end justify-between h-24 gap-1">
                                 {MOCK_AI_INSIGHTS.weeklyTrend.map((val, idx) => (
-                                    <div key={idx} className="w-full flex flex-col justify-end h-full gap-1 group">
-                                        <motion.div
-                                            className="w-full bg-[var(--color-primary)] rounded-t-sm opacity-50 group-hover:opacity-100 transition-all duration-300 relative"
-                                            initial={{ height: 0 }}
-                                            animate={{ height: `${val}%` }}
-                                            transition={{ duration: 0.8, delay: idx * 0.1 }}
-                                        >
-                                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-[var(--color-bg)] text-[var(--color-text)] text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity border border-[var(--color-border)] pointer-events-none">
-                                                {val}
-                                            </div>
-                                        </motion.div>
-                                    </div>
+                                    <motion.div
+                                        key={idx}
+                                        className="w-full bg-[var(--color-primary)] rounded-t-sm opacity-60 hover:opacity-100 transition-opacity relative group"
+                                        initial={{ height: 0 }}
+                                        animate={{ height: `${val}%` }}
+                                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                                    >
+                                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                                            {val}
+                                        </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </div>
 
-                {/* 2. RIGHT CONTENT AREA */}
+                {/* 2. RIGHT CONTENT - STATS & DETAILS (8 Columns) */}
                 <div className="col-span-1 xl:col-span-8 flex flex-col gap-6">
 
-                    {/* Stats Row */}
+                    {/* Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {stats.map((stat, i) => (
                             <motion.div
                                 key={i}
-                                className="p-5 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)] flex flex-col justify-between hover:border-[var(--color-primary)] transition-colors group h-28"
+                                className="bg-[var(--color-card)] p-5 rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-card)] flex flex-col gap-2 hover:-translate-y-1 transition-transform"
                                 variants={itemVariants}
                             >
                                 <div className="flex justify-between items-start">
-                                    <span className="text-[10px] font-bold uppercase text-[var(--color-text-secondary)] tracking-wider">{stat.label}</span>
-                                    <stat.icon size={18} style={{ color: stat.color }} className="opacity-80 group-hover:opacity-100 transition-opacity" />
+                                    <div className="p-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text)]">
+                                        <stat.icon size={20} />
+                                    </div>
                                 </div>
-                                <div className="text-3xl font-bold text-[var(--color-text)]">{stat.value}</div>
+                                <div>
+                                    <div className="text-2xl font-bold text-[var(--color-text)]">{stat.value}</div>
+                                    <div className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wide">{stat.label}</div>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
 
                     {/* Strengths & Weaknesses */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
-                        {/* Strengths */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <motion.div
-                            className="bg-[var(--color-card)] rounded-[24px] border border-[var(--color-border)] shadow-[var(--shadow-card)] p-6"
+                            className="bg-[var(--color-card)] p-6 rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-card)]"
                             variants={itemVariants}
                         >
-                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-6 text-sm uppercase tracking-wide">
-                                <Award className="text-green-500" size={18} /> Strong Areas
+                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-6">
+                                <Award className="text-green-500" size={20} /> Strong Areas
                             </h3>
-                            <div className="space-y-6">
+                            <div className="space-y-5">
                                 {strengths.map((item, i) => (
                                     <div key={i}>
                                         <div className="flex justify-between text-sm mb-2">
                                             <span className="font-semibold text-[var(--color-text)]">{item.topic}</span>
-                                            <span className="font-bold text-green-600 dark:text-green-400 text-xs">{item.score}%</span>
+                                            <span className="font-bold text-green-600">{item.score}%</span>
                                         </div>
-                                        <div className="h-1.5 w-full bg-[var(--color-bg)] rounded-full overflow-hidden">
+                                        <div className="h-2 w-full bg-[var(--color-bg)] rounded-full overflow-hidden">
                                             <motion.div
-                                                className="h-full bg-green-500 rounded-full"
+                                                className="h-full bg-green-500"
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${item.score}%` }}
                                                 transition={{ duration: 1, delay: 0.5 }}
@@ -254,24 +248,23 @@ export function AIAnalysis() {
                             </div>
                         </motion.div>
 
-                        {/* Weaknesses */}
                         <motion.div
-                            className="bg-[var(--color-card)] rounded-[24px] border border-[var(--color-border)] shadow-[var(--shadow-card)] p-6"
+                            className="bg-[var(--color-card)] p-6 rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-card)]"
                             variants={itemVariants}
                         >
-                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-6 text-sm uppercase tracking-wide">
-                                <AlertTriangle className="text-red-500" size={18} /> Focus Areas
+                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-6">
+                                <AlertTriangle className="text-red-500" size={20} /> Areas to Improve
                             </h3>
-                            <div className="space-y-6">
+                            <div className="space-y-5">
                                 {weaknesses.map((item, i) => (
                                     <div key={i}>
                                         <div className="flex justify-between text-sm mb-2">
                                             <span className="font-semibold text-[var(--color-text)]">{item.topic}</span>
-                                            <span className="font-bold text-red-500 dark:text-red-400 text-xs">{item.score}%</span>
+                                            <span className="font-bold text-red-500">{item.score}%</span>
                                         </div>
-                                        <div className="h-1.5 w-full bg-[var(--color-bg)] rounded-full overflow-hidden">
+                                        <div className="h-2 w-full bg-[var(--color-bg)] rounded-full overflow-hidden">
                                             <motion.div
-                                                className="h-full bg-red-500 rounded-full"
+                                                className="h-full bg-red-500"
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${item.score}%` }}
                                                 transition={{ duration: 1, delay: 0.5 }}
@@ -288,24 +281,19 @@ export function AIAnalysis() {
                         {suggestions.map((s, i) => (
                             <motion.div
                                 key={i}
-                                className="bg-[var(--color-card)] p-6 rounded-[24px] border border-[var(--color-border)] shadow-[var(--shadow-card)] flex flex-col justify-between hover:shadow-lg transition-all duration-300"
+                                className="bg-[var(--color-card)] p-6 rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-card)] flex flex-col h-full hover:shadow-md transition-shadow"
                                 variants={itemVariants}
                             >
-                                <div>
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className="text-2xl">{s.icon}</div>
-                                        <span className="text-[10px] font-bold px-2 py-1 rounded-md bg-[var(--color-bg)] text-[var(--color-text-secondary)] border border-[var(--color-border)] uppercase">{s.priority}</span>
-                                    </div>
-                                    <h4 className="font-bold text-[var(--color-text)] text-sm mb-2 line-clamp-1">{s.topic}</h4>
-                                    <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-6 line-clamp-2">{s.reason}</p>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="text-2xl p-2 bg-[var(--color-bg)] rounded-lg">{s.icon}</div>
+                                    <span className="text-[10px] font-bold px-2 py-1 rounded bg-[var(--color-bg)] text-[var(--color-text-secondary)] border border-[var(--color-border)] uppercase">{s.priority}</span>
                                 </div>
+                                <h4 className="font-bold text-[var(--color-text)] text-sm mb-2">{s.topic}</h4>
+                                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-6 flex-1">{s.reason}</p>
 
                                 <button
-                                    className="w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2 hover:gap-3"
-                                    style={{
-                                        backgroundColor: 'var(--color-primary-light, rgba(147, 51, 234, 0.1))',
-                                        color: 'var(--color-primary)'
-                                    }}
+                                    className="w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white transition-transform active:scale-95 flex items-center justify-center gap-2"
+                                    style={{ backgroundColor: 'var(--color-primary)' }}
                                     onClick={() => navigate('/quizzes')}
                                 >
                                     Start Practice <ArrowRight size={14} />
