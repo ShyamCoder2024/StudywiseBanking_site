@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     BookOpen, Target, Zap, Star, RefreshCw,
-    Award, AlertTriangle, TrendingUp, TrendingDown,
-    Crown, LayoutDashboard, Sparkles, Brain, Activity,
-    Clock, Calendar, Flame, Trophy, ChevronUp, ChevronDown,
-    BarChart3, PieChart, Timer, GraduationCap, Lightbulb
+    Award, AlertTriangle, TrendingUp,
+    Crown, Brain, Activity,
+    Clock, Flame, Trophy, ChevronUp,
+    BarChart3, Timer, GraduationCap, Lightbulb, Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -49,43 +49,67 @@ function AnimatedBar({ value, color, delay = 0 }) {
 
 // ============ STAT CARD WITH ANIMATION ============
 function StatCard({ icon: Icon, label, value, trend, color, delay }) {
+    const [hovered, setHovered] = useState(false);
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: delay * 0.1 }}
-            whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
+            transition={{ delay: delay * 0.08, type: 'spring', stiffness: 100 }}
+            whileHover={{ y: -6, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             style={{
                 background: 'var(--color-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 16,
-                padding: 20,
+                border: `1px solid ${hovered ? color + '40' : 'var(--color-border)'}`,
+                borderRadius: 18,
+                padding: 'clamp(16px, 3vw, 22px)',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: hovered ? `0 12px 32px ${color}20` : '0 4px 16px rgba(0,0,0,0.04)'
             }}
         >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{
-                    width: 44, height: 44,
-                    background: `${color}15`,
-                    borderRadius: 12,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                    <Icon size={22} style={{ color }} />
-                </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <motion.div
+                    animate={{ rotate: hovered ? [0, -10, 10, 0] : 0 }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                        width: 48, height: 48,
+                        background: `${color}15`,
+                        borderRadius: 14,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}
+                >
+                    <Icon size={24} style={{ color }} />
+                </motion.div>
                 {trend !== undefined && (
-                    <div style={{
-                        display: 'flex', alignItems: 'center', gap: 2,
-                        fontSize: 12, fontWeight: 600,
-                        color: trend >= 0 ? '#10B981' : '#EF4444'
-                    }}>
-                        {trend >= 0 ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: 2,
+                            fontSize: 12, fontWeight: 700,
+                            color: trend >= 0 ? '#10B981' : '#EF4444',
+                            padding: '4px 8px',
+                            background: trend >= 0 ? '#10B98115' : '#EF444415',
+                            borderRadius: 20
+                        }}
+                    >
+                        <ChevronUp size={14} style={{ transform: trend < 0 ? 'rotate(180deg)' : 'none' }} />
                         {Math.abs(trend)}%
-                    </div>
+                    </motion.div>
                 )}
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>{value}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)', marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</div>
+            <motion.div
+                animate={{ scale: hovered ? 1.05 : 1 }}
+                style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}
+            >
+                {value}
+            </motion.div>
+            <div style={{ fontSize: 'clamp(10px, 2vw, 12px)', fontWeight: 600, color: 'var(--color-text-secondary)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {label}
+            </div>
         </motion.div>
     );
 }
@@ -117,7 +141,14 @@ function CircularProgress({ value, size = 180, strokeWidth = 12, color }) {
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center'
             }}>
-                <span style={{ fontSize: 42, fontWeight: 800, color: 'var(--color-text)' }}>{animatedValue}</span>
+                <motion.span
+                    key={animatedValue}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    style={{ fontSize: 'clamp(36px, 8vw, 48px)', fontWeight: 800, color: 'var(--color-text)' }}
+                >
+                    {animatedValue}
+                </motion.span>
                 <span style={{ fontSize: 12, fontWeight: 700, color, textTransform: 'uppercase' }}>AI Score</span>
             </div>
         </div>
@@ -156,7 +187,6 @@ export function AIAnalysis() {
         setTimeout(() => setAnalyzing(false), 1500);
     };
 
-    // Data Processing
     const data = dashboardData || {};
     const ai = aiAnalysis || {};
     const score = data.accuracy || 0;
@@ -172,7 +202,6 @@ export function AIAnalysis() {
         { topic: "General", score: 0 }
     ];
 
-    // Calculate study time recommendation
     const getStudyRecommendation = () => {
         if (score < 40) return { hours: "5-6", level: "Intensive", color: "#EF4444" };
         if (score < 60) return { hours: "4-5", level: "Focused", color: "#F59E0B" };
@@ -181,7 +210,6 @@ export function AIAnalysis() {
     };
     const studyRec = getStudyRecommendation();
 
-    // Performance metrics
     const performanceMetrics = {
         quizzesCompleted: data.totalAttempts || 0,
         questionsAnswered: data.totalQuestions || 0,
@@ -191,22 +219,23 @@ export function AIAnalysis() {
         averageScore: data.averageScore || 0
     };
 
-    // Styles
+    // Responsive styles
     const cardStyle = {
         background: 'var(--color-card)',
         border: '1px solid var(--color-border)',
-        borderRadius: 20,
-        padding: 24,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+        borderRadius: 'clamp(16px, 3vw, 22px)',
+        padding: 'clamp(18px, 4vw, 28px)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+        transition: 'all 0.3s ease'
     };
 
     const sectionTitle = {
-        fontSize: 13,
+        fontSize: 'clamp(11px, 2.5vw, 13px)',
         fontWeight: 700,
         textTransform: 'uppercase',
-        letterSpacing: '0.08em',
+        letterSpacing: '0.1em',
         color: 'var(--color-text-secondary)',
-        marginBottom: 20,
+        marginBottom: 'clamp(16px, 3vw, 24px)',
         display: 'flex',
         alignItems: 'center',
         gap: 10
@@ -233,12 +262,13 @@ export function AIAnalysis() {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(16px, 3vw, 24px)' }}
         >
             {/* ============ HEADER ============ */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 80 }}
                 style={{
                     ...cardStyle,
                     background: 'linear-gradient(135deg, var(--color-card) 0%, var(--color-primary-light) 100%)',
@@ -249,43 +279,45 @@ export function AIAnalysis() {
                     gap: 16
                 }}
             >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 18px)', flexWrap: 'wrap' }}>
                     <motion.div
-                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                        transition={{ duration: 0.5 }}
                         style={{
-                            width: 60, height: 60,
+                            width: 'clamp(50px, 10vw, 64px)', height: 'clamp(50px, 10vw, 64px)',
                             background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)',
-                            borderRadius: 16,
+                            borderRadius: 'clamp(14px, 3vw, 18px)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: '0 8px 24px rgba(138, 117, 186, 0.35)'
+                            boxShadow: '0 8px 28px rgba(138, 117, 186, 0.4)'
                         }}
                     >
-                        <Brain color="white" size={30} />
+                        <Brain color="white" size={28} />
                     </motion.div>
                     <div>
-                        <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--color-text)', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <h1 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, color: 'var(--color-text)', margin: 0, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                             Performance Analytics
                             <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                                <Sparkles size={22} color="var(--color-primary)" />
+                                <Sparkles size={20} color="var(--color-primary)" />
                             </motion.span>
                         </h1>
-                        <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: '6px 0 0 0' }}>
-                            AI-powered insights to accelerate your learning journey
+                        <p style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: 'var(--color-text-secondary)', margin: '6px 0 0 0' }}>
+                            AI-powered insights to accelerate your learning
                         </p>
                     </div>
                 </div>
                 <motion.button
                     onClick={handleRefresh}
                     disabled={analyzing}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(138, 117, 186, 0.5)' }}
+                    whileTap={{ scale: 0.95 }}
                     style={{
                         display: 'flex', alignItems: 'center', gap: 10,
-                        padding: '14px 28px',
+                        padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 28px)',
                         background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)',
                         color: 'white', border: 'none', borderRadius: 14,
-                        fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                        boxShadow: '0 6px 20px rgba(138, 117, 186, 0.4)'
+                        fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 700, cursor: 'pointer',
+                        boxShadow: '0 6px 24px rgba(138, 117, 186, 0.4)',
+                        transition: 'all 0.3s ease'
                     }}
                 >
                     <RefreshCw size={18} className={analyzing ? "animate-spin" : ""} />
@@ -293,8 +325,12 @@ export function AIAnalysis() {
                 </motion.button>
             </motion.div>
 
-            {/* ============ STATS ROW ============ */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
+            {/* ============ STATS GRID - 2 columns mobile, 3 tablet, 6 desktop ============ */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                gap: 'clamp(12px, 2vw, 16px)'
+            }}>
                 <StatCard icon={Target} label="Quizzes Taken" value={performanceMetrics.quizzesCompleted} color="#8A75BA" delay={1} />
                 <StatCard icon={BarChart3} label="Questions" value={performanceMetrics.questionsAnswered} color="#6EBCC3" delay={2} />
                 <StatCard icon={Zap} label="Accuracy" value={`${score}%`} trend={5} color="#F59E0B" delay={3} />
@@ -303,188 +339,195 @@ export function AIAnalysis() {
                 <StatCard icon={GraduationCap} label="Avg Score" value={`${performanceMetrics.averageScore}%`} color="#8B5CF6" delay={6} />
             </div>
 
-            {/* ============ MAIN GRID ============ */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 24 }}>
+            {/* ============ SCORE & STUDY PLAN - Stack on mobile ============ */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
 
-                {/* LEFT COLUMN - Score & Study Plan */}
-                <div style={{ gridColumn: 'span 12', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
+                {/* AI SCORE CARD */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2, type: 'spring' }}
+                    whileHover={{ boxShadow: '0 12px 40px rgba(138, 117, 186, 0.15)' }}
+                    style={{ ...cardStyle, textAlign: 'center' }}
+                >
+                    <div style={sectionTitle}>
+                        <Brain size={16} color="var(--color-primary)" /> Overall AI Score
+                    </div>
 
-                    {/* AI SCORE CARD */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2 }}
-                        style={{ ...cardStyle, textAlign: 'center' }}
-                    >
-                        <div style={sectionTitle}>
-                            <Brain size={16} color="var(--color-primary)" /> Overall AI Score
-                        </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+                        <motion.div
+                            animate={{ boxShadow: ['0 0 0 0 rgba(138, 117, 186, 0)', '0 0 50px 15px rgba(138, 117, 186, 0.2)', '0 0 0 0 rgba(138, 117, 186, 0)'] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                            style={{ borderRadius: '50%' }}
+                        >
+                            <CircularProgress value={score} size={160} color="var(--color-primary)" />
+                        </motion.div>
+                    </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                            <motion.div
-                                animate={{ boxShadow: ['0 0 0 0 rgba(138, 117, 186, 0)', '0 0 40px 10px rgba(138, 117, 186, 0.2)', '0 0 0 0 rgba(138, 117, 186, 0)'] }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                                style={{ borderRadius: '50%' }}
-                            >
-                                <CircularProgress value={score} color="var(--color-primary)" />
-                            </motion.div>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                            <motion.div
-                                whileHover={{ scale: 1.03 }}
-                                style={{ padding: 16, background: 'var(--color-bg)', borderRadius: 14, border: '1px solid var(--color-border)' }}
-                            >
-                                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
-                                <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
-                                    <Crown size={18} color="#F59E0B" fill="#F59E0B" /> Top 15%
-                                </div>
-                            </motion.div>
-                            <motion.div
-                                whileHover={{ scale: 1.03 }}
-                                style={{ padding: 16, background: 'var(--color-bg)', borderRadius: 14, border: '1px solid var(--color-border)' }}
-                            >
-                                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>This Week</div>
-                                <div style={{ fontSize: 18, fontWeight: 800, color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
-                                    <TrendingUp size={18} /> +12%
-                                </div>
-                            </motion.div>
-                        </div>
-                    </motion.div>
-
-                    {/* STUDY PLANNER CARD */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.3 }}
-                        style={cardStyle}
-                    >
-                        <div style={sectionTitle}>
-                            <Clock size={16} color={studyRec.color} /> Recommended Study Plan
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
-                            <motion.div
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                style={{
-                                    width: 80, height: 80,
-                                    background: `${studyRec.color}15`,
-                                    borderRadius: 20,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    border: `2px solid ${studyRec.color}30`
-                                }}
-                            >
-                                <Timer size={36} style={{ color: studyRec.color }} />
-                            </motion.div>
-                            <div>
-                                <div style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text)' }}>{studyRec.hours}</div>
-                                <div style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>Hours per day</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        <motion.div
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            style={{ padding: 'clamp(14px, 3vw, 18px)', background: 'var(--color-bg)', borderRadius: 16, border: '1px solid var(--color-border)' }}
+                        >
+                            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
+                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
+                                <Crown size={18} color="#F59E0B" fill="#F59E0B" /> Top 15%
                             </div>
-                            <div style={{
-                                marginLeft: 'auto',
-                                padding: '8px 16px',
+                        </motion.div>
+                        <motion.div
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            style={{ padding: 'clamp(14px, 3vw, 18px)', background: 'var(--color-bg)', borderRadius: 16, border: '1px solid var(--color-border)' }}
+                        >
+                            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>This Week</div>
+                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                                <TrendingUp size={18} /> +12%
+                            </div>
+                        </motion.div>
+                    </div>
+                </motion.div>
+
+                {/* STUDY PLANNER */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3, type: 'spring' }}
+                    whileHover={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)' }}
+                    style={cardStyle}
+                >
+                    <div style={sectionTitle}>
+                        <Clock size={16} color={studyRec.color} /> Recommended Study Plan
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(14px, 3vw, 22px)', marginBottom: 24, flexWrap: 'wrap' }}>
+                        <motion.div
+                            animate={{ scale: [1, 1.08, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            style={{
+                                width: 'clamp(60px, 12vw, 80px)', height: 'clamp(60px, 12vw, 80px)',
+                                background: `${studyRec.color}15`,
+                                borderRadius: 20,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                border: `2px solid ${studyRec.color}30`,
+                                flexShrink: 0
+                            }}
+                        >
+                            <Timer size={32} style={{ color: studyRec.color }} />
+                        </motion.div>
+                        <div style={{ flex: 1, minWidth: 100 }}>
+                            <div style={{ fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 800, color: 'var(--color-text)' }}>{studyRec.hours}</div>
+                            <div style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: 'var(--color-text-secondary)' }}>Hours per day</div>
+                        </div>
+                        <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            style={{
+                                padding: '10px 18px',
                                 background: `${studyRec.color}15`,
                                 borderRadius: 30,
                                 fontSize: 13,
                                 fontWeight: 700,
-                                color: studyRec.color
-                            }}>
-                                {studyRec.level} Mode
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                            {[
-                                { label: 'Morning', time: '2 hrs', desc: 'Core concepts' },
-                                { label: 'Afternoon', time: '1.5 hrs', desc: 'Practice tests' },
-                                { label: 'Evening', time: '1.5 hrs', desc: 'Revision' }
-                            ].map((slot, i) => (
-                                <motion.div
-                                    key={i}
-                                    whileHover={{ scale: 1.02 }}
-                                    style={{
-                                        padding: 14,
-                                        background: 'var(--color-bg)',
-                                        borderRadius: 12,
-                                        border: '1px solid var(--color-border)',
-                                        textAlign: 'center'
-                                    }}
-                                >
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>{slot.label}</div>
-                                    <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-text)', margin: '4px 0' }}>{slot.time}</div>
-                                    <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>{slot.desc}</div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* PERFORMANCE TREND */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    style={{ ...cardStyle, gridColumn: 'span 12' }}
-                >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                        <div style={sectionTitle}>
-                            <Activity size={16} color="var(--color-primary)" /> 7-Day Performance Trend
-                        </div>
-                        <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                            Last updated: Today
-                        </div>
+                                color: studyRec.color,
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            {studyRec.level} Mode
+                        </motion.div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 140, gap: 8, paddingBottom: 8 }}>
-                        {weeklyTrend.slice(-7).map((val, idx) => (
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2vw, 12px)' }}>
+                        {[
+                            { label: 'Morning', time: '2 hrs', desc: 'Core concepts' },
+                            { label: 'Afternoon', time: '1.5 hrs', desc: 'Practice tests' },
+                            { label: 'Evening', time: '1.5 hrs', desc: 'Revision' }
+                        ].map((slot, i) => (
                             <motion.div
-                                key={idx}
-                                initial={{ height: 0 }}
-                                animate={{ height: `${val}%` }}
-                                transition={{ duration: 0.6, delay: 0.5 + idx * 0.1 }}
-                                whileHover={{ opacity: 1, scale: 1.08 }}
+                                key={i}
+                                whileHover={{ scale: 1.05, y: -4 }}
+                                whileTap={{ scale: 0.98 }}
                                 style={{
-                                    flex: 1,
-                                    background: `linear-gradient(to top, var(--color-primary), #A58FD8)`,
-                                    borderRadius: '8px 8px 0 0',
-                                    opacity: 0.5 + idx * 0.08,
+                                    padding: 'clamp(12px, 2vw, 16px)',
+                                    background: 'var(--color-bg)',
+                                    borderRadius: 14,
+                                    border: '1px solid var(--color-border)',
+                                    textAlign: 'center',
                                     cursor: 'pointer',
-                                    position: 'relative'
+                                    transition: 'all 0.3s ease'
                                 }}
                             >
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    whileHover={{ opacity: 1 }}
-                                    style={{
-                                        position: 'absolute',
-                                        top: -30,
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                        background: 'var(--color-text)',
-                                        color: 'var(--color-bg)',
-                                        padding: '4px 10px',
-                                        borderRadius: 6,
-                                        fontSize: 12,
-                                        fontWeight: 700,
-                                        whiteSpace: 'nowrap'
-                                    }}
-                                >
-                                    {val}%
-                                </motion.div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>{slot.label}</div>
+                                <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: 'var(--color-text)', margin: '4px 0' }}>{slot.time}</div>
+                                <div style={{ fontSize: 10, color: 'var(--color-text-secondary)' }}>{slot.desc}</div>
                             </motion.div>
                         ))}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--color-text-secondary)', fontWeight: 600, marginTop: 8 }}>
-                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)}
-                    </div>
                 </motion.div>
+            </div>
 
-                {/* STRENGTHS & WEAKNESSES */}
+            {/* ============ 7-DAY TREND ============ */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)' }}
+                style={cardStyle}
+            >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
+                    <div style={sectionTitle}>
+                        <Activity size={16} color="var(--color-primary)" /> 7-Day Performance Trend
+                    </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 'clamp(100px, 20vw, 160px)', gap: 'clamp(4px, 1.5vw, 10px)', paddingBottom: 8 }}>
+                    {weeklyTrend.slice(-7).map((val, idx) => (
+                        <motion.div
+                            key={idx}
+                            initial={{ height: 0 }}
+                            animate={{ height: `${val}%` }}
+                            transition={{ duration: 0.6, delay: 0.5 + idx * 0.08, ease: 'easeOut' }}
+                            whileHover={{ opacity: 1, scale: 1.1 }}
+                            style={{
+                                flex: 1,
+                                background: `linear-gradient(to top, var(--color-primary), #A58FD8)`,
+                                borderRadius: '8px 8px 0 0',
+                                opacity: 0.5 + idx * 0.08,
+                                cursor: 'pointer',
+                                position: 'relative',
+                                minWidth: 20
+                            }}
+                        >
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                whileHover={{ opacity: 1 }}
+                                style={{
+                                    position: 'absolute',
+                                    top: -30,
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    background: 'var(--color-text)',
+                                    color: 'var(--color-bg)',
+                                    padding: '4px 10px',
+                                    borderRadius: 6,
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {val}%
+                            </motion.div>
+                        </motion.div>
+                    ))}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(9px, 2vw, 11px)', color: 'var(--color-text-secondary)', fontWeight: 600, marginTop: 10 }}>
+                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)}
+                </div>
+            </motion.div>
+
+            {/* ============ STRENGTHS & WEAKNESSES ============ */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
-                    style={{ ...cardStyle, gridColumn: 'span 6' }}
+                    whileHover={{ boxShadow: '0 12px 40px rgba(16, 185, 129, 0.1)' }}
+                    style={cardStyle}
                 >
                     <div style={sectionTitle}>
                         <Award size={16} color="#10B981" /> Strong Areas
@@ -496,6 +539,7 @@ export function AIAnalysis() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 + i * 0.1 }}
+                                whileHover={{ x: 4 }}
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                                     <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{item.topic}</span>
@@ -511,7 +555,8 @@ export function AIAnalysis() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
-                    style={{ ...cardStyle, gridColumn: 'span 6' }}
+                    whileHover={{ boxShadow: '0 12px 40px rgba(239, 68, 68, 0.1)' }}
+                    style={cardStyle}
                 >
                     <div style={sectionTitle}>
                         <AlertTriangle size={16} color="#EF4444" /> Areas to Improve
@@ -523,6 +568,7 @@ export function AIAnalysis() {
                                 initial={{ opacity: 0, x: 10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.7 + i * 0.1 }}
+                                whileHover={{ x: 4 }}
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                                     <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{item.topic}</span>
@@ -533,60 +579,62 @@ export function AIAnalysis() {
                         ))}
                     </div>
                 </motion.div>
-
-                {/* LEARNING INSIGHTS */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                    style={{ ...cardStyle, gridColumn: 'span 12' }}
-                >
-                    <div style={sectionTitle}>
-                        <Lightbulb size={16} color="#F59E0B" /> AI Learning Insights
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
-                        {[
-                            { icon: '🎯', title: 'Focus Area', desc: weaknesses[0]?.topic || 'Complete more quizzes', color: '#EF4444' },
-                            { icon: '⚡', title: 'Quick Win', desc: 'Practice 10 questions daily to boost accuracy', color: '#F59E0B' },
-                            { icon: '🏆', title: 'Next Milestone', desc: `Reach ${Math.ceil((score + 10) / 10) * 10}% accuracy for bonus XP`, color: '#10B981' },
-                            { icon: '📈', title: 'Growth Potential', desc: 'You can improve by 15% with consistent practice', color: '#8A75BA' }
-                        ].map((insight, i) => (
-                            <motion.div
-                                key={i}
-                                whileHover={{ scale: 1.02, y: -4 }}
-                                style={{
-                                    padding: 20,
-                                    background: 'var(--color-bg)',
-                                    borderRadius: 16,
-                                    border: '1px solid var(--color-border)',
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: 14,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                <div style={{ fontSize: 28 }}>{insight.icon}</div>
-                                <div>
-                                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)', marginBottom: 4 }}>{insight.title}</div>
-                                    <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>{insight.desc}</div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
             </div>
+
+            {/* ============ LEARNING INSIGHTS ============ */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                style={cardStyle}
+            >
+                <div style={sectionTitle}>
+                    <Lightbulb size={16} color="#F59E0B" /> AI Learning Insights
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(12px, 2vw, 16px)' }}>
+                    {[
+                        { icon: '🎯', title: 'Focus Area', desc: weaknesses[0]?.topic || 'Complete more quizzes', color: '#EF4444' },
+                        { icon: '⚡', title: 'Quick Win', desc: 'Practice 10 questions daily', color: '#F59E0B' },
+                        { icon: '🏆', title: 'Next Milestone', desc: `Reach ${Math.ceil((score + 10) / 10) * 10}% accuracy`, color: '#10B981' },
+                        { icon: '📈', title: 'Growth Potential', desc: 'Improve 15% with consistency', color: '#8A75BA' }
+                    ].map((insight, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.9 + i * 0.1 }}
+                            whileHover={{ scale: 1.03, y: -6, boxShadow: '0 12px 32px rgba(0,0,0,0.1)' }}
+                            whileTap={{ scale: 0.98 }}
+                            style={{
+                                padding: 'clamp(16px, 3vw, 22px)',
+                                background: 'var(--color-bg)',
+                                borderRadius: 18,
+                                border: '1px solid var(--color-border)',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 14,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                            }}
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                                style={{ fontSize: 'clamp(24px, 5vw, 32px)' }}
+                            >
+                                {insight.icon}
+                            </motion.div>
+                            <div>
+                                <div style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', fontWeight: 700, color: 'var(--color-text)', marginBottom: 4 }}>{insight.title}</div>
+                                <div style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>{insight.desc}</div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
 
             <style>{`
                 @keyframes spin { to { transform: rotate(360deg); } }
                 .animate-spin { animation: spin 1s linear infinite; }
-                @media (max-width: 1024px) {
-                    [style*="gridColumn: span 6"] { grid-column: span 12 !important; }
-                }
-                @media (max-width: 768px) {
-                    [style*="gridTemplateColumns: repeat(12"] { grid-template-columns: 1fr !important; }
-                    [style*="gridColumn: span"] { grid-column: span 1 !important; }
-                }
             `}</style>
         </motion.div>
     );

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { AIAnalysis } from '../../components/ai/AIAnalysis';
 
 export default function AIAnalysisPage() {
@@ -8,25 +8,52 @@ export default function AIAnalysisPage() {
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="min-h-screen"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             style={{
-                padding: '24px',
+                padding: 'clamp(16px, 4vw, 24px)',
                 paddingBottom: '120px',
                 maxWidth: '1400px',
                 margin: '0 auto',
-                width: '100%'
+                width: '100%',
+                minHeight: '100vh'
             }}
         >
-            {/* Back Button */}
+            {/* Back Button - Premium Styled */}
             <motion.button
                 onClick={() => navigate('/dashboard')}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                whileHover={{ x: -4 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 mb-6 px-4 py-2 rounded-xl bg-[var(--color-card)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm font-medium hover:border-[var(--color-primary)]/30 hover:text-[var(--color-text)] transition-all shadow-sm"
+                transition={{ delay: 0.1 }}
+                whileHover={{ x: -4, scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginBottom: 24,
+                    padding: '12px 20px',
+                    background: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 14,
+                    color: 'var(--color-text-secondary)',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                    transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--color-primary)';
+                    e.currentTarget.style.color = 'var(--color-text)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(138, 117, 186, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--color-border)';
+                    e.currentTarget.style.color = 'var(--color-text-secondary)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+                }}
             >
                 <ArrowLeft size={18} />
                 Back to Dashboard
