@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect, studentOnly } from '../middleware/authMiddleware.js';
 import { Subject, Topic, Quiz, Question, Attempt } from '../models/Content.js';
+import User from '../models/User.js';
 import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
 import GlobalTask from '../models/GlobalTask.js';
@@ -12,53 +13,119 @@ router.use(protect);
 // Note: removed studentOnly so all authenticated users can access content
 
 // @route   GET /api/student/dashboard
-// @desc    Get student dashboard data
+// @desc    Get student dashboard data with comprehensive metrics
 // @access  Private (Student)
 router.get('/dashboard', async (req, res, next) => {
     try {
-        // Get recent attempts
-        const recentAttempts = await Attempt.find({ user: req.user._id })
-            .populate('quiz', 'title')
-            .sort({ createdAt: -1 })
-            .limit(5);
+        const userId = req.user._id;
 
-        // Calculate stats
-        const allAttempts = await Attempt.find({ user: req.user._id });
+        // Get all attempts for this user
+        const allAttempts = await Attempt.find({ user: userId })
+            .populate('quiz', 'title')
+            .sort({ createdAt: -1 });
+
         const totalAttempts = allAttempts.length;
+
+        // Calculate totals for accuracy
+        let totalQuestions = 0;
+        let totalCorrect = 0;
+        allAttempts.forEach(a => {
+            totalQuestions += a.totalQuestions || 0;
+            totalCorrect += a.correctAnswers || 0;
+        });
+
+        // Accuracy calculation
+        const accuracy = totalQuestions > 0
+            ? Math.round((totalCorrect / totalQuestions) * 100)
+            : 0;
+
+        // Average score across attempts
         const averageScore = totalAttempts > 0
             ? Math.round(allAttempts.reduce((sum, a) => sum + a.score, 0) / totalAttempts)
             : 0;
 
-        // Get weak areas from AI analysis
-        const weakAreas = [];
-        const latestAttempt = await Attempt.findOne({ user: req.user._id })
-            .sort({ createdAt: -1 });
+        // Performance Graph: Last 7 attempts
+        const performanceGraph = allAttempts.slice(0, 7).reverse().map(a => ({
+            date: a.createdAt.toISOString().split('T')[0],
+            score: a.score,
+            quizTitle: a.quiz?.title || 'Quiz'
+        }));
 
-        if (latestAttempt?.aiAnalysis?.topicSuggestions) {
-            latestAttempt.aiAnalysis.topicSuggestions.forEach((s) => {
-                weakAreas.push({ name: s.topic, score: 50 }); // Placeholder score
-            });
+        // Get weak areas from AI analysis of recent attempts
+        const weakAreas = [];
+        const strengths = [];
+        allAttempts.slice(0, 5).forEach(attempt => {
+            if (attempt.aiAnalysis?.weaknesses) {
+                weakAreas.push(...attempt.aiAnalysis.weaknesses);
+            }
+            if (attempt.aiAnalysis?.strengths) {
+                strengths.push(...attempt.aiAnalysis.strengths);
+            }
+        });
+
+        // AI-Suggested Study Hours based on accuracy
+        let suggestedStudyHours = '2-3';
+        let studyRecommendation = 'Maintain your current pace';
+        if (accuracy < 50) {
+            suggestedStudyHours = '4-5';
+            studyRecommendation = 'Focus more on fundamentals and practice daily';
+        } else if (accuracy < 70) {
+            suggestedStudyHours = '3-4';
+            studyRecommendation = 'Good progress! Work on weak areas identified below';
+        } else if (accuracy < 85) {
+            suggestedStudyHours = '2-3';
+            studyRecommendation = 'Great performance! Focus on speed and mock tests';
+        } else {
+            suggestedStudyHours = '1-2';
+            studyRecommendation = 'Excellent! Maintain with revision and full-length mocks';
         }
+
+        // Recent attempts (last 5)
+        const recentAttempts = allAttempts.slice(0, 5).map(a => ({
+            id: a._id,
+            quizName: a.quiz?.title,
+            score: a.score,
+            date: a.createdAt.toISOString().split('T')[0],
+        }));
+
+        // Get user's XP and streak from User model
+        const user = req.user;
 
         res.json({
             success: true,
             data: {
-                totalAttempts,
+                // User Stats
+                xpPoints: user.xpPoints || 0,
+                streakCount: user.streakCount || 0,
+                accuracy,
                 averageScore,
-                weakAreas: weakAreas.slice(0, 3),
-                recentAttempts: recentAttempts.map((a) => ({
-                    id: a._id,
-                    quizName: a.quiz?.title,
-                    score: a.score,
-                    date: a.createdAt.toISOString().split('T')[0],
-                })),
-                recommendations: [], // TODO: AI-powered recommendations
+                totalAttempts,
+                totalQuestions,
+                totalCorrect,
+
+                // Performance Graph (for chart)
+                performanceGraph,
+
+                // AI Insights
+                suggestedStudyHours,
+                studyRecommendation,
+                weakAreas: [...new Set(weakAreas)].slice(0, 3),
+                strengths: [...new Set(strengths)].slice(0, 3),
+
+                // Recent Activity
+                recentAttempts,
+
+                // Recommendations based on performance
+                recommendations: weakAreas.length > 0
+                    ? [`Focus on: ${[...new Set(weakAreas)].slice(0, 2).join(', ')}`]
+                    : ['Take more quizzes to get personalized recommendations'],
             },
         });
     } catch (error) {
         next(error);
     }
 });
+
 
 // @route   GET /api/subjects
 // @desc    Get all subjects (for students)
@@ -274,4 +341,55 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
+// ============ Leaderboard ============
+
+// @route   GET /api/student/leaderboard
+// @desc    Get leaderboard ranked by XP points
+// @access  Private
+router.get('/leaderboard', async (req, res, next) => {
+    try {
+        // Get top 50 students by XP
+        const topStudents = await User.find({ role: 'student' })
+            .select('firstName lastName xpPoints streakCount avatar')
+            .sort({ xpPoints: -1 })
+            .limit(50);
+
+        // Get current user's rank
+        const currentUserId = req.user._id;
+        const allStudentsByXP = await User.find({ role: 'student' })
+            .select('_id xpPoints')
+            .sort({ xpPoints: -1 });
+
+        let currentUserRank = 0;
+        allStudentsByXP.forEach((student, index) => {
+            if (student._id.toString() === currentUserId.toString()) {
+                currentUserRank = index + 1;
+            }
+        });
+
+        // Format leaderboard data
+        const leaderboard = topStudents.map((student, index) => ({
+            rank: index + 1,
+            _id: student._id,
+            name: `${student.firstName} ${student.lastName}`,
+            xpPoints: student.xpPoints || 0,
+            streakCount: student.streakCount || 0,
+            avatar: student.avatar,
+            isCurrentUser: student._id.toString() === currentUserId.toString()
+        }));
+
+        res.json({
+            success: true,
+            data: {
+                leaderboard,
+                currentUserRank,
+                totalStudents: allStudentsByXP.length
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default router;
+

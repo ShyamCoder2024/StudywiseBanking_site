@@ -66,12 +66,26 @@ const userSchema = new mongoose.Schema({
         id: String,
         url: String
     },
+    // Performance Tracking
+    xpPoints: {
+        type: Number,
+        default: 0,
+    },
+    streakCount: {
+        type: Number,
+        default: 0,
+    },
+    lastActivityDate: {
+        type: Date,
+        default: null,
+    },
     // OTP for password reset
     resetOTP: String,
     resetOTPExpiry: Date,
 }, {
     timestamps: true,
 });
+
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
@@ -102,8 +116,12 @@ userSchema.methods.getPublicProfile = function () {
         city: this.city,
         role: this.role,
         avatar: this.avatar,
+        xpPoints: this.xpPoints || 0,
+        streakCount: this.streakCount || 0,
+        lastActivityDate: this.lastActivityDate,
     };
 };
+
 
 const User = mongoose.model('User', userSchema);
 

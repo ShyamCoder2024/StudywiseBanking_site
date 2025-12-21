@@ -59,9 +59,53 @@ const MOCK_LEADERBOARD_DATA = generateLeaderboardData();
 
 export function Leaderboard({ limit }) {
     const { user } = useAuth();
+    const [backendData, setBackendData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Merge user into leaderboard if logged in
+    // Fetch leaderboard from backend
+    useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                const res = await fetch('/api/student/leaderboard', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.data.leaderboard?.length > 0) {
+                        // Check if any student has XP > 0 (real activity)
+                        const hasRealActivity = data.data.leaderboard.some(s => s.xpPoints > 0);
+                        if (hasRealActivity) {
+                            setBackendData(data.data);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch leaderboard:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLeaderboard();
+    }, []);
+
+    // Use backend data if available and has real activity, otherwise use mock
     const leaderboardData = React.useMemo(() => {
+        if (backendData && backendData.leaderboard?.length > 0) {
+            // Transform backend data to match our format
+            return backendData.leaderboard.map((student, index) => ({
+                id: student._id,
+                name: student.name,
+                score: student.xpPoints,
+                timeTaken: 0, // Backend doesn't track time for leaderboard
+                avatar: student.avatar,
+                isCurrentUser: student.isCurrentUser,
+                rank: index + 1
+            }));
+        }
+
+        // Fall back to mock data (with user merged in)
         if (!user) return MOCK_LEADERBOARD_DATA;
 
         // Check if user is already in the mock data (by name or a unique identifier)
@@ -101,12 +145,13 @@ export function Leaderboard({ limit }) {
             ...student,
             rank: index + 1
         }));
-    }, [user]);
+    }, [user, backendData]);
 
     const listData = limit ? leaderboardData.slice(3, limit) : leaderboardData.slice(3, 50);
 
     // Helper to get top 3 with fallback
     const getTopStudent = (index) => leaderboardData[index] || { name: '-', score: 0, timeTaken: 0, avatar: null };
+
 
     return (
         <div className="leaderboard-container">

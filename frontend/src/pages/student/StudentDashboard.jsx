@@ -13,13 +13,8 @@ import { AvatarDisplay } from '../../components/ui/AvatarDisplay';
 import api from '../../services/api';
 import './StudentDashboard.css';
 
-// Enhanced Mock Data for Bento Grid
-const DASHBOARD_DATA = {
-    // ... existing data ... (I will skip redefining it to save tokens if I can just match lines carefully)
-    // Actually I need to match the start lines.
-    // I will just replace the top up to line 87.
-
-    // ...
+// Mock Data for testing (used when student has no real attempts)
+const MOCK_DASHBOARD_DATA = {
     userStats: {
         points: 2450,
         rank: 12,
@@ -41,24 +36,33 @@ const DASHBOARD_DATA = {
         { id: 'c1', title: "Complete Banking Batch 2025", progress: 45, total: 100 },
         { id: 'c2', title: "Data Interpretation Pro", progress: 12, total: 50 }
     ],
-    todo: [
-        { id: 1, text: "Complete Mock Test #5", done: false, tag: "High Priority" },
-        { id: 2, text: "Review Wrong Answers", done: false, tag: "Review" },
-        { id: 3, text: "Read Daily GK Update", done: true, tag: "GK" }
-    ],
     performance: [65, 72, 58, 80, 75, 82, 78],
 };
 
 export function StudentDashboard() {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [data] = useState(DASHBOARD_DATA);
+
+    // Dashboard data state (real + mock fallback)
+    const [dashboardData, setDashboardData] = useState(null);
     const [todos, setTodos] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        fetchDashboardData();
         fetchTodos();
     }, []);
+
+    // Fetch real dashboard data from backend
+    const fetchDashboardData = async () => {
+        try {
+            const res = await api.get('/student/dashboard');
+            setDashboardData(res.data.data);
+        } catch (error) {
+            console.error('Failed to fetch dashboard data:', error);
+            // Will use mock data as fallback
+        }
+    };
 
     const fetchTodos = async () => {
         try {
@@ -70,6 +74,21 @@ export function StudentDashboard() {
             setLoading(false);
         }
     };
+
+    // Computed values: Use real data if available, otherwise mock
+    const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
+
+    const stats = {
+        xpPoints: hasRealData ? dashboardData.xpPoints : MOCK_DASHBOARD_DATA.userStats.points,
+        streak: hasRealData ? dashboardData.streakCount : MOCK_DASHBOARD_DATA.userStats.streak,
+        accuracy: hasRealData ? dashboardData.accuracy : MOCK_DASHBOARD_DATA.userStats.accuracy,
+    };
+
+    const performanceData = hasRealData && dashboardData.performanceGraph?.length > 0
+        ? dashboardData.performanceGraph.map(p => p.score)
+        : MOCK_DASHBOARD_DATA.performance;
+
+
 
     const toggleTodo = async (id) => {
         try {
@@ -112,11 +131,11 @@ export function StudentDashboard() {
                     <div className="header-stats-pill">
                         <div className="pill-item">
                             <Flame size={18} className="text-orange" />
-                            <span>{data.userStats.streak} Day Streak</span>
+                            <span>{stats.streak} Day Streak</span>
                         </div>
                         <div className="pill-item">
                             <Star size={18} className="text-yellow" />
-                            <span>{data.userStats.points} XP</span>
+                            <span>{stats.xpPoints} XP</span>
                         </div>
                     </div>
                 </motion.div>
@@ -133,12 +152,12 @@ export function StudentDashboard() {
                         <div className="hero-bg-overlay"></div>
                         <div className="hero-content-bento">
                             <div className="exam-countdown">
-                                <span className="label">Upcoming Exam | {data.upcomingExam.date}</span>
-                                <h2>{data.upcomingExam.name}</h2>
+                                <span className="label">Upcoming Exam | {MOCK_DASHBOARD_DATA.upcomingExam.date}</span>
+                                <h2>{MOCK_DASHBOARD_DATA.upcomingExam.name}</h2>
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">
-                                            <span className="num">{data.upcomingExam.daysLeft}</span>
+                                            <span className="num">{MOCK_DASHBOARD_DATA.upcomingExam.daysLeft}</span>
                                         </div>
                                         <span className="unit">Days</span>
                                     </div>
@@ -179,13 +198,13 @@ export function StudentDashboard() {
                                         cx="50" cy="50" r="45" fill="none" stroke="url(#gradientPurple)"
                                         strokeWidth="8" strokeDasharray="283" strokeDashoffset="283"
                                         strokeLinecap="round"
-                                        animate={{ strokeDashoffset: 283 - (283 * data.userStats.accuracy) / 100 }}
+                                        animate={{ strokeDashoffset: 283 - (283 * stats.accuracy) / 100 }}
                                         transition={{ duration: 1.5, delay: 0.5 }}
                                     />
                                 </svg>
                                 <div className="thermostat-value">
-                                    <span className="t-num">{data.userStats.accuracy}%</span>
-                                    <span className="t-label">Score</span>
+                                    <span className="t-num">{stats.accuracy}%</span>
+                                    <span className="t-label">Accuracy</span>
                                 </div>
                             </div>
                             <div className="ai-mini-stats">
@@ -206,22 +225,22 @@ export function StudentDashboard() {
                     <motion.div className="bento-tile stats-tile-1 clickable" variants={tile} onClick={() => navigate('/performance')}>
                         <div className="stat-top">
                             <Target size={24} className="text-coral" />
-                            <div className="trend-up">+5% this week</div>
+                            <div className="trend-up">{hasRealData ? 'Real Data' : 'Demo'}</div>
                         </div>
                         <div className="stat-bottom">
-                            <span className="stat-num">{data.userStats.accuracy}%</span>
+                            <span className="stat-num">{stats.accuracy}%</span>
                             <span className="stat-lbl">Accuracy Rate</span>
                         </div>
                     </motion.div>
 
-                    <motion.div className="bento-tile stats-tile-2 clickable" variants={tile} onClick={() => navigate('/tasks')}>
+                    <motion.div className="bento-tile stats-tile-2 clickable" variants={tile} onClick={() => navigate('/analysis')}>
                         <div className="stat-top">
                             <BookOpen size={24} className="text-teal" />
-                            <span className="tag-micro">Today</span>
+                            <span className="tag-micro">AI Suggested</span>
                         </div>
                         <div className="stat-bottom">
-                            <span className="stat-num">4.5h</span>
-                            <span className="stat-lbl">Study Time</span>
+                            <span className="stat-num">{dashboardData?.suggestedStudyHours || '2-3'}h</span>
+                            <span className="stat-lbl">Daily Study</span>
                         </div>
                     </motion.div>
 
@@ -247,7 +266,7 @@ export function StudentDashboard() {
                             <h3><GraduationCap size={20} className="text-blue" /> My Courses</h3>
                         </div>
                         <div className="course-progress-list">
-                            {data.courses.map(course => (
+                            {MOCK_DASHBOARD_DATA.courses.map(course => (
                                 <div key={course.id} className="course-item-mini">
                                     <div className="course-info-row">
                                         <span className="c-name">{course.title}</span>
@@ -298,7 +317,7 @@ export function StudentDashboard() {
                             <h3><BarChart2 size={20} /> Performance Trend</h3>
                         </div>
                         <div className="graph-bars">
-                            {data.performance.map((score, i) => (
+                            {performanceData.map((score, i) => (
                                 <div key={i} className="bar-wrapper">
                                     <motion.div
                                         className="graph-bar"
@@ -312,6 +331,7 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
+
                     {/* 8. Leaderboard */}
                     <motion.div className="bento-tile rank-tile clickable" variants={tile} onClick={() => navigate('/leaderboard')}>
                         <Leaderboard limit={10} />
@@ -320,7 +340,7 @@ export function StudentDashboard() {
             </div>
 
             <BottomNav />
-        </div>
+        </div >
     );
 }
 

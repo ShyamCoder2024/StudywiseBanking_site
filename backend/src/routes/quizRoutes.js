@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import { Subject, Topic, Quiz, Question, Attempt } from '../models/Content.js';
+import User from '../models/User.js';
 import { NotFoundError } from '../middleware/errorMiddleware.js';
 import { analyzeDescriptiveAnswer } from '../services/aiService.js';
 
@@ -111,12 +112,61 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
             aiAnalysis: { status: 'pending' },
         });
 
+        // === XP CALCULATION ===
+        // Base XP: 100 for completing a quiz
+        let xpEarned = 100;
+        // +10 XP per correct answer
+        xpEarned += correctAnswers * 10;
+        // -5 XP per wrong answer (minimum 0 total)
+        xpEarned -= wrongAnswers * 5;
+        // Bonus: +50 XP for scoring above 80%
+        if (score >= 80) xpEarned += 50;
+        // Bonus: +25 XP for scoring above 90%
+        if (score >= 90) xpEarned += 25;
+        // Ensure XP doesn't go negative
+        xpEarned = Math.max(0, xpEarned);
+
+        // === STREAK CALCULATION ===
+        const user = await User.findById(req.user._id);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let newStreak = 1;
+        if (user.lastActivityDate) {
+            const lastActivity = new Date(user.lastActivityDate);
+            lastActivity.setHours(0, 0, 0, 0);
+
+            const diffDays = Math.floor((today - lastActivity) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+                // Same day - keep current streak
+                newStreak = user.streakCount || 1;
+            } else if (diffDays === 1) {
+                // Consecutive day - increment streak
+                newStreak = (user.streakCount || 0) + 1;
+            } else {
+                // Missed days - reset streak to 1
+                newStreak = 1;
+            }
+        }
+
+        // Update user's XP and streak
+        await User.findByIdAndUpdate(req.user._id, {
+            $inc: { xpPoints: xpEarned },
+            streakCount: newStreak,
+            lastActivityDate: new Date()
+        });
+
         // Trigger AI analysis in background (don't await)
         processAIAnalysis(attempt._id, questions, answers).catch(console.error);
 
         res.json({
             success: true,
-            data: { attemptId: attempt._id },
+            data: {
+                attemptId: attempt._id,
+                xpEarned,
+                newStreak
+            },
         });
     } catch (error) {
         next(error);
