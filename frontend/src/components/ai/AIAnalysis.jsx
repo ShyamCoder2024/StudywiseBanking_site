@@ -1,110 +1,12 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     BookOpen, Target, Zap, Star, RefreshCw,
-    TrendingUp, Award, AlertTriangle, ArrowRight,
-    Crown, LayoutDashboard, Sparkles, Brain, Clock,
-    ChevronRight, Activity
+    Award, AlertTriangle, ArrowRight,
+    Crown, LayoutDashboard, Sparkles, Brain, Activity
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-
-// Animation Variants
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.08 }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: { type: "spring", stiffness: 100, damping: 15 }
-    }
-};
-
-const pulseVariants = {
-    pulse: {
-        scale: [1, 1.02, 1],
-        transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-    }
-};
-
-// Animated Counter Component
-function AnimatedCounter({ value, duration = 1.5 }) {
-    const [count, setCount] = useState(0);
-
-    useEffect(() => {
-        let start = 0;
-        const end = parseInt(value) || 0;
-        if (start === end) return;
-
-        const incrementTime = (duration * 1000) / end;
-        const timer = setInterval(() => {
-            start += 1;
-            setCount(start);
-            if (start >= end) clearInterval(timer);
-        }, incrementTime);
-
-        return () => clearInterval(timer);
-    }, [value, duration]);
-
-    return <span>{count}</span>;
-}
-
-// Glassmorphism Card Component
-function GlassCard({ children, className = "", gradient = false, hover = true, delay = 0 }) {
-    return (
-        <motion.div
-            variants={itemVariants}
-            whileHover={hover ? { y: -4, scale: 1.01 } : {}}
-            className={`
-                relative overflow-hidden rounded-2xl
-                bg-[var(--color-card)] 
-                border border-[var(--color-border)]
-                shadow-[var(--shadow-card)]
-                backdrop-blur-sm
-                transition-all duration-300
-                ${hover ? 'hover:shadow-[var(--shadow-hover)] hover:border-[var(--color-primary)]/30' : ''}
-                ${className}
-            `}
-            style={{
-                transitionDelay: `${delay}ms`,
-            }}
-        >
-            {gradient && (
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-[var(--color-success)]/5 pointer-events-none" />
-            )}
-            <div className="relative z-10">{children}</div>
-        </motion.div>
-    );
-}
-
-// Animated Progress Bar Component
-function AnimatedProgressBar({ value, color = "primary", delay = 0 }) {
-    const colorMap = {
-        primary: "from-[var(--color-primary)] to-[#A58FD8]",
-        success: "from-emerald-500 to-teal-400",
-        warning: "from-rose-500 to-orange-400",
-        info: "from-blue-500 to-cyan-400"
-    };
-
-    return (
-        <div className="h-2.5 w-full bg-[var(--color-bg)] rounded-full overflow-hidden">
-            <motion.div
-                className={`h-full bg-gradient-to-r ${colorMap[color]} rounded-full`}
-                initial={{ width: 0 }}
-                animate={{ width: `${value}%` }}
-                transition={{ duration: 1.2, delay: delay * 0.1, ease: "easeOut" }}
-            />
-        </div>
-    );
-}
 
 export function AIAnalysis() {
     const navigate = useNavigate();
@@ -124,7 +26,6 @@ export function AIAnalysis() {
                 api.get('/student/dashboard'),
                 api.get('/student/ai-analysis').catch(() => ({ data: { success: false } }))
             ]);
-
             if (dashRes.data.success) setDashboardData(dashRes.data.data);
             if (aiRes.data.success) setAiAnalysis(aiRes.data.data);
         } catch (error) {
@@ -140,332 +41,337 @@ export function AIAnalysis() {
         setTimeout(() => setAnalyzing(false), 1000);
     };
 
-    // Data Processing
     const data = dashboardData || {};
     const ai = aiAnalysis || {};
-
     const score = data.accuracy || 0;
     const weeklyTrend = [40, 50, 45, 60, 55, 70, 75];
 
     const stats = [
-        { label: "Hours Studied", value: data.suggestedStudyHours || "4-5", icon: Clock, color: "var(--color-primary)", bgColor: "var(--color-primary-light)" },
-        { label: "Questions", value: data.totalQuestions || 2, icon: Target, color: "var(--color-success)", bgColor: "var(--color-success-light)" },
-        { label: "Accuracy", value: `${score}%`, icon: Zap, color: "var(--color-warning)", bgColor: "var(--color-warning-light)" },
-        { label: "Streak", value: data.streakCount || 0, icon: Star, color: "#F59E0B", bgColor: "#FEF3C7" }
+        { label: "Hours Studied", value: data.suggestedStudyHours || "4-5", icon: BookOpen },
+        { label: "Questions", value: data.totalQuestions || 2, icon: Target },
+        { label: "Accuracy", value: `${score}%`, icon: Zap },
+        { label: "Streak", value: data.streakCount || 0, icon: Star }
     ];
 
-    const defaultStrengths = [
+    const strengths = ai.strengths?.length > 0 ? ai.strengths : [
         { topic: "Data Interpretation", score: 85 },
         { topic: "Simplification", score: 92 },
         { topic: "Inequalities", score: 78 }
     ];
 
-    const defaultWeaknesses = [
+    const weaknesses = ai.weaknesses?.length > 0 ? ai.weaknesses : [
         { topic: "General", score: 0 }
     ];
 
-    const defaultSuggestions = [
+    const suggestions = ai.suggestions?.length > 0 ? ai.suggestions : [
         { topic: "Master General", reason: "Your General score is 0%. Daily practice will boost it quickly!", icon: "📈", priority: "High" },
         { topic: "Take More Quizzes", reason: "Complete at least 5 quizzes to get detailed performance insights", icon: "📝", priority: "High" },
         { topic: "Foundation Building", reason: "Focus on understanding core concepts before timed practice", icon: "📚", priority: "High" }
     ];
 
-    const strengths = ai.strengths && ai.strengths.length > 0 ? ai.strengths : defaultStrengths;
-    const weaknesses = ai.weaknesses && ai.weaknesses.length > 0 ? ai.weaknesses : defaultWeaknesses;
-    const suggestions = ai.suggestions && ai.suggestions.length > 0 ? ai.suggestions : defaultSuggestions;
-
-    const priorityColors = {
-        High: { bg: "bg-rose-500/10", text: "text-rose-500", border: "border-rose-500/20" },
-        Medium: { bg: "bg-amber-500/10", text: "text-amber-500", border: "border-amber-500/20" },
-        Low: { bg: "bg-emerald-500/10", text: "text-emerald-500", border: "border-emerald-500/20" }
-    };
-
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full"
-                />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+                <div style={{
+                    width: 48, height: 48,
+                    border: '4px solid var(--color-primary)',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                }} />
             </div>
         );
     }
 
+    const cardStyle = {
+        background: 'var(--color-card)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 16,
+        padding: 24,
+        boxShadow: 'var(--shadow-card)'
+    };
+
+    const sectionTitleStyle = {
+        fontSize: 12,
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        color: 'var(--color-text-secondary)',
+        marginBottom: 16,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
+    };
+
     return (
         <motion.div
-            className="w-full space-y-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}
         >
-            {/* Header Section */}
-            <GlassCard className="p-6" gradient hover={false}>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <motion.div
-                            className="p-3 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[#A58FD8]"
-                            whileHover={{ rotate: [0, -10, 10, 0] }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <LayoutDashboard className="text-white" size={28} />
-                        </motion.div>
-                        <div>
-                            <h2 className="text-2xl font-bold text-[var(--color-text)] flex items-center gap-2">
-                                AI Performance Analysis
-                                <Sparkles className="text-[var(--color-primary)]" size={20} />
-                            </h2>
-                            <p className="text-sm text-[var(--color-text-secondary)]">Your personalized learning insights powered by AI</p>
-                        </div>
+            {/* HEADER CARD */}
+            <div style={{ ...cardStyle, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{
+                        width: 56, height: 56,
+                        background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)',
+                        borderRadius: 14,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <LayoutDashboard color="white" size={28} />
                     </div>
-                    <motion.button
-                        onClick={handleRefresh}
-                        disabled={analyzing}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white shadow-lg shadow-[var(--color-primary)]/25 transition-all"
-                        style={{ background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)' }}
-                    >
-                        <RefreshCw size={18} className={analyzing ? "animate-spin" : ""} />
-                        {analyzing ? "Analyzing..." : "Refresh Analysis"}
-                    </motion.button>
+                    <div>
+                        <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--color-text)', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                            AI Performance Analysis
+                            <Sparkles size={20} color="var(--color-primary)" />
+                        </h1>
+                        <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: '4px 0 0 0' }}>
+                            Your personalized learning insights powered by AI
+                        </p>
+                    </div>
                 </div>
-            </GlassCard>
+                <button
+                    onClick={handleRefresh}
+                    disabled={analyzing}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '12px 24px',
+                        background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 12,
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(138, 117, 186, 0.3)'
+                    }}
+                >
+                    <RefreshCw size={18} className={analyzing ? "animate-spin" : ""} />
+                    {analyzing ? "Analyzing..." : "Refresh Analysis"}
+                </button>
+            </div>
 
-            {/* Main Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* MAIN CONTENT - Two Column Layout */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) 2fr', gap: 24 }}>
 
-                {/* Left Column - Score & Trend */}
-                <div className="lg:col-span-4 space-y-6">
+                {/* LEFT COLUMN */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-                    {/* AI Score Card */}
-                    <GlassCard className="p-8" gradient>
-                        <div className="text-center">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-secondary)] mb-6 flex items-center justify-center gap-2">
-                                <Brain size={14} /> Overall AI Score
-                            </h3>
+                    {/* SCORE CARD */}
+                    <div style={{ ...cardStyle, textAlign: 'center' }}>
+                        <div style={sectionTitleStyle}>
+                            <Brain size={14} /> Overall AI Score
+                        </div>
 
-                            {/* Animated Score Ring */}
-                            <div className="relative w-48 h-48 mx-auto mb-6">
-                                {/* Glow Effect */}
-                                <motion.div
-                                    className="absolute inset-0 rounded-full bg-[var(--color-primary)]/20 blur-xl"
-                                    variants={pulseVariants}
-                                    animate="pulse"
+                        {/* Score Ring */}
+                        <div style={{ position: 'relative', width: 180, height: 180, margin: '0 auto 24px' }}>
+                            <svg viewBox="0 0 120 120" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                                <circle cx="60" cy="60" r="52" stroke="var(--color-border)" strokeWidth="10" fill="none" opacity="0.3" />
+                                <defs>
+                                    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="var(--color-primary)" />
+                                        <stop offset="100%" stopColor="#A58FD8" />
+                                    </linearGradient>
+                                </defs>
+                                <motion.circle
+                                    cx="60" cy="60" r="52"
+                                    stroke="url(#scoreGrad)" strokeWidth="10" fill="none"
+                                    strokeLinecap="round"
+                                    initial={{ strokeDasharray: 327, strokeDashoffset: 327 }}
+                                    animate={{ strokeDashoffset: 327 - (327 * score) / 100 }}
+                                    transition={{ duration: 1.5, ease: "easeOut" }}
                                 />
+                            </svg>
+                            <div style={{
+                                position: 'absolute', inset: 0,
+                                display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', justifyContent: 'center'
+                            }}>
+                                <span style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text)' }}>{score}</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>AI Score</span>
+                            </div>
+                        </div>
 
-                                <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90 relative z-10">
-                                    {/* Background Circle */}
-                                    <circle
-                                        cx="60" cy="60" r="52"
-                                        stroke="var(--color-border)"
-                                        strokeWidth="10"
-                                        fill="none"
-                                        opacity="0.3"
-                                    />
-                                    {/* Gradient Definition */}
-                                    <defs>
-                                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stopColor="var(--color-primary)" />
-                                            <stop offset="100%" stopColor="#A58FD8" />
-                                        </linearGradient>
-                                    </defs>
-                                    {/* Progress Circle */}
-                                    <motion.circle
-                                        cx="60" cy="60" r="52"
-                                        stroke="url(#scoreGradient)"
-                                        strokeWidth="10"
-                                        fill="none"
-                                        initial={{ strokeDasharray: 327, strokeDashoffset: 327 }}
-                                        animate={{ strokeDashoffset: 327 - (327 * score) / 100 }}
-                                        transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
-                                        strokeLinecap="round"
-                                    />
-                                </svg>
-
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-5xl font-black text-[var(--color-text)]">
-                                        <AnimatedCounter value={score} />
-                                    </span>
-                                    <span className="text-xs font-bold text-[var(--color-primary)] uppercase mt-1 tracking-wider">AI Score</span>
+                        {/* Rank & Accuracy */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                            <div style={{ padding: 16, background: 'var(--color-bg)', borderRadius: 12, border: '1px solid var(--color-border)' }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
+                                <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                                    <Crown size={16} color="#F59E0B" fill="#F59E0B" /> Top 15%
                                 </div>
                             </div>
-
-                            {/* Rank & Accuracy Quick Stats */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <motion.div
-                                    className="p-4 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-primary)]/30 transition-colors"
-                                    whileHover={{ scale: 1.02 }}
-                                >
-                                    <span className="block text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wide">Rank</span>
-                                    <span className="flex items-center justify-center gap-1 text-lg font-bold text-[var(--color-text)] mt-1">
-                                        <Crown size={16} className="text-amber-400 fill-amber-400" />
-                                        Top 15%
-                                    </span>
-                                </motion.div>
-                                <motion.div
-                                    className="p-4 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-primary)]/30 transition-colors"
-                                    whileHover={{ scale: 1.02 }}
-                                >
-                                    <span className="block text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wide">Accuracy</span>
-                                    <span className="block text-lg font-bold text-[var(--color-text)] mt-1">{score}%</span>
-                                </motion.div>
+                            <div style={{ padding: 16, background: 'var(--color-bg)', borderRadius: 12, border: '1px solid var(--color-border)' }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Accuracy</div>
+                                <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text)', marginTop: 4 }}>{score}%</div>
                             </div>
                         </div>
-                    </GlassCard>
+                    </div>
 
-                    {/* 7-Day Trend Card */}
-                    <GlassCard className="p-6">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-secondary)] mb-4 flex items-center gap-2">
+                    {/* TREND CARD */}
+                    <div style={cardStyle}>
+                        <div style={sectionTitleStyle}>
                             <Activity size={14} /> 7-Day Performance Trend
-                        </h3>
-                        <div className="flex items-end justify-between h-32 gap-2 pt-6">
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 100, gap: 6, marginBottom: 8 }}>
                             {weeklyTrend.map((val, idx) => (
                                 <motion.div
                                     key={idx}
-                                    className="flex-1 bg-gradient-to-t from-[var(--color-primary)] to-[#A58FD8] rounded-t-md relative group cursor-pointer"
                                     initial={{ height: 0 }}
                                     animate={{ height: `${val}%` }}
-                                    transition={{ duration: 0.6, delay: 0.8 + idx * 0.1, ease: "easeOut" }}
-                                    whileHover={{ opacity: 1, scale: 1.05 }}
-                                    style={{ opacity: 0.6 + (idx * 0.05) }}
-                                >
-                                    {/* Tooltip */}
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--color-text)] text-[var(--color-bg)] text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                                        {val}%
-                                    </div>
-                                </motion.div>
+                                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                                    style={{
+                                        flex: 1,
+                                        background: 'linear-gradient(to top, var(--color-primary), #A58FD8)',
+                                        borderRadius: '4px 4px 0 0',
+                                        opacity: 0.6 + idx * 0.05
+                                    }}
+                                />
                             ))}
                         </div>
-                        <div className="flex justify-between mt-3 text-[10px] text-[var(--color-text-secondary)] font-medium">
-                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                                <span key={day}>{day}</span>
-                            ))}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--color-text-secondary)' }}>
+                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)}
                         </div>
-                    </GlassCard>
+                    </div>
                 </div>
 
-                {/* Right Column - Stats, Strengths, Weaknesses, Recommendations */}
-                <div className="lg:col-span-8 space-y-6">
+                {/* RIGHT COLUMN */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {/* STATS ROW */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                         {stats.map((stat, i) => (
-                            <GlassCard key={i} className="p-5" delay={i * 50}>
-                                <div className="flex items-start justify-between mb-3">
-                                    <motion.div
-                                        className="p-2.5 rounded-xl"
-                                        style={{ backgroundColor: stat.bgColor }}
-                                        whileHover={{ rotate: [0, -5, 5, 0] }}
-                                    >
-                                        <stat.icon size={20} style={{ color: stat.color }} />
-                                    </motion.div>
+                            <div key={i} style={cardStyle}>
+                                <div style={{
+                                    width: 40, height: 40,
+                                    background: 'var(--color-bg)',
+                                    borderRadius: 10,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    marginBottom: 12
+                                }}>
+                                    <stat.icon size={20} color="var(--color-primary)" />
                                 </div>
-                                <div className="text-2xl font-bold text-[var(--color-text)]">{stat.value}</div>
-                                <div className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mt-1">{stat.label}</div>
-                            </GlassCard>
+                                <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--color-text)' }}>{stat.value}</div>
+                                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase', marginTop: 4 }}>{stat.label}</div>
+                            </div>
                         ))}
                     </div>
 
-                    {/* Strengths & Weaknesses Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        {/* Strong Areas */}
-                        <GlassCard className="p-6">
-                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-5">
-                                <div className="p-2 rounded-lg bg-emerald-500/10">
-                                    <Award className="text-emerald-500" size={18} />
+                    {/* STRENGTHS & WEAKNESSES */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                        {/* Strengths */}
+                        <div style={cardStyle}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                                <div style={{ width: 36, height: 36, background: 'rgba(16, 185, 129, 0.1)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Award size={18} color="#10B981" />
                                 </div>
-                                Strong Areas
-                            </h3>
-                            <div className="space-y-4">
+                                <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text)' }}>Strong Areas</span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                                 {strengths.map((item, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 1 + i * 0.1 }}
-                                    >
-                                        <div className="flex justify-between text-sm mb-2">
-                                            <span className="font-semibold text-[var(--color-text)]">{item.topic}</span>
-                                            <span className="font-bold text-emerald-500">{item.score}%</span>
+                                    <div key={i}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{item.topic}</span>
+                                            <span style={{ fontSize: 14, fontWeight: 700, color: '#10B981' }}>{item.score}%</span>
                                         </div>
-                                        <AnimatedProgressBar value={item.score} color="success" delay={i + 10} />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </GlassCard>
-
-                        {/* Areas to Improve */}
-                        <GlassCard className="p-6">
-                            <h3 className="font-bold flex items-center gap-2 text-[var(--color-text)] mb-5">
-                                <div className="p-2 rounded-lg bg-rose-500/10">
-                                    <AlertTriangle className="text-rose-500" size={18} />
-                                </div>
-                                Areas to Improve
-                            </h3>
-                            <div className="space-y-4">
-                                {weaknesses.map((item, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 1.2 + i * 0.1 }}
-                                    >
-                                        <div className="flex justify-between text-sm mb-2">
-                                            <span className="font-semibold text-[var(--color-text)]">{item.topic}</span>
-                                            <span className="font-bold text-rose-500">{item.score}%</span>
-                                        </div>
-                                        <AnimatedProgressBar value={item.score || 5} color="warning" delay={i + 12} />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </GlassCard>
-                    </div>
-
-                    {/* AI Recommendations */}
-                    <div>
-                        <h3 className="font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-                            <Sparkles className="text-[var(--color-primary)]" size={18} />
-                            AI-Powered Recommendations
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {suggestions.map((s, i) => {
-                                const colors = priorityColors[s.priority] || priorityColors.Medium;
-                                return (
-                                    <GlassCard key={i} className="p-5 flex flex-col h-full" delay={i * 100}>
-                                        <div className="flex justify-between items-start mb-4">
+                                        <div style={{ height: 8, background: 'var(--color-bg)', borderRadius: 4, overflow: 'hidden' }}>
                                             <motion.div
-                                                className="text-3xl p-2 bg-[var(--color-bg)] rounded-xl"
-                                                whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-                                            >
-                                                {s.icon}
-                                            </motion.div>
-                                            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${colors.bg} ${colors.text} ${colors.border} border uppercase tracking-wide`}>
-                                                {s.priority}
-                                            </span>
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${item.score}%` }}
+                                                transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                                                style={{ height: '100%', background: 'linear-gradient(to right, #10B981, #34D399)', borderRadius: 4 }}
+                                            />
                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                                        <h4 className="font-bold text-[var(--color-text)] text-sm mb-2">{s.topic}</h4>
-                                        <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-5 flex-1">{s.reason}</p>
-
-                                        <motion.button
-                                            whileHover={{ scale: 1.02, x: 2 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className="w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20"
-                                            style={{ background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)' }}
-                                            onClick={() => navigate('/subjects')}
-                                        >
-                                            Start Practice <ArrowRight size={14} />
-                                        </motion.button>
-                                    </GlassCard>
-                                );
-                            })}
+                        {/* Weaknesses */}
+                        <div style={cardStyle}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                                <div style={{ width: 36, height: 36, background: 'rgba(239, 68, 68, 0.1)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <AlertTriangle size={18} color="#EF4444" />
+                                </div>
+                                <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text)' }}>Areas to Improve</span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                {weaknesses.map((item, i) => (
+                                    <div key={i}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{item.topic}</span>
+                                            <span style={{ fontSize: 14, fontWeight: 700, color: '#EF4444' }}>{item.score}%</span>
+                                        </div>
+                                        <div style={{ height: 8, background: 'var(--color-bg)', borderRadius: 4, overflow: 'hidden' }}>
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${Math.max(item.score, 5)}%` }}
+                                                transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                                                style={{ height: '100%', background: 'linear-gradient(to right, #EF4444, #F87171)', borderRadius: 4 }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
+                    {/* RECOMMENDATIONS */}
+                    <div>
+                        <div style={{ ...sectionTitleStyle, marginBottom: 16 }}>
+                            <Sparkles size={14} color="var(--color-primary)" /> AI-Powered Recommendations
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                            {suggestions.map((s, i) => (
+                                <div key={i} style={{ ...cardStyle, display: 'flex', flexDirection: 'column' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                                        <div style={{ fontSize: 28, padding: 8, background: 'var(--color-bg)', borderRadius: 12 }}>{s.icon}</div>
+                                        <span style={{
+                                            fontSize: 10, fontWeight: 700,
+                                            padding: '4px 10px', borderRadius: 20,
+                                            background: s.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                                            color: s.priority === 'High' ? '#EF4444' : '#F59E0B',
+                                            textTransform: 'uppercase'
+                                        }}>{s.priority}</span>
+                                    </div>
+                                    <h4 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-text)', margin: '0 0 8px 0' }}>{s.topic}</h4>
+                                    <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5, margin: '0 0 16px 0', flex: 1 }}>{s.reason}</p>
+                                    <button
+                                        onClick={() => navigate('/subjects')}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px 16px',
+                                            background: 'linear-gradient(135deg, var(--color-primary), #A58FD8)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: 10,
+                                            fontSize: 12,
+                                            fontWeight: 700,
+                                            textTransform: 'uppercase',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: 8
+                                        }}
+                                    >
+                                        Start Practice <ArrowRight size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {/* CSS for spin animation */}
+            <style>{`
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+                .animate-spin {
+                    animation: spin 1s linear infinite;
+                }
+            `}</style>
         </motion.div>
     );
 }
