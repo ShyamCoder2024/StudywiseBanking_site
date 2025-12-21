@@ -207,19 +207,24 @@ export function StudentDashboard() {
                                     <span className="t-label">Accuracy</span>
                                 </div>
                             </div>
-                            <div className="ai-mini-stats">
-                                <div className="stat-row">
-                                    <span className="label">Strength</span>
-                                    <span className="val success">Reasoning</span>
+                        </div>
+                        <div className="ai-insight-footer">
+                            <div className="insight-tag-group">
+                                <div className="insight-tag success">
+                                    <span className="tag-dot"></span>
+                                    <span className="tag-label">Strength:</span>
+                                    <span className="tag-value">Reasoning</span>
                                 </div>
-                                <div className="stat-row">
-                                    <span className="label">Weakness</span>
-                                    <span className="val danger">Puzzles</span>
+                                <div className="insight-tag danger">
+                                    <span className="tag-dot"></span>
+                                    <span className="tag-label">Focus:</span>
+                                    <span className="tag-value">Puzzles</span>
                                 </div>
-                                <div className="click-hint">Click for full report</div>
                             </div>
+                            <div className="click-hint">Tap for full AI report →</div>
                         </div>
                     </motion.div>
+
 
                     {/* 3. Stats Rows (Clickable) - Go to Performance */}
                     <motion.div className="bento-tile stats-tile-1 clickable" variants={tile} onClick={() => navigate('/performance')}>

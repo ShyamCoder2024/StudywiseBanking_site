@@ -389,39 +389,103 @@
     color: var(--text-secondary);
 }
 
-.ai-mini-stats {
+/* AI Insights Card - New Premium Layout */
+.ai-tile {
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-thermostat-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.ai-insight-footer {
     width: 100%;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.insight-tag-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin-bottom: 12px;
 }
 
-.stat-row {
+.insight-tag {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
     font-size: 0.85rem;
-    padding: 6px 10px;
-    background: var(--surface-alt);
-    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.stat-row .val.success {
+.insight-tag:hover {
+    transform: translateX(4px);
+}
+
+.insight-tag.success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.insight-tag.danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.insight-tag .tag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.insight-tag.success .tag-dot {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.insight-tag.danger .tag-dot {
+    background: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.insight-tag .tag-label {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.insight-tag .tag-value {
+    font-weight: 700;
+    margin-left: auto;
+}
+
+.insight-tag.success .tag-value {
     color: #10b981;
-    font-weight: 600;
 }
 
-.stat-row .val.danger {
+.insight-tag.danger .tag-value {
     color: #ef4444;
-    font-weight: 600;
 }
 
 .click-hint {
     text-align: center;
     font-size: 0.75rem;
     color: var(--primary);
-    margin-top: 4px;
-    opacity: 0.8;
+    font-weight: 500;
+    opacity: 0.9;
+    padding: 6px 0;
 }
+
 
 /* 4. Stats Tokens (Span 1) */
 .stats-tile-1,

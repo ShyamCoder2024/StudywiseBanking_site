@@ -959,13 +959,65 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Card header text visibility in dark mode */
+/* ============================================
+   COMPREHENSIVE DARK MODE FIXES
+   ============================================ */
+
+/* AI Cards - General dark mode */
+:root.dark .ai-card {
+    background: var(--color-card) !important;
+    border-color: var(--color-border) !important;
+}
+
+/* Strengths Card Dark Mode */
+:root.dark .strengths-card {
+    background: var(--color-card) !important;
+}
+
+:root.dark .strengths-card .card-header h3 {
+    color: #10b981 !important;
+    font-weight: 700 !important;
+}
+
+/* Weaknesses Card Dark Mode */
+:root.dark .weaknesses-card {
+    background: var(--color-card) !important;
+}
+
+:root.dark .weaknesses-card .card-header h3 {
+    color: #ef4444 !important;
+    font-weight: 700 !important;
+}
+
+/* Progress Card Dark Mode */
+:root.dark .progress-card {
+    background: var(--color-card) !important;
+}
+
+:root.dark .progress-card .card-header h3 {
+    color: var(--color-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Recommendations Card Dark Mode */
+:root.dark .recommendations-card {
+    background: var(--color-card) !important;
+}
+
+:root.dark .recommendations-card .card-header h3 {
+    color: #f59e0b !important;
+    font-weight: 700 !important;
+}
+
+/* Generic Card Header Text */
 :root.dark .card-header h3 {
     color: var(--color-text) !important;
 }
 
-:root.dark .ai-card {
-    background: var(--color-card);
+/* Skill Items */
+:root.dark .skill-item {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--color-border) !important;
 }
 
 :root.dark .skill-name {
@@ -976,33 +1028,135 @@
     color: var(--color-text-secondary) !important;
 }
 
-/* Skill item background in dark mode */
-:root.dark .skill-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--color-border);
+:root.dark .skill-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Recommendation item in dark mode */
-:root.dark .recommendation-content p {
+:root.dark .skill-item.success:hover {
+    background-color: rgba(22, 163, 74, 0.15) !important;
+}
+
+:root.dark .skill-item.danger:hover {
+    background-color: rgba(220, 38, 38, 0.15) !important;
+}
+
+/* Progress Chart */
+:root.dark .progress-chart {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+:root.dark .chart-bar {
+    background: linear-gradient(to top, var(--color-primary) 0%, #a78bfa 100%) !important;
+}
+
+:root.dark .chart-label {
     color: var(--color-text-secondary) !important;
+}
+
+/* Progress Footer */
+:root.dark .progress-footer {
+    border-top-color: var(--color-border) !important;
+}
+
+:root.dark .streak-info {
+    color: #fbbf24 !important;
+}
+
+:root.dark .topics-info {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Recommendation Items */
+:root.dark .recommendation-item {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: var(--color-border) !important;
+}
+
+:root.dark .recommendation-icon {
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
 :root.dark .recommendation-header h4 {
     color: var(--color-text) !important;
 }
 
-/* Progress footer text in dark mode */
-:root.dark .topics-info {
+:root.dark .recommendation-content p {
     color: var(--color-text-secondary) !important;
 }
 
-/* Chart bar label in dark mode */
-:root.dark .chart-label {
-    color: var(--color-text-secondary) !important;
+/* Priority Badges Dark Mode */
+:root.dark .priority-badge.high {
+    background: rgba(220, 38, 38, 0.2) !important;
+    color: #fca5a5 !important;
 }
 
-/* Btn start in dark mode */
+:root.dark .priority-badge.medium {
+    background: rgba(217, 119, 6, 0.2) !important;
+    color: #fcd34d !important;
+}
+
+:root.dark .priority-badge.low {
+    background: rgba(22, 163, 74, 0.2) !important;
+    color: #86efac !important;
+}
+
+/* Count Badge Dark Mode */
+:root.dark .count-badge.success {
+    background: rgba(22, 163, 74, 0.2) !important;
+    color: #86efac !important;
+}
+
+:root.dark .count-badge.danger {
+    background: rgba(220, 38, 38, 0.2) !important;
+    color: #fca5a5 !important;
+}
+
+/* Quick Stat Icons Dark Mode */
+:root.dark .quick-stat-icon.purple {
+    background: rgba(147, 51, 234, 0.2) !important;
+    color: #c4b5fd !important;
+}
+
+:root.dark .quick-stat-icon.blue {
+    background: rgba(37, 99, 235, 0.2) !important;
+    color: #93c5fd !important;
+}
+
+:root.dark .quick-stat-icon.green {
+    background: rgba(22, 163, 74, 0.2) !important;
+    color: #86efac !important;
+}
+
+:root.dark .quick-stat-icon.orange {
+    background: rgba(234, 88, 12, 0.2) !important;
+    color: #fdba74 !important;
+}
+
+/* Btn Start Dark Mode */
 :root.dark .btn-start {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text) !important;
+}
+
+:root.dark .btn-start:hover {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: white !important;
+}
+
+/* Quick Stats Cards */
+:root.dark .quick-stat {
+    background: var(--color-card) !important;
+    border-color: var(--color-border) !important;
+}
+
+:root.dark .stat-value {
+    color: var(--color-text) !important;
+}
+
+:root.dark .stat-label {
+    color: var(--color-text-secondary) !important;
 }
