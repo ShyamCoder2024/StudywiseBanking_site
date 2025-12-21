@@ -197,7 +197,7 @@ export function StudentDashboard() {
                                 <span className="label">
                                     {newQuizzes.length > 0 ? 'New Test Available!' : 'Upcoming Exam'} | {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
-                                <h2>{targetExam}</h2>
+                                <h2>{targetExam.toUpperCase()}</h2>
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">
