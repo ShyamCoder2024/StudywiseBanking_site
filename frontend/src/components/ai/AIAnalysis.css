@@ -958,3 +958,51 @@
 :root.dark .quick-stat:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
 }
+
+/* Card header text visibility in dark mode */
+:root.dark .card-header h3 {
+    color: var(--color-text) !important;
+}
+
+:root.dark .ai-card {
+    background: var(--color-card);
+}
+
+:root.dark .skill-name {
+    color: var(--color-text) !important;
+}
+
+:root.dark .skill-percent {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Skill item background in dark mode */
+:root.dark .skill-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-border);
+}
+
+/* Recommendation item in dark mode */
+:root.dark .recommendation-content p {
+    color: var(--color-text-secondary) !important;
+}
+
+:root.dark .recommendation-header h4 {
+    color: var(--color-text) !important;
+}
+
+/* Progress footer text in dark mode */
+:root.dark .topics-info {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Chart bar label in dark mode */
+:root.dark .chart-label {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Btn start in dark mode */
+:root.dark .btn-start {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+}

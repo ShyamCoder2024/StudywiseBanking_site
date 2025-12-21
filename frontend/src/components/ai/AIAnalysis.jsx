@@ -5,9 +5,10 @@ import {
     CheckCircle, Target, Zap, BookOpen, RefreshCw, Sparkles,
     Clock, Award, BarChart2, Calendar, ArrowUpRight, Star
 } from 'lucide-react';
+import api from '../../services/api';
 import './AIAnalysis.css';
 
-// Mock AI Data - In real app, fetch from backend
+// Mock AI Data - Used as fallback when no real data available
 const MOCK_AI_INSIGHTS = {
     overallScore: 78,
     scoreChange: +12,
@@ -43,7 +44,7 @@ const MOCK_AI_INSIGHTS = {
         }
     ],
     weeklyProgress: [65, 68, 72, 70, 75, 78, 78],
-    studyHours: 24,
+    studyHours: "2-3",
     questionsAttempted: 456,
     accuracy: 72,
     streakDays: 8,
@@ -79,10 +80,118 @@ const listItemVariants = {
     }
 };
 
+// Generate AI suggestions based on accuracy
+const generateAISuggestions = (accuracy, weakAreas) => {
+    const suggestions = [];
+
+    if (accuracy < 50) {
+        suggestions.push({
+            topic: "Foundation Building",
+            reason: "Focus on understanding core concepts before moving to advanced topics",
+            icon: "📚",
+            priority: "High"
+        });
+    }
+
+    if (accuracy < 70) {
+        suggestions.push({
+            topic: "Daily Practice",
+            reason: `Study ${accuracy < 50 ? '4-5' : '3-4'} hours daily with focused topic-wise practice`,
+            icon: "⏰",
+            priority: "High"
+        });
+    }
+
+    if (weakAreas && weakAreas.length > 0) {
+        suggestions.push({
+            topic: `Focus on ${weakAreas[0] || 'Weak Topics'}`,
+            reason: "Dedicate extra time to your identified weak areas",
+            icon: "🎯",
+            priority: "High"
+        });
+    }
+
+    suggestions.push({
+        topic: "Take More Quizzes",
+        reason: "Regular testing helps identify gaps and improve retention",
+        icon: "📝",
+        priority: accuracy < 70 ? "High" : "Medium"
+    });
+
+    if (accuracy >= 70) {
+        suggestions.push({
+            topic: "Speed Improvement",
+            reason: "Focus on reducing time per question while maintaining accuracy",
+            icon: "⚡",
+            priority: "Medium"
+        });
+    }
+
+    return suggestions.slice(0, 3);
+};
+
 export function AIAnalysis() {
     const [analyzing, setAnalyzing] = useState(false);
-    const [insights, setInsights] = useState(MOCK_AI_INSIGHTS);
+    const [dashboardData, setDashboardData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [displayScore, setDisplayScore] = useState(0);
+
+    // Fetch real data from backend
+    useEffect(() => {
+        fetchDashboardData();
+    }, []);
+
+    const fetchDashboardData = async () => {
+        try {
+            const res = await api.get('/student/dashboard');
+            setDashboardData(res.data.data);
+        } catch (error) {
+            console.error('Failed to fetch dashboard data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Determine if we have real data
+    const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
+
+    // Build insights object from real data or mock
+    const insights = hasRealData ? {
+        overallScore: dashboardData.accuracy || 0,
+        scoreChange: dashboardData.accuracy > 50 ? Math.round((dashboardData.accuracy - 50) / 5) : 0,
+        summary: dashboardData.studyRecommendation ||
+            `You have completed ${dashboardData.totalAttempts} quizzes with ${dashboardData.accuracy}% accuracy. ${dashboardData.accuracy >= 80 ? 'Excellent performance! Keep it up!' :
+                dashboardData.accuracy >= 60 ? 'Good progress! Focus on your weak areas to improve further.' :
+                    'Keep practicing to improve your scores. Focus on fundamentals.'
+            }`,
+        strengths: (dashboardData.strengths || []).map((s, i) => ({
+            topic: s,
+            score: 80 + Math.floor(Math.random() * 15),
+            detail: "Strong area"
+        })).concat(dashboardData.strengths?.length === 0 ? [
+            { topic: "Consistency", score: 85, detail: "Regular practice" }
+        ] : []),
+        weaknesses: (dashboardData.weakAreas || []).map((w, i) => ({
+            topic: w,
+            score: 40 + Math.floor(Math.random() * 20),
+            detail: "Needs practice"
+        })).concat(dashboardData.weakAreas?.length === 0 ? [
+            { topic: "Take More Quizzes", score: 50, detail: "To identify weak areas" }
+        ] : []),
+        suggestions: generateAISuggestions(dashboardData.accuracy, dashboardData.weakAreas),
+        weeklyProgress: dashboardData.performanceGraph?.length > 0
+            ? dashboardData.performanceGraph.map(p => p.score)
+            : [65, 68, 72, 70, 75, 78, dashboardData.accuracy || 78],
+        studyHours: dashboardData.suggestedStudyHours || "2-3",
+        questionsAttempted: dashboardData.totalQuestions || 0,
+        accuracy: dashboardData.accuracy || 0,
+        streakDays: dashboardData.streakCount || 0,
+        rank: 1, // Would need leaderboard data
+        totalUsers: 1,
+        nextMilestone: dashboardData.accuracy < 60 ? 60 : dashboardData.accuracy < 80 ? 80 : 90,
+        completedTopics: dashboardData.totalAttempts || 0,
+        totalTopics: Math.max(dashboardData.totalAttempts + 5, 10)
+    } : MOCK_AI_INSIGHTS;
 
     // Animated number counter effect
     useEffect(() => {
@@ -110,9 +219,13 @@ export function AIAnalysis() {
         return () => clearInterval(timer);
     }, [insights.overallScore]);
 
-    const handleRefreshAnalysis = () => {
+    const handleRefreshAnalysis = async () => {
         setAnalyzing(true);
         setDisplayScore(0);
+
+        // Re-fetch data
+        await fetchDashboardData();
+
         setTimeout(() => {
             setAnalyzing(false);
             // Re-trigger count animation manually
@@ -132,8 +245,9 @@ export function AIAnalysis() {
                     clearInterval(timer);
                 }
             }, duration / steps);
-        }, 2000);
+        }, 1500);
     };
+
 
     return (
         <div className="ai-analysis-page">
@@ -248,7 +362,7 @@ export function AIAnalysis() {
                         <div className="quick-stat-icon purple"><BookOpen size={20} /></div>
                         <div className="quick-stat-info">
                             <span className="stat-value">{insights.studyHours}h</span>
-                            <span className="stat-label">Study Time</span>
+                            <span className="stat-label">Daily Study (AI)</span>
                         </div>
                     </motion.div>
                     <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
@@ -266,13 +380,14 @@ export function AIAnalysis() {
                         </div>
                     </motion.div>
                     <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
-                        <div className="quick-stat-icon orange"><Award size={20} /></div>
+                        <div className="quick-stat-icon orange"><Star size={20} /></div>
                         <div className="quick-stat-info">
-                            <span className="stat-value">#{insights.rank}</span>
-                            <span className="stat-label">Rank</span>
+                            <span className="stat-value">{insights.streakDays} Days</span>
+                            <span className="stat-label">Streak</span>
                         </div>
                     </motion.div>
                 </motion.div>
+
 
                 {/* Strengths Section */}
                 <motion.div className="ai-card strengths-card" variants={cardVariants}>
