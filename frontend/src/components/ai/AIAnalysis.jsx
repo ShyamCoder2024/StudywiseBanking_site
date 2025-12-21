@@ -361,7 +361,9 @@ export function AIAnalysis() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6, duration: 0.4 }}
                         >
-                            {insights.summary}
+                            {displayScore === 0
+                                ? "Start your first quiz to unlock personalized AI insights and performance tracking."
+                                : insights.summary}
                         </motion.p>
                         <motion.div
                             className="score-milestone"

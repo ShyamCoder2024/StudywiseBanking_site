@@ -308,7 +308,7 @@
 }
 
 :root.dark .ai-score-section::before {
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+    display: none;
 }
 
 :root.dark .score-ring-bg {
