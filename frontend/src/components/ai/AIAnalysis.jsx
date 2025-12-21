@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Brain, TrendingUp, AlertTriangle, Lightbulb, ChevronRight,
     CheckCircle, Target, Zap, BookOpen, RefreshCw, Sparkles,
-    Clock, Award, BarChart2, Calendar, ArrowUpRight, Star
+    Star, BarChart2
 } from 'lucide-react';
 import api from '../../services/api';
 import './AIAnalysis.css';
 
-// Mock AI Data - Used as fallback when no real data available
+// Mock AI Data
 const MOCK_AI_INSIGHTS = {
     overallScore: 78,
     scoreChange: +12,
@@ -55,7 +55,6 @@ const MOCK_AI_INSIGHTS = {
     totalTopics: 18
 };
 
-// Animation Variants
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -80,53 +79,18 @@ const listItemVariants = {
     }
 };
 
-// Generate AI suggestions based on accuracy
 const generateAISuggestions = (accuracy, weakAreas) => {
     const suggestions = [];
-
     if (accuracy < 50) {
-        suggestions.push({
-            topic: "Foundation Building",
-            reason: "Focus on understanding core concepts before moving to advanced topics",
-            icon: "📚",
-            priority: "High"
-        });
+        suggestions.push({ topic: "Foundation Building", reason: "Focus on core concepts.", icon: "📚", priority: "High" });
     }
-
     if (accuracy < 70) {
-        suggestions.push({
-            topic: "Daily Practice",
-            reason: `Study ${accuracy < 50 ? '4-5' : '3-4'} hours daily with focused topic-wise practice`,
-            icon: "⏰",
-            priority: "High"
-        });
+        suggestions.push({ topic: "Daily Practice", reason: "Study 3-4 hours daily.", icon: "⏰", priority: "High" });
     }
-
     if (weakAreas && weakAreas.length > 0) {
-        suggestions.push({
-            topic: `Focus on ${weakAreas[0] || 'Weak Topics'}`,
-            reason: "Dedicate extra time to your identified weak areas",
-            icon: "🎯",
-            priority: "High"
-        });
+        suggestions.push({ topic: `Focus on ${weakAreas[0]}`, reason: "Work on weak areas.", icon: "🎯", priority: "High" });
     }
-
-    suggestions.push({
-        topic: "Take More Quizzes",
-        reason: "Regular testing helps identify gaps and improve retention",
-        icon: "📝",
-        priority: accuracy < 70 ? "High" : "Medium"
-    });
-
-    if (accuracy >= 70) {
-        suggestions.push({
-            topic: "Speed Improvement",
-            reason: "Focus on reducing time per question while maintaining accuracy",
-            icon: "⚡",
-            priority: "Medium"
-        });
-    }
-
+    suggestions.push({ topic: "Take Quizzes", reason: "Identify gaps.", icon: "📝", priority: accuracy < 70 ? "High" : "Medium" });
     return suggestions.slice(0, 3);
 };
 
@@ -134,10 +98,8 @@ export function AIAnalysis() {
     const [analyzing, setAnalyzing] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [aiAnalysis, setAiAnalysis] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [displayScore, setDisplayScore] = useState(0);
 
-    // Fetch real data from backend
     useEffect(() => {
         fetchDashboardData();
         fetchAIAnalysis();
@@ -148,413 +110,137 @@ export function AIAnalysis() {
             const res = await api.get('/student/dashboard');
             setDashboardData(res.data.data);
         } catch (error) {
-            console.error('Failed to fetch dashboard data:', error);
-        } finally {
-            setLoading(false);
+            console.error('Failed dashboard data', error);
         }
     };
 
     const fetchAIAnalysis = async () => {
         try {
             const res = await api.get('/student/ai-analysis');
-            if (res.data.success) {
-                setAiAnalysis(res.data.data);
-            }
+            if (res.data.success) setAiAnalysis(res.data.data);
         } catch (error) {
-            console.error('Failed to fetch AI analysis:', error);
+            console.error('Failed AI analysis', error);
         }
     };
 
-    // Determine if we have real data
     const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
     const hasAiData = aiAnalysis && aiAnalysis.summary;
 
-    // Build insights object from AI analysis, real data, or mock
     const insights = hasRealData ? {
         overallScore: dashboardData.accuracy || 0,
         scoreChange: dashboardData.accuracy > 50 ? Math.round((dashboardData.accuracy - 50) / 5) : 0,
-        // Use AI-generated summary if available
-        summary: hasAiData ? aiAnalysis.summary : (dashboardData.studyRecommendation ||
-            `You have completed ${dashboardData.totalAttempts} quizzes with ${dashboardData.accuracy}% accuracy. ${dashboardData.accuracy >= 80 ? 'Excellent performance! Keep it up!' :
-                dashboardData.accuracy >= 60 ? 'Good progress! Focus on your weak areas to improve further.' :
-                    'Keep practicing to improve your scores. Focus on fundamentals.'
-            }`),
-        // Use AI-generated strengths if available
-        strengths: hasAiData && aiAnalysis.strengths?.length > 0
-            ? aiAnalysis.strengths
-            : (dashboardData.strengths || []).map((s, i) => ({
-                topic: s,
-                score: 80 + Math.floor(Math.random() * 15),
-                detail: "Strong area"
-            })).concat(dashboardData.strengths?.length === 0 ? [
-                { topic: "Consistency", score: 85, detail: "Regular practice" }
-            ] : []),
-        // Use AI-generated weaknesses if available
-        weaknesses: hasAiData && aiAnalysis.weaknesses?.length > 0
-            ? aiAnalysis.weaknesses
-            : (dashboardData.weakAreas || []).map((w, i) => ({
-                topic: w,
-                score: 40 + Math.floor(Math.random() * 20),
-                detail: "Needs practice"
-            })).concat(dashboardData.weakAreas?.length === 0 ? [
-                { topic: "Take More Quizzes", score: 50, detail: "To identify weak areas" }
-            ] : []),
-        // Use AI-generated suggestions if available
-        suggestions: hasAiData && aiAnalysis.suggestions?.length > 0
-            ? aiAnalysis.suggestions
-            : generateAISuggestions(dashboardData.accuracy, dashboardData.weakAreas),
-        weeklyProgress: dashboardData.performanceGraph?.length > 0
-            ? dashboardData.performanceGraph.map(p => p.score)
-            : [65, 68, 72, 70, 75, 78, dashboardData.accuracy || 78],
+        summary: hasAiData ? aiAnalysis.summary : "Keep practicing to improve your scores.",
+        strengths: hasAiData && aiAnalysis.strengths ? aiAnalysis.strengths : [],
+        weaknesses: hasAiData && aiAnalysis.weaknesses ? aiAnalysis.weaknesses : [],
+        suggestions: hasAiData && aiAnalysis.suggestions ? aiAnalysis.suggestions : generateAISuggestions(dashboardData.accuracy, []),
+        weeklyProgress: dashboardData.performanceGraph ? dashboardData.performanceGraph.map(p => p.score) : [],
         studyHours: dashboardData.suggestedStudyHours || "2-3",
         questionsAttempted: dashboardData.totalQuestions || 0,
         accuracy: dashboardData.accuracy || 0,
         streakDays: dashboardData.streakCount || 0,
-        rank: 1,
-        totalUsers: 1,
-        nextMilestone: dashboardData.accuracy < 60 ? 60 : dashboardData.accuracy < 80 ? 80 : 90,
-        completedTopics: dashboardData.totalAttempts || 0,
-        totalTopics: Math.max(dashboardData.totalAttempts + 5, 10),
-        aiGenerated: hasAiData && aiAnalysis.aiGenerated
+        nextMilestone: 80,
     } : MOCK_AI_INSIGHTS;
 
-    // Animated number counter effect
     useEffect(() => {
-        const targetScore = insights.overallScore;
-        const duration = 1500; // 1.5 seconds
-        const steps = 60;
-        let step = 0;
-
-        // Reset to 0 first
-        setDisplayScore(0);
-
-        const timer = setInterval(() => {
-            step++;
-            // Easing function for smooth deceleration
-            const progress = step / steps;
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setDisplayScore(Math.round(targetScore * eased));
-
-            if (step >= steps) {
-                setDisplayScore(targetScore);
-                clearInterval(timer);
-            }
-        }, duration / steps);
-
-        return () => clearInterval(timer);
+        setDisplayScore(insights.overallScore);
     }, [insights.overallScore]);
 
     const handleRefreshAnalysis = async () => {
         setAnalyzing(true);
-        setDisplayScore(0);
-
-        // Re-fetch both dashboard and AI analysis data
-        await Promise.all([fetchDashboardData(), fetchAIAnalysis()]);
-
-        setTimeout(() => {
-            setAnalyzing(false);
-            // Re-trigger count animation manually
-            const targetScore = insights.overallScore;
-            const duration = 1500;
-            const steps = 60;
-            let step = 0;
-
-            const timer = setInterval(() => {
-                step++;
-                const progress = step / steps;
-                const eased = 1 - Math.pow(1 - progress, 3);
-                setDisplayScore(Math.round(targetScore * eased));
-
-                if (step >= steps) {
-                    setDisplayScore(targetScore);
-                    clearInterval(timer);
-                }
-            }, duration / steps);
-        }, 1500);
+        setTimeout(() => setAnalyzing(false), 2000);
     };
 
-
     return (
-        <div className="ai-analysis-page">
-            {/* Hero Header */}
+        <div className="w-full max-w-7xl mx-auto space-y-6">
+            {/* Header */}
             <motion.div
-                className="ai-hero"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm flex justify-between items-center"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             >
-                <div className="ai-hero-content">
-                    <div className="ai-hero-icon">
-                        <Brain size={28} />
-                        <Sparkles className="sparkle-icon" size={14} />
-                    </div>
-                    <div className="ai-hero-text">
-                        <h1>AI Performance Analysis</h1>
-                        <p>Personalized insights to optimize your preparation</p>
-                    </div>
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AI Performance Analysis</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Personalized insights</p>
                 </div>
-                <motion.button
-                    className="btn-analyze-premium"
+                <button
                     onClick={handleRefreshAnalysis}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition"
                     disabled={analyzing}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                 >
-                    <RefreshCw size={16} className={analyzing ? 'spinning' : ''} />
                     {analyzing ? 'Analyzing...' : 'Refresh Analysis'}
-                </motion.button>
+                </button>
             </motion.div>
 
-            {/* Main Content Grid */}
-            <motion.div
-                className="ai-content-grid"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-            >
-                {/* Score Overview Section - Clean Premium Design */}
-                <motion.div className="ai-score-section" variants={cardVariants}>
-                    <div className="score-ring-container">
-                        <svg viewBox="0 0 120 120" className="score-ring">
-                            <defs>
-                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stopColor="#ffffff" />
-                                    <stop offset="100%" stopColor="rgba(255,255,255,0.7)" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="60" cy="60" r="52" className="score-ring-bg" />
-                            <motion.circle
+            {/* Grid */}
+            <motion.div className="grid grid-cols-1 lg:grid-cols-12 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+
+                {/* Score Card - CLEAN DESIGN */}
+                <motion.div className="col-span-1 lg:col-span-4 bg-white dark:bg-gray-800 border border-purple-100 dark:border-purple-900/40 rounded-3xl p-8 flex flex-col items-center shadow-lg" variants={cardVariants}>
+                    <div className="relative w-48 h-48 mb-6">
+                        <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+                            {/* Background Circle */}
+                            <circle cx="60" cy="60" r="52" stroke="currentColor" strokeWidth="8" fill="none" className="text-gray-100 dark:text-gray-700" />
+                            {/* Progress Circle */}
+                            <circle
                                 cx="60" cy="60" r="52"
-                                className="score-ring-progress"
+                                stroke="currentColor" strokeWidth="8" fill="none"
+                                className="text-purple-600 dark:text-purple-500"
                                 strokeDasharray="327"
-                                initial={{ strokeDashoffset: 327 }}
-                                animate={{ strokeDashoffset: 327 - (327 * insights.overallScore) / 100 }}
-                                transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1] }}
+                                strokeDashoffset={327 - (327 * insights.overallScore) / 100}
+                                strokeLinecap="round"
                             />
                         </svg>
-                        <div className="score-ring-center">
-                            <motion.span
-                                className="score-value"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.5 }}
-                                style={displayScore === 0 ? { fontSize: '2rem' } : {}}
-                            >
-                                {displayScore === 0 ? "Start" : displayScore}
-                            </motion.span>
-                            <span className="score-label">AI Score</span>
-                            <motion.div
-                                className="score-change positive"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 1.5, type: "spring", stiffness: 300, damping: 20 }}
-                            >
-                                <TrendingUp size={11} />
-                                <span>+{insights.scoreChange}%</span>
-                            </motion.div>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-4xl font-bold text-gray-900 dark:text-white">{displayScore}</span>
+                            <span className="text-xs uppercase font-bold text-purple-600 dark:text-purple-400 mt-1">AI Score</span>
                         </div>
                     </div>
-                    <div className="score-details">
-                        <motion.p
-                            className="score-summary"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6, duration: 0.4 }}
-                        >
-                            {displayScore === 0
-                                ? "Start your first quiz to unlock personalized AI insights and performance tracking."
-                                : insights.summary}
-                        </motion.p>
-                        <motion.div
-                            className="score-milestone"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8 }}
-                        >
-                            <span>Next Milestone: {insights.nextMilestone}</span>
-                            <div className="milestone-bar">
-                                <motion.div
-                                    className="milestone-fill"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${(insights.overallScore / insights.nextMilestone) * 100}%` }}
-                                    transition={{ duration: 1.2, delay: 1, ease: [0.4, 0, 0.2, 1] }}
-                                />
-                            </div>
-                        </motion.div>
-                    </div>
+                    <p className="text-center text-gray-600 dark:text-gray-300 text-sm mb-6 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
+                        {insights.summary}
+                    </p>
                 </motion.div>
 
-                {/* Quick Stats Row */}
-                <motion.div className="ai-quick-stats" variants={cardVariants}>
-                    <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
-                        <div className="quick-stat-icon purple"><BookOpen size={20} /></div>
-                        <div className="quick-stat-info">
-                            <span className="stat-value">{insights.studyHours}h</span>
-                            <span className="stat-label">Daily Study (AI)</span>
-                        </div>
-                    </motion.div>
-                    <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
-                        <div className="quick-stat-icon blue"><Target size={20} /></div>
-                        <div className="quick-stat-info">
-                            <span className="stat-value">{insights.questionsAttempted}</span>
-                            <span className="stat-label">Questions</span>
-                        </div>
-                    </motion.div>
-                    <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
-                        <div className="quick-stat-icon green"><Zap size={20} /></div>
-                        <div className="quick-stat-info">
-                            <span className="stat-value">{insights.accuracy}%</span>
-                            <span className="stat-label">Accuracy</span>
-                        </div>
-                    </motion.div>
-                    <motion.div className="quick-stat" whileHover={{ y: -4, boxShadow: "0 8px 25px rgba(0,0,0,0.1)" }}>
-                        <div className="quick-stat-icon orange"><Star size={20} /></div>
-                        <div className="quick-stat-info">
-                            <span className="stat-value">{insights.streakDays} Days</span>
-                            <span className="stat-label">Streak</span>
-                        </div>
-                    </motion.div>
-                </motion.div>
-
-
-                {/* Strengths Section */}
-                <motion.div className="ai-card strengths-card" variants={cardVariants}>
-                    <div className="card-header">
-                        <TrendingUp className="header-icon success" size={20} />
-                        <h3>Your Strengths</h3>
-                        <span className="count-badge success">{insights.strengths.length}</span>
-                    </div>
-                    <motion.div className="skill-list" variants={containerVariants}>
-                        {insights.strengths.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                className="skill-item success"
-                                variants={listItemVariants}
-                                whileHover={{ x: 4, backgroundColor: "var(--color-success-light)" }}
-                            >
-                                <div className="skill-info">
-                                    <CheckCircle size={16} className="skill-icon" />
-                                    <span className="skill-name">{item.topic}</span>
+                {/* Right Column */}
+                <div className="col-span-1 lg:col-span-8 space-y-6">
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                            { label: 'Study Hours', value: insights.studyHours, icon: BookOpen, color: 'text-purple-600 bg-purple-100' },
+                            { label: 'Questions', value: insights.questionsAttempted, icon: Target, color: 'text-blue-600 bg-blue-100' },
+                            { label: 'Accuracy', value: `${insights.accuracy}%`, icon: Zap, color: 'text-green-600 bg-green-100' },
+                            { label: 'Streak', value: `${insights.streakDays}`, icon: Star, color: 'text-orange-600 bg-orange-100' },
+                        ].map((stat, i) => (
+                            <div key={i} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center gap-3">
+                                <div className={`p-2 rounded-lg ${stat.color} bg-opacity-20`}>
+                                    <stat.icon size={20} />
                                 </div>
-                                <div className="skill-score-wrapper">
-                                    <div className="skill-progress">
-                                        <motion.div
-                                            className="skill-progress-fill success"
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${item.score}%` }}
-                                            transition={{ duration: 0.8, delay: i * 0.1 }}
-                                        />
-                                    </div>
-                                    <span className="skill-percent">{item.score}%</span>
+                                <div>
+                                    <div className="text-lg font-bold text-gray-900 dark:text-white">{stat.value}</div>
+                                    <div className="text-xs text-gray-500">{stat.label}</div>
                                 </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </motion.div>
-
-                {/* Weaknesses Section */}
-                <motion.div className="ai-card weaknesses-card" variants={cardVariants}>
-                    <div className="card-header">
-                        <AlertTriangle className="header-icon danger" size={20} />
-                        <h3>Areas to Improve</h3>
-                        <span className="count-badge danger">{insights.weaknesses.length}</span>
-                    </div>
-                    <motion.div className="skill-list" variants={containerVariants}>
-                        {insights.weaknesses.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                className="skill-item danger"
-                                variants={listItemVariants}
-                                whileHover={{ x: 4, backgroundColor: "var(--color-warning-light)" }}
-                            >
-                                <div className="skill-info">
-                                    <AlertTriangle size={16} className="skill-icon" />
-                                    <span className="skill-name">{item.topic}</span>
-                                </div>
-                                <div className="skill-score-wrapper">
-                                    <div className="skill-progress">
-                                        <motion.div
-                                            className="skill-progress-fill danger"
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${item.score}%` }}
-                                            transition={{ duration: 0.8, delay: i * 0.1 }}
-                                        />
-                                    </div>
-                                    <span className="skill-percent">{item.score}%</span>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </motion.div>
-
-                {/* Progress Card - NEW */}
-                <motion.div className="ai-card progress-card" variants={cardVariants}>
-                    <div className="card-header">
-                        <BarChart2 className="header-icon primary" size={20} />
-                        <h3>Weekly Progress</h3>
-                    </div>
-                    <div className="progress-chart">
-                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                            <div key={i} className="chart-bar-wrapper">
-                                <motion.div
-                                    className="chart-bar"
-                                    initial={{ height: 0 }}
-                                    animate={{ height: `${insights.weeklyProgress[i]}%` }}
-                                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                                />
-                                <span className="chart-label">{day}</span>
                             </div>
                         ))}
                     </div>
-                    <div className="progress-footer">
-                        <div className="streak-info">
-                            <Star size={16} className="streak-icon" />
-                            <span>{insights.streakDays} Day Streak!</span>
-                        </div>
-                        <div className="topics-info">
-                            <span>{insights.completedTopics}/{insights.totalTopics} Topics</span>
-                        </div>
-                    </div>
-                </motion.div>
 
-                {/* AI Recommendations */}
-                <motion.div className="ai-card recommendations-card" variants={cardVariants}>
-                    <div className="card-header">
-                        <Lightbulb className="header-icon warning" size={20} />
-                        <h3>AI Recommendations</h3>
-                        <span className="badge">Personalized</span>
-                    </div>
-                    <div className="recommendation-list">
-                        {insights.suggestions.map((suggestion, i) => (
-                            <motion.div
-                                key={i}
-                                className="recommendation-item"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.12 }}
-                                whileHover={{ scale: 1.01, x: 5 }}
-                            >
-                                <div className="recommendation-icon">{suggestion.icon}</div>
-                                <div className="recommendation-content">
-                                    <div className="recommendation-header">
-                                        <h4>{suggestion.topic}</h4>
-                                        <span className={`priority-badge ${suggestion.priority.toLowerCase()}`}>
-                                            {suggestion.priority}
-                                        </span>
+                    {/* Recommendations */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <Lightbulb className="text-amber-500" size={20} /> Recommendations
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {insights.suggestions.map((s, i) => (
+                                <div key={i} className="p-4 border border-gray-100 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700/30">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="text-2xl">{s.icon}</div>
+                                        <span className="text-[10px] uppercase font-bold px-2 py-1 bg-white dark:bg-gray-600 rounded-md shadow-sm">{s.priority}</span>
                                     </div>
-                                    <p>{suggestion.reason}</p>
+                                    <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-1">{s.topic}</h4>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{s.reason}</p>
                                 </div>
-                                <motion.button
-                                    className="btn-start"
-                                    whileHover={{ scale: 1.05, backgroundColor: "var(--color-primary)" }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    Start <ChevronRight size={14} />
-                                </motion.button>
-                            </motion.div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </motion.div>
+                </div>
+
             </motion.div>
         </div>
     );
