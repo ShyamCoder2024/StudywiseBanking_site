@@ -133,12 +133,14 @@ const generateAISuggestions = (accuracy, weakAreas) => {
 export function AIAnalysis() {
     const [analyzing, setAnalyzing] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
+    const [aiAnalysis, setAiAnalysis] = useState(null);
     const [loading, setLoading] = useState(true);
     const [displayScore, setDisplayScore] = useState(0);
 
     // Fetch real data from backend
     useEffect(() => {
         fetchDashboardData();
+        fetchAIAnalysis();
     }, []);
 
     const fetchDashboardData = async () => {
@@ -152,33 +154,55 @@ export function AIAnalysis() {
         }
     };
 
+    const fetchAIAnalysis = async () => {
+        try {
+            const res = await api.get('/student/ai-analysis');
+            if (res.data.success) {
+                setAiAnalysis(res.data.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch AI analysis:', error);
+        }
+    };
+
     // Determine if we have real data
     const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
+    const hasAiData = aiAnalysis && aiAnalysis.summary;
 
-    // Build insights object from real data or mock
+    // Build insights object from AI analysis, real data, or mock
     const insights = hasRealData ? {
         overallScore: dashboardData.accuracy || 0,
         scoreChange: dashboardData.accuracy > 50 ? Math.round((dashboardData.accuracy - 50) / 5) : 0,
-        summary: dashboardData.studyRecommendation ||
+        // Use AI-generated summary if available
+        summary: hasAiData ? aiAnalysis.summary : (dashboardData.studyRecommendation ||
             `You have completed ${dashboardData.totalAttempts} quizzes with ${dashboardData.accuracy}% accuracy. ${dashboardData.accuracy >= 80 ? 'Excellent performance! Keep it up!' :
                 dashboardData.accuracy >= 60 ? 'Good progress! Focus on your weak areas to improve further.' :
                     'Keep practicing to improve your scores. Focus on fundamentals.'
-            }`,
-        strengths: (dashboardData.strengths || []).map((s, i) => ({
-            topic: s,
-            score: 80 + Math.floor(Math.random() * 15),
-            detail: "Strong area"
-        })).concat(dashboardData.strengths?.length === 0 ? [
-            { topic: "Consistency", score: 85, detail: "Regular practice" }
-        ] : []),
-        weaknesses: (dashboardData.weakAreas || []).map((w, i) => ({
-            topic: w,
-            score: 40 + Math.floor(Math.random() * 20),
-            detail: "Needs practice"
-        })).concat(dashboardData.weakAreas?.length === 0 ? [
-            { topic: "Take More Quizzes", score: 50, detail: "To identify weak areas" }
-        ] : []),
-        suggestions: generateAISuggestions(dashboardData.accuracy, dashboardData.weakAreas),
+            }`),
+        // Use AI-generated strengths if available
+        strengths: hasAiData && aiAnalysis.strengths?.length > 0
+            ? aiAnalysis.strengths
+            : (dashboardData.strengths || []).map((s, i) => ({
+                topic: s,
+                score: 80 + Math.floor(Math.random() * 15),
+                detail: "Strong area"
+            })).concat(dashboardData.strengths?.length === 0 ? [
+                { topic: "Consistency", score: 85, detail: "Regular practice" }
+            ] : []),
+        // Use AI-generated weaknesses if available
+        weaknesses: hasAiData && aiAnalysis.weaknesses?.length > 0
+            ? aiAnalysis.weaknesses
+            : (dashboardData.weakAreas || []).map((w, i) => ({
+                topic: w,
+                score: 40 + Math.floor(Math.random() * 20),
+                detail: "Needs practice"
+            })).concat(dashboardData.weakAreas?.length === 0 ? [
+                { topic: "Take More Quizzes", score: 50, detail: "To identify weak areas" }
+            ] : []),
+        // Use AI-generated suggestions if available
+        suggestions: hasAiData && aiAnalysis.suggestions?.length > 0
+            ? aiAnalysis.suggestions
+            : generateAISuggestions(dashboardData.accuracy, dashboardData.weakAreas),
         weeklyProgress: dashboardData.performanceGraph?.length > 0
             ? dashboardData.performanceGraph.map(p => p.score)
             : [65, 68, 72, 70, 75, 78, dashboardData.accuracy || 78],
@@ -186,11 +210,12 @@ export function AIAnalysis() {
         questionsAttempted: dashboardData.totalQuestions || 0,
         accuracy: dashboardData.accuracy || 0,
         streakDays: dashboardData.streakCount || 0,
-        rank: 1, // Would need leaderboard data
+        rank: 1,
         totalUsers: 1,
         nextMilestone: dashboardData.accuracy < 60 ? 60 : dashboardData.accuracy < 80 ? 80 : 90,
         completedTopics: dashboardData.totalAttempts || 0,
-        totalTopics: Math.max(dashboardData.totalAttempts + 5, 10)
+        totalTopics: Math.max(dashboardData.totalAttempts + 5, 10),
+        aiGenerated: hasAiData && aiAnalysis.aiGenerated
     } : MOCK_AI_INSIGHTS;
 
     // Animated number counter effect
@@ -223,8 +248,8 @@ export function AIAnalysis() {
         setAnalyzing(true);
         setDisplayScore(0);
 
-        // Re-fetch data
-        await fetchDashboardData();
+        // Re-fetch both dashboard and AI analysis data
+        await Promise.all([fetchDashboardData(), fetchAIAnalysis()]);
 
         setTimeout(() => {
             setAnalyzing(false);

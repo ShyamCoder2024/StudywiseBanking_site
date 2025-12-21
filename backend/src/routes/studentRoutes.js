@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
 import GlobalTask from '../models/GlobalTask.js';
+import { generateStudentAnalysis } from '../services/aiAnalysisService.js';
 
 const router = express.Router();
 
@@ -126,6 +127,32 @@ router.get('/dashboard', async (req, res, next) => {
     }
 });
 
+// @route   GET /api/student/ai-analysis
+// @desc    Get AI-powered personalized performance analysis (Gemini)
+// @access  Private
+router.get('/ai-analysis', async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        // Generate AI analysis using Gemini
+        const analysis = await generateStudentAnalysis(userId);
+
+        if (!analysis) {
+            return res.status(500).json({
+                success: false,
+                error: { message: 'Failed to generate AI analysis' }
+            });
+        }
+
+        res.json({
+            success: true,
+            data: analysis
+        });
+    } catch (error) {
+        console.error('AI Analysis error:', error);
+        next(error);
+    }
+});
 
 // @route   GET /api/subjects
 // @desc    Get all subjects (for students)

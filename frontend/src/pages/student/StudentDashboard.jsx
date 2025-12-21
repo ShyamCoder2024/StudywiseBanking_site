@@ -178,50 +178,93 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 2. AI Analysis / Thermostat (Medium Tile) */}
-                    <motion.div className="bento-tile ai-tile clickable" variants={tile} onClick={() => navigate('/analysis')}>
-                        <div className="tile-header">
-                            <h3><Zap size={20} className="text-purple" /> AI Insights</h3>
-                            <ArrowRight size={16} className="arrow-hint" />
-                        </div>
-                        <div className="ai-thermostat-layout">
-                            <div className="ai-thermostat">
-                                <svg viewBox="0 0 100 100">
-                                    <defs>
-                                        <linearGradient id="gradientPurple" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stopColor="#8b5cf6" />
-                                            <stop offset="100%" stopColor="#d946ef" />
-                                        </linearGradient>
-                                    </defs>
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-border)" strokeWidth="8" />
-                                    <motion.circle
-                                        cx="50" cy="50" r="45" fill="none" stroke="url(#gradientPurple)"
-                                        strokeWidth="8" strokeDasharray="283" strokeDashoffset="283"
-                                        strokeLinecap="round"
-                                        animate={{ strokeDashoffset: 283 - (283 * stats.accuracy) / 100 }}
-                                        transition={{ duration: 1.5, delay: 0.5 }}
+                    {/* 2. AI Analysis - Premium Gradient Card */}
+                    <motion.div
+                        className="bento-tile ai-tile-premium clickable"
+                        variants={tile}
+                        onClick={() => navigate('/analysis')}
+                        whileHover={{ scale: 1.02, y: -4 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div className="ai-gradient-bg">
+                            <div className="ai-particles">
+                                {[...Array(5)].map((_, i) => (
+                                    <motion.div
+                                        key={i}
+                                        className="particle"
+                                        animate={{
+                                            y: [0, -20, 0],
+                                            opacity: [0.3, 0.7, 0.3]
+                                        }}
+                                        transition={{
+                                            duration: 3 + i,
+                                            repeat: Infinity,
+                                            delay: i * 0.5
+                                        }}
+                                        style={{
+                                            left: `${20 + i * 15}%`,
+                                            top: `${30 + i * 10}%`
+                                        }}
                                     />
-                                </svg>
-                                <div className="thermostat-value">
-                                    <span className="t-num">{stats.accuracy}%</span>
-                                    <span className="t-label">Accuracy</span>
-                                </div>
+                                ))}
                             </div>
                         </div>
-                        <div className="ai-insight-footer">
-                            <div className="insight-tag-group">
-                                <div className="insight-tag success">
-                                    <span className="tag-dot"></span>
-                                    <span className="tag-label">Strength:</span>
-                                    <span className="tag-value">Reasoning</span>
+                        <div className="ai-tile-content">
+                            <div className="ai-tile-header">
+                                <div className="ai-badge">
+                                    <Zap size={14} />
+                                    <span>AI Insights</span>
                                 </div>
-                                <div className="insight-tag danger">
-                                    <span className="tag-dot"></span>
-                                    <span className="tag-label">Focus:</span>
-                                    <span className="tag-value">Puzzles</span>
+                                <ArrowRight size={16} className="arrow-icon" />
+                            </div>
+
+                            <div className="ai-score-display">
+                                <motion.div
+                                    className="score-circle"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", delay: 0.3 }}
+                                >
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="42" className="score-bg" />
+                                        <motion.circle
+                                            cx="50" cy="50" r="42"
+                                            className="score-progress"
+                                            strokeDasharray={264}
+                                            initial={{ strokeDashoffset: 264 }}
+                                            animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
+                                            transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                                        />
+                                    </svg>
+                                    <div className="score-value">
+                                        <motion.span
+                                            className="score-num"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.8 }}
+                                        >
+                                            {stats.accuracy}%
+                                        </motion.span>
+                                        <span className="score-label">Accuracy</span>
+                                    </div>
+                                </motion.div>
+                            </div>
+
+                            <div className="ai-quick-info">
+                                <div className="info-item success">
+                                    <span className="info-dot"></span>
+                                    <span className="info-text">Strong: Reasoning</span>
+                                </div>
+                                <div className="info-item warning">
+                                    <span className="info-dot"></span>
+                                    <span className="info-text">Focus: Math</span>
                                 </div>
                             </div>
-                            <div className="click-hint">Tap for full AI report →</div>
+
+                            <div className="ai-cta">
+                                <span>View Full Report</span>
+                                <ArrowRight size={14} />
+                            </div>
                         </div>
                     </motion.div>
 
