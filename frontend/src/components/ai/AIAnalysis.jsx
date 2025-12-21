@@ -338,8 +338,9 @@ export function AIAnalysis() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}
+                                style={displayScore === 0 ? { fontSize: '2rem' } : {}}
                             >
-                                {displayScore}
+                                {displayScore === 0 ? "Start" : displayScore}
                             </motion.span>
                             <span className="score-label">AI Score</span>
                             <motion.div
