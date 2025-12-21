@@ -36,6 +36,7 @@ import TaskManagementPage from './pages/admin/TaskManagementPage';
 import AllTasksPage from './pages/admin/AllTasksPage';
 import AllInactiveStudentsPage from './pages/admin/AllInactiveStudentsPage';
 import QuizAnalytics from './pages/admin/QuizAnalytics';
+import VideoManagement from './pages/admin/VideoManagement';
 
 // SIMPLIFIED Protected Route - Direct localStorage check
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -138,6 +139,7 @@ function AppContent() {
           <Route path="/admin/tasks" element={<ProtectedRoute adminOnly><PageTransition><TaskManagementPage /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/tasks/all" element={<ProtectedRoute adminOnly><PageTransition><AllTasksPage /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/inactive-students" element={<ProtectedRoute adminOnly><PageTransition><AllInactiveStudentsPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/videos" element={<ProtectedRoute adminOnly><PageTransition><VideoManagement /></PageTransition></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/login" replace />} />

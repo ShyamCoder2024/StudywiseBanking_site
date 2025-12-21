@@ -391,5 +391,90 @@ router.get('/leaderboard', async (req, res, next) => {
     }
 });
 
+// ============ Personalized Video Recommendations ============
+
+import Video from '../models/Video.js';
+
+// @route   GET /api/student/videos
+// @desc    Get personalized video recommendations based on weak areas
+// @access  Private
+router.get('/videos', async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        // Get user's weak areas from their attempts
+        const allAttempts = await Attempt.find({ user: userId })
+            .populate('quiz', 'title subject')
+            .sort({ createdAt: -1 });
+
+        // Determine weak subjects based on low-scoring attempts
+        const subjectScores = {};
+        allAttempts.forEach(attempt => {
+            const subject = attempt.quiz?.subject;
+            if (subject) {
+                if (!subjectScores[subject]) {
+                    subjectScores[subject] = { total: 0, count: 0 };
+                }
+                subjectScores[subject].total += attempt.score;
+                subjectScores[subject].count += 1;
+            }
+        });
+
+        // Find weak subjects (average score < 70%)
+        const weakSubjects = [];
+        Object.keys(subjectScores).forEach(subject => {
+            const avg = subjectScores[subject].total / subjectScores[subject].count;
+            if (avg < 70) {
+                weakSubjects.push(subject.toUpperCase());
+            }
+        });
+
+        // Fetch all active videos
+        const allVideos = await Video.find({ isActive: true });
+
+        // Separate into recommended and other videos
+        const recommendedVideos = [];
+        const otherVideos = [];
+
+        allVideos.forEach(video => {
+            const videoData = {
+                ...video.toObject(),
+                thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
+                watchUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+                isRecommended: false
+            };
+
+            // Check if video subject matches any weak area
+            if (weakSubjects.includes(video.subject.toUpperCase())) {
+                videoData.isRecommended = true;
+                videoData.recommendedReason = `Recommended for your ${video.subject} improvement`;
+                recommendedVideos.push(videoData);
+            } else {
+                otherVideos.push(videoData);
+            }
+        });
+
+        // Sort recommended by date, others by date
+        recommendedVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        otherVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        // Combine: recommended first, then others
+        const sortedVideos = [...recommendedVideos, ...otherVideos];
+
+        res.json({
+            success: true,
+            data: {
+                videos: sortedVideos,
+                totalVideos: sortedVideos.length,
+                recommendedCount: recommendedVideos.length,
+                weakSubjects
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default router;
+
 

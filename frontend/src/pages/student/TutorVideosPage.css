@@ -46,6 +46,7 @@
     color: #0f172a;
     background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -191,8 +192,10 @@
 :root.dark .page-header h1 {
     background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 
 /* Video card border */
 :root.dark .video-card-premium {
@@ -213,4 +216,125 @@
 /* Meta row border */
 :root.dark .meta-row {
     border-top-color: var(--color-border);
+}
+
+/* ============================================
+   RECOMMENDED VIDEO STYLING
+   ============================================ */
+
+.video-card-premium.recommended {
+    border: 2px solid #f59e0b;
+    box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.2);
+}
+
+.video-card-premium.recommended:hover {
+    box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: #1e1b4b;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* Subject-specific tag colors */
+.tag.math {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.tag.reasoning {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.tag.gk {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.tag.english {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.tag.quant {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.tag.banking {
+    background: #cffafe;
+    color: #0891b2;
+}
+
+.tag.computer {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.tag.general {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+:root.dark .tag.math {
+    background: rgba(37, 99, 235, 0.2);
+    color: #93c5fd;
+}
+
+:root.dark .tag.reasoning {
+    background: rgba(22, 163, 74, 0.2);
+    color: #86efac;
+}
+
+:root.dark .tag.gk {
+    background: rgba(217, 119, 6, 0.2);
+    color: #fcd34d;
+}
+
+:root.dark .tag.english {
+    background: rgba(219, 39, 119, 0.2);
+    color: #f9a8d4;
+}
+
+:root.dark .tag.quant {
+    background: rgba(67, 56, 202, 0.2);
+    color: #a5b4fc;
+}
+
+:root.dark .tag.banking {
+    background: rgba(8, 145, 178, 0.2);
+    color: #67e8f9;
+}
+
+:root.dark .tag.computer {
+    background: rgba(147, 51, 234, 0.2);
+    color: #d8b4fe;
+}
+
+:root.dark .tag.general {
+    background: rgba(100, 116, 139, 0.2);
+    color: #94a3b8;
+}
+
+/* Dark mode for recommended */
+:root.dark .video-card-premium.recommended {
+    border-color: #f59e0b;
+    box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3);
+}
+
+:root.dark .video-card-premium.recommended:hover {
+    box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4);
 }
