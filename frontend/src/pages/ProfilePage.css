@@ -1,17 +1,17 @@
-/* ProfilePage.css - DRD Compliant Design */
+/* ProfilePage.css - DRD Compliant Design - Full Width Layout */
 
 .profile-page {
     min-height: 100vh;
     background: var(--color-bg);
-    padding: 24px 16px 100px;
+    padding: 24px 40px 100px;
 }
 
 .profile-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Profile Header Card */
+/* Profile Header Card - Full Width */
 .profile-header-card {
     background: var(--color-card);
     border-radius: 24px;
@@ -21,7 +21,7 @@
 }
 
 .profile-cover {
-    height: 100px;
+    height: 120px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     position: relative;
 }
@@ -34,15 +34,18 @@
 }
 
 .profile-header-content {
-    padding: 0 24px 24px;
-    margin-top: -50px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    padding: 0 32px 28px;
+    margin-top: -60px;
     position: relative;
+    flex-wrap: wrap;
 }
 
 .avatar-section {
     position: relative;
-    width: fit-content;
-    margin-bottom: 16px;
+    flex-shrink: 0;
 }
 
 .avatar-edit-btn {
@@ -64,10 +67,13 @@
 
 .avatar-edit-btn:hover {
     background: var(--primary-dark);
+    transform: scale(1.1);
 }
 
 .user-info {
-    margin-bottom: 16px;
+    flex: 1;
+    min-width: 200px;
+    padding-top: 60px;
 }
 
 .name-row {
@@ -75,10 +81,11 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    margin-bottom: 8px;
 }
 
 .name-row h1 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0;
@@ -86,9 +93,9 @@
 
 .age-badge {
     background: var(--color-bg);
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
@@ -96,8 +103,12 @@
 
 .user-details {
     color: var(--color-text-secondary);
-    font-size: 0.9rem;
-    margin: 8px 0 12px;
+    font-size: 0.95rem;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
 }
 
 .target-exam-pill {
@@ -105,9 +116,9 @@
     align-items: center;
     gap: 8px;
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--primary);
     border: 1px solid rgba(139, 92, 246, 0.2);
 }
@@ -117,8 +128,7 @@
 }
 
 .edit-profile-btn {
-    width: 100%;
-    padding: 12px 24px;
+    padding: 12px 28px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: 12px;
@@ -126,13 +136,17 @@
     color: var(--color-text);
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
+    margin-left: auto;
+    align-self: center;
 }
 
 .edit-profile-btn:hover {
     background: var(--color-border);
+    transform: translateY(-2px);
 }
 
-/* Profile Grid */
+/* Profile Grid - Side by Side */
 .profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -146,60 +160,72 @@
     border-radius: 20px;
     padding: 24px;
     border: 1px solid var(--color-border);
+    height: fit-content;
 }
 
 .section-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0 0 20px;
 }
 
+/* Stats Grid - Horizontal Row */
 .stats-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
 .stat-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
-    padding: 16px;
+    text-align: center;
+    padding: 20px 16px;
     background: var(--color-bg);
-    border-radius: 14px;
+    border-radius: 16px;
     border: 1px solid var(--color-border);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
 }
 
 .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    margin-bottom: 14px;
 }
 
 .stat-icon.purple {
     background: linear-gradient(135deg, #8b5cf6, #a78bfa);
     color: white;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
 }
 
 .stat-icon.blue {
     background: linear-gradient(135deg, #3b82f6, #60a5fa);
     color: white;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
 .stat-icon.orange {
     background: linear-gradient(135deg, #f97316, #fb923c);
     color: white;
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
 }
 
 .stat-content h4 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: var(--color-text);
     margin: 0;
@@ -209,7 +235,8 @@
 .stat-content p {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
-    margin: 4px 0 0;
+    margin: 6px 0 0;
+    white-space: nowrap;
 }
 
 /* Settings Section */
@@ -223,19 +250,20 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .setting-item:hover {
     background: var(--color-bg);
+    transform: translateX(4px);
 }
 
 .setting-icon {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -276,11 +304,16 @@
 .setting-content p {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
-    margin: 2px 0 0;
+    margin: 3px 0 0;
 }
 
 .setting-arrow {
     color: var(--color-text-muted);
+    transition: transform 0.2s;
+}
+
+.setting-item:hover .setting-arrow {
+    transform: translateX(4px);
 }
 
 /* Modal Overlay */
@@ -301,7 +334,7 @@
     background: var(--color-card);
     border-radius: 24px;
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
@@ -449,24 +482,86 @@
     justify-content: center;
 }
 
-/* Responsive - Tablet */
+/* ============================================
+   RESPONSIVE - TABLET (768px - 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+    .profile-page {
+        padding: 20px 24px 100px;
+    }
+
+    .profile-header-content {
+        padding: 0 24px 24px;
+    }
+
+    .stats-grid {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px 12px;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .stat-content h4 {
+        font-size: 1.3rem;
+    }
+}
+
+/* ============================================
+   RESPONSIVE - SMALL TABLET / LARGE MOBILE
+   ============================================ */
 @media (max-width: 768px) {
+    .profile-page {
+        padding: 16px 16px 100px;
+    }
+
+    .profile-cover {
+        height: 100px;
+    }
+
+    .profile-header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0 20px 24px;
+        margin-top: -50px;
+        gap: 16px;
+    }
+
+    .user-info {
+        padding-top: 0;
+        text-align: center;
+    }
+
+    .name-row {
+        justify-content: center;
+    }
+
+    .user-details {
+        justify-content: center;
+    }
+
+    .target-exam-pill {
+        margin: 0 auto;
+    }
+
+    .edit-profile-btn {
+        width: 100%;
+        margin-left: 0;
+    }
+
     .profile-grid {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 
-    .profile-header-content {
-        padding: 0 16px 20px;
-    }
-
-    .name-row h1 {
-        font-size: 1.3rem;
-    }
-
-    .stats-section,
-    .settings-section {
-        padding: 20px;
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .exam-grid {
@@ -478,10 +573,12 @@
     }
 }
 
-/* Responsive - Mobile */
+/* ============================================
+   RESPONSIVE - MOBILE (< 480px)
+   ============================================ */
 @media (max-width: 480px) {
     .profile-page {
-        padding: 16px 12px 100px;
+        padding: 12px 12px 100px;
     }
 
     .profile-cover {
@@ -490,34 +587,66 @@
 
     .profile-header-content {
         margin-top: -40px;
-        padding: 0 12px 16px;
+        padding: 0 16px 20px;
     }
 
     .name-row h1 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .age-badge {
-        padding: 3px 10px;
+        padding: 4px 10px;
         font-size: 0.75rem;
+    }
+
+    .user-details {
+        font-size: 0.85rem;
     }
 
     .target-exam-pill {
         font-size: 0.8rem;
-        padding: 6px 12px;
+        padding: 6px 14px;
+    }
+
+    .stats-section,
+    .settings-section {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
     }
 
     .stat-card {
-        padding: 14px;
+        padding: 14px 8px;
+        border-radius: 12px;
     }
 
     .stat-icon {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    .stat-icon svg {
+        width: 18px;
+        height: 18px;
     }
 
     .stat-content h4 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .stat-content p {
+        font-size: 0.7rem;
     }
 
     .setting-item {
@@ -525,8 +654,16 @@
     }
 
     .setting-icon {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .setting-content h4 {
+        font-size: 0.9rem;
+    }
+
+    .setting-content p {
+        font-size: 0.75rem;
     }
 
     .input-row {
@@ -538,7 +675,7 @@
     }
 
     .avatar-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 8px;
     }
 
