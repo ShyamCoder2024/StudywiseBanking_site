@@ -96,6 +96,24 @@ const quizSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    // NEW: Expiry system - quizzes expire after 7 days
+    publishedAt: {
+        type: Date,
+        default: null,
+    },
+    expiresAt: {
+        type: Date,
+        default: null, // Set to 7 days from publishedAt when published
+    },
+    isExpired: {
+        type: Boolean,
+        default: false,
+    },
+    // NEW: Track which students have viewed/seen the quiz notification
+    viewedBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
     timePerQuestion: {
         type: Number,
         default: 60, // in seconds

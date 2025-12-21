@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
     Activity, TrendingUp, Award, Target, BookOpen, Clock,
     CheckCircle2, ArrowRight, Zap, BarChart2, Calendar,
-    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X, Sparkles
+    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X, Sparkles, Bell
 } from 'lucide-react';
 import { AIAnalysis } from '../../components/ai/AIAnalysis';
 import { Leaderboard } from '../../components/leaderboard/Leaderboard';
@@ -46,11 +46,13 @@ export function StudentDashboard() {
     // Dashboard data state (real + mock fallback)
     const [dashboardData, setDashboardData] = useState(null);
     const [todos, setTodos] = useState([]);
+    const [newQuizzes, setNewQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchDashboardData();
         fetchTodos();
+        fetchNewQuizzes();
     }, []);
 
     // Fetch real dashboard data from backend
@@ -75,6 +77,19 @@ export function StudentDashboard() {
         }
     };
 
+    // Fetch new quizzes that user hasn't seen yet
+    const fetchNewQuizzes = async () => {
+        try {
+            const res = await api.get('/student/quizzes/all');
+            const activeQuizzes = res.data.data?.active || [];
+            // Filter quizzes that are not expired
+            const pendingQuizzes = activeQuizzes.filter(q => !q.isExpired);
+            setNewQuizzes(pendingQuizzes);
+        } catch (error) {
+            console.error('Failed to fetch quizzes:', error);
+        }
+    };
+
     // Computed values: Use real data if available, otherwise mock
     const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
 
@@ -88,6 +103,24 @@ export function StudentDashboard() {
         ? dashboardData.performanceGraph.map(p => p.score)
         : MOCK_DASHBOARD_DATA.performance;
 
+    // Get user's target exam (from their profile)
+    const targetExam = user?.targetExam || 'SBI PO Prelims';
+
+    // Calculate days until a mock exam date (for countdown display)
+    const getExamCountdown = () => {
+        // If there are pending quizzes, show countdown until first one expires
+        if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
+            const expiresAt = new Date(newQuizzes[0].expiresAt);
+            const now = new Date();
+            const diff = expiresAt - now;
+            const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+            const hours = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+            return { days, hours, hasQuiz: true };
+        }
+        return { days: 14, hours: 0, hasQuiz: false };
+    };
+
+    const examCountdown = getExamCountdown();
 
 
     const toggleTodo = async (id) => {
@@ -150,21 +183,32 @@ export function StudentDashboard() {
                     {/* 1. Hero / Exam Countdown (Large Tile) */}
                     <motion.div className="bento-tile hero-tile clickable" variants={tile} onClick={() => navigate('/tests')}>
                         <div className="hero-bg-overlay"></div>
+
+                        {/* New Quiz Notification Badge */}
+                        {newQuizzes.length > 0 && (
+                            <div className="quiz-notification-badge">
+                                <span className="notification-dot"></span>
+                                <span className="notification-count">{newQuizzes.length} New</span>
+                            </div>
+                        )}
+
                         <div className="hero-content-bento">
                             <div className="exam-countdown">
-                                <span className="label">Upcoming Exam | {MOCK_DASHBOARD_DATA.upcomingExam.date}</span>
-                                <h2>{MOCK_DASHBOARD_DATA.upcomingExam.name}</h2>
+                                <span className="label">
+                                    {newQuizzes.length > 0 ? 'New Test Available!' : 'Upcoming Exam'} | {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                <h2>{targetExam}</h2>
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">
-                                            <span className="num">{MOCK_DASHBOARD_DATA.upcomingExam.daysLeft}</span>
+                                            <span className="num">{examCountdown.days}</span>
                                         </div>
-                                        <span className="unit">Days</span>
+                                        <span className="unit">{newQuizzes.length > 0 ? 'Days Left' : 'Days'}</span>
                                     </div>
                                     <div className="time-sep">:</div>
                                     <div className="time-unit">
                                         <div className="time-box">
-                                            <span className="num">--</span>
+                                            <span className="num">{examCountdown.hours || '--'}</span>
                                         </div>
                                         <span className="unit">Hrs</span>
                                     </div>
@@ -172,7 +216,7 @@ export function StudentDashboard() {
                             </div>
                             <div className="hero-action">
                                 <div className="btn-action-glow">
-                                    Start Test <Play size={16} fill="white" />
+                                    {newQuizzes.length > 0 ? 'Take Test' : 'Start Test'} <Play size={16} fill="white" />
                                 </div>
                             </div>
                         </div>

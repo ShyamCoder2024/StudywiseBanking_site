@@ -7,6 +7,7 @@ import studentRoutes from './routes/studentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
+import { initQuizCleanupJob } from './services/quizCleanupService.js';
 
 dotenv.config();
 
@@ -52,6 +53,8 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
+        // Initialize quiz cleanup cron job
+        initQuizCleanupJob();
     });
 });
 

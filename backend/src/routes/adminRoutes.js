@@ -214,7 +214,6 @@ router.post('/quizzes/:id/publish', async (req, res, next) => {
         console.log('=== PUBLISH QUIZ REQUEST ===');
         console.log('Quiz ID:', req.params.id);
         console.log('User:', req.user?.email, 'Role:', req.user?.role);
-        console.log('Headers auth:', req.headers.authorization ? 'Present' : 'Missing');
 
         // First verify quiz exists
         const existingQuiz = await Quiz.findById(req.params.id);
@@ -233,14 +232,24 @@ router.post('/quizzes/:id/publish', async (req, res, next) => {
             });
         }
 
-        // Now update to published
+        // Set publish date and expiry (7 days from now)
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+        // Now update to published with expiry
         const quiz = await Quiz.findByIdAndUpdate(
             req.params.id,
-            { isPublished: true },
+            {
+                isPublished: true,
+                publishedAt: now,
+                expiresAt: expiresAt,
+                isExpired: false,
+                viewedBy: [] // Reset viewed list on publish
+            },
             { new: true }
         );
 
-        console.log('Quiz updated, isPublished:', quiz.isPublished);
+        console.log('Quiz updated, isPublished:', quiz.isPublished, 'expiresAt:', quiz.expiresAt);
 
         // Notify all students (non-blocking - don't let notification failure block publish)
         try {
