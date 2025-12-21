@@ -178,78 +178,91 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 2. AI Insights Card - Premium & Clean */}
+                    {/* 2. AI Coach Card - THE VOID / ULTRA PREMIUM DESIGN */}
                     <motion.div
-                        className="bento-tile ai-premium-card clickable"
+                        className="bento-tile ai-coach-card clickable"
                         variants={tile}
                         onClick={() => navigate('/analysis')}
                         whileHover="hover"
                         initial="rest"
                     >
-                        <div className="ai-card-content">
-                            <div className="ai-card-header">
-                                <div className="ai-title-group">
-                                    <div className="ai-icon-box">
-                                        <Zap size={16} />
-                                    </div>
-                                    <span className="ai-card-title">AI Coach</span>
+                        {/* Animated Deep Background */}
+                        <div className="ai-coach-bg">
+                            <div className="ai-orb-1"></div>
+                            <div className="ai-orb-2"></div>
+                            <div className="ai-grid-overlay"></div>
+                        </div>
+
+                        <div className="ai-coach-content">
+                            <div className="ai-coach-header">
+                                <div className="coach-badge">
+                                    <Sparkles size={14} className="sparkle-icon" />
+                                    <span>AI COACH</span>
                                 </div>
                                 <motion.div
-                                    className="ai-arrow-btn"
+                                    className="coach-arrow"
                                     variants={{
-                                        rest: { x: 0, opacity: 0.7 },
+                                        rest: { x: 0, opacity: 0.6 },
                                         hover: { x: 4, opacity: 1 }
                                     }}
                                 >
-                                    <ArrowRight size={18} />
+                                    <ArrowRight size={16} />
                                 </motion.div>
                             </div>
 
-                            <div className="ai-card-body">
-                                <div className="ai-circle-container">
-                                    <svg viewBox="0 0 100 100" className="premium-ring">
-                                        <circle cx="50" cy="50" r="42" className="ring-bg-track" />
+                            <div className="ai-coach-main">
+                                <div className="coach-ring-container">
+                                    <svg viewBox="0 0 100 100" className="coach-ring">
+                                        {/* Glow Filter */}
+                                        <defs>
+                                            <filter id="glow">
+                                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                                                <feMerge>
+                                                    <feMergeNode in="coloredBlur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
+                                            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stopColor="#a78bfa" />
+                                                <stop offset="100%" stopColor="#c084fc" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <circle cx="50" cy="50" r="42" className="coach-track" />
                                         <motion.circle
                                             cx="50" cy="50" r="42"
-                                            className="ring-progress-fill"
+                                            className="coach-progress"
+                                            stroke="url(#ringGradient)"
                                             strokeDasharray={264}
                                             initial={{ strokeDashoffset: 264 }}
                                             animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
                                             transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                                            filter="url(#glow)"
                                         />
                                     </svg>
-                                    <div className="ai-circle-text">
-                                        <span className="score-number">{stats.accuracy}%</span>
-                                        <span className="score-subtitle">Accuracy</span>
+                                    <div className="coach-score">
+                                        <span className="coach-num">{stats.accuracy}%</span>
+                                        <span className="coach-lbl">Accuracy</span>
                                     </div>
                                 </div>
 
-                                <div className="ai-insights-column">
-                                    <div className="insight-pill strength">
-                                        <span className="pill-icon">✓</span>
-                                        <div className="pill-info">
-                                            <span className="pill-label">Mastered</span>
-                                            <span className="pill-value">Reasoning</span>
+                                <div className="coach-insights">
+                                    <div className="coach-item">
+                                        <span className="coach-dot strong"></span>
+                                        <div className="coach-text">
+                                            <span className="coach-t-label">Strong</span>
+                                            <span className="coach-t-val">Reasoning</span>
                                         </div>
                                     </div>
-                                    <div className="insight-pill focus">
-                                        <span className="pill-icon">!</span>
-                                        <div className="pill-info">
-                                            <span className="pill-label">Focus On</span>
-                                            <span className="pill-value">Math</span>
+                                    <div className="coach-item">
+                                        <span className="coach-dot focus"></span>
+                                        <div className="coach-text">
+                                            <span className="coach-t-label">Focus</span>
+                                            <span className="coach-t-val">Math</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <motion.div
-                                className="ai-card-glow"
-                                variants={{
-                                    rest: { opacity: 0 },
-                                    hover: { opacity: 1 }
-                                }}
-                                transition={{ duration: 0.3 }}
-                            />
                         </div>
                     </motion.div>
 
