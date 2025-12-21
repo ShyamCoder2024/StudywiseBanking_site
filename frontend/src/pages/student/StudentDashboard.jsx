@@ -178,59 +178,101 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 2. AI Insights Card - Unique Gradient Border Design */}
+                    {/* 2. AI Insights Card - Premium Design with Animations */}
                     <motion.div
-                        className="bento-tile ai-insights-card clickable"
+                        className="bento-tile dashboard-ai-card clickable"
                         variants={tile}
                         onClick={() => navigate('/analysis')}
-                        whileHover={{ y: -4, scale: 1.01 }}
+                        whileHover={{ y: -6 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        <div className="ai-card-inner">
-                            <div className="ai-header-row">
-                                <div className="ai-icon-badge">
-                                    <Zap size={16} />
-                                </div>
-                                <span className="ai-title">AI Insights</span>
-                                <ArrowRight size={16} className="ai-arrow" />
+                        {/* Animated gradient background */}
+                        <div className="dashboard-ai-bg">
+                            <motion.div
+                                className="ai-bg-glow"
+                                animate={{
+                                    scale: [1, 1.2, 1],
+                                    opacity: [0.5, 0.8, 0.5]
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            />
+                        </div>
+
+                        {/* Content */}
+                        <div className="dashboard-ai-content">
+                            <div className="dashboard-ai-header">
+                                <motion.div
+                                    className="ai-spark-icon"
+                                    animate={{ rotate: [0, 10, -10, 0] }}
+                                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 2 }}
+                                >
+                                    <Zap size={18} />
+                                </motion.div>
+                                <span>AI Insights</span>
+                                <motion.span whileHover={{ x: 4 }}>
+                                    <ArrowRight size={16} className="header-arrow" />
+                                </motion.span>
                             </div>
 
-                            <div className="ai-score-section">
-                                <div className="ai-score-ring">
-                                    <svg viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="38" className="ring-track" />
-                                        <motion.circle
-                                            cx="50" cy="50" r="38"
-                                            className="ring-fill"
-                                            strokeDasharray={239}
-                                            initial={{ strokeDashoffset: 239 }}
-                                            animate={{ strokeDashoffset: 239 - (239 * stats.accuracy) / 100 }}
-                                            transition={{ duration: 1.5, delay: 0.3 }}
-                                        />
-                                    </svg>
-                                    <div className="ring-center">
-                                        <span className="ring-value">{stats.accuracy}%</span>
-                                        <span className="ring-label">Score</span>
-                                    </div>
+                            <div className="dashboard-ai-body">
+                                <div className="ai-accuracy-display">
+                                    <motion.div
+                                        className="accuracy-circle"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ type: "spring", delay: 0.3 }}
+                                    >
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="42" className="circle-track" />
+                                            <motion.circle
+                                                cx="50" cy="50" r="42"
+                                                className="circle-progress"
+                                                strokeDasharray={264}
+                                                initial={{ strokeDashoffset: 264 }}
+                                                animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
+                                                transition={{ duration: 1.5, delay: 0.5 }}
+                                            />
+                                        </svg>
+                                        <div className="accuracy-text">
+                                            <span className="accuracy-number">{stats.accuracy}%</span>
+                                            <span className="accuracy-label">Accuracy</span>
+                                        </div>
+                                    </motion.div>
                                 </div>
 
-                                <div className="ai-stats-list">
-                                    <div className="ai-stat-item">
-                                        <span className="dot green"></span>
-                                        <span className="label">Strong:</span>
-                                        <span className="value green">Reasoning</span>
-                                    </div>
-                                    <div className="ai-stat-item">
-                                        <span className="dot orange"></span>
-                                        <span className="label">Focus:</span>
-                                        <span className="value orange">Math</span>
-                                    </div>
+                                <div className="ai-insights-list">
+                                    <motion.div
+                                        className="insight-row strength"
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.6 }}
+                                    >
+                                        <span className="insight-icon">✓</span>
+                                        <span className="insight-text">Strong: <strong>Reasoning</strong></span>
+                                    </motion.div>
+                                    <motion.div
+                                        className="insight-row focus"
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.7 }}
+                                    >
+                                        <span className="insight-icon">!</span>
+                                        <span className="insight-text">Focus: <strong>Math</strong></span>
+                                    </motion.div>
                                 </div>
                             </div>
 
-                            <div className="ai-cta-btn">
-                                View Analysis <ArrowRight size={12} />
-                            </div>
+                            <motion.div
+                                className="dashboard-ai-cta"
+                                whileHover={{ scale: 1.02 }}
+                            >
+                                <span>View Full Analysis</span>
+                                <ArrowRight size={14} />
+                            </motion.div>
                         </div>
                     </motion.div>
 
