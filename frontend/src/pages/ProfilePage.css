@@ -1,4 +1,4 @@
-/* ProfilePage.css - DRD Compliant Design - Full Width Layout */
+/* ProfilePage.css - DRD Compliant Design - Balanced Layout */
 
 .profile-page {
     min-height: 100vh;
@@ -7,11 +7,13 @@
 }
 
 .profile-container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
-/* Profile Header Card - Full Width */
+/* ============================================
+   PROFILE HEADER CARD - Full Width
+   ============================================ */
 .profile-header-card {
     background: var(--color-card);
     border-radius: 24px;
@@ -21,7 +23,7 @@
 }
 
 .profile-cover {
-    height: 120px;
+    height: 140px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     position: relative;
 }
@@ -34,13 +36,13 @@
 }
 
 .profile-header-content {
-    display: flex;
-    align-items: flex-end;
-    gap: 24px;
-    padding: 0 32px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 28px;
+    padding: 0 36px 32px;
     margin-top: -60px;
     position: relative;
-    flex-wrap: wrap;
 }
 
 .avatar-section {
@@ -52,8 +54,8 @@
     position: absolute;
     bottom: 8px;
     right: 8px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     background: var(--primary);
     border: 3px solid var(--color-card);
     border-radius: 50%;
@@ -71,21 +73,19 @@
 }
 
 .user-info {
-    flex: 1;
-    min-width: 200px;
     padding-top: 60px;
 }
 
 .name-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .name-row h1 {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0;
@@ -93,9 +93,9 @@
 
 .age-badge {
     background: var(--color-bg);
-    padding: 5px 14px;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
@@ -104,11 +104,10 @@
 .user-details {
     color: var(--color-text-secondary);
     font-size: 0.95rem;
-    margin: 0 0 12px;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 4px;
-    flex-wrap: wrap;
 }
 
 .target-exam-pill {
@@ -116,11 +115,12 @@
     align-items: center;
     gap: 8px;
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-    padding: 8px 18px;
-    border-radius: 20px;
+    padding: 12px 20px;
+    border-radius: 14px;
     font-size: 0.9rem;
     color: var(--primary);
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    white-space: nowrap;
 }
 
 .target-exam-pill strong {
@@ -128,17 +128,16 @@
 }
 
 .edit-profile-btn {
-    padding: 12px 28px;
+    padding: 14px 32px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 600;
+    font-size: 0.95rem;
     color: var(--color-text);
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
-    margin-left: auto;
-    align-self: center;
 }
 
 .edit-profile-btn:hover {
@@ -146,48 +145,56 @@
     transform: translateY(-2px);
 }
 
-/* Profile Grid - Side by Side */
+/* ============================================
+   PROFILE GRID - Equal Height Cards
+   ============================================ */
 .profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
+    align-items: stretch;
 }
 
-/* Stats Section */
 .stats-section,
 .settings-section {
     background: var(--color-card);
     border-radius: 20px;
-    padding: 24px;
+    padding: 28px;
     border: 1px solid var(--color-border);
-    height: fit-content;
+    display: flex;
+    flex-direction: column;
 }
 
 .section-title {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 20px;
+    margin: 0 0 24px;
 }
 
-/* Stats Grid - Horizontal Row */
+/* ============================================
+   STATS GRID - Equal Size Cards
+   ============================================ */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
+    flex: 1;
 }
 
 .stat-card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 20px 16px;
+    padding: 24px 16px;
     background: var(--color-bg);
     border-radius: 16px;
     border: 1px solid var(--color-border);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 160px;
 }
 
 .stat-card:hover {
@@ -197,13 +204,13 @@
 }
 
 .stat-icon {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .stat-icon.purple {
@@ -225,35 +232,37 @@
 }
 
 .stat-content h4 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: var(--color-text);
     margin: 0;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .stat-content p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--color-text-secondary);
-    margin: 6px 0 0;
-    white-space: nowrap;
+    margin: 8px 0 0;
 }
 
-/* Settings Section */
+/* ============================================
+   SETTINGS LIST - Fill Available Space
+   ============================================ */
 .settings-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    flex: 1;
 }
 
 .setting-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: 16px;
+    padding: 18px;
     border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s;
+    flex: 1;
 }
 
 .setting-item:hover {
@@ -262,9 +271,9 @@
 }
 
 .setting-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -291,7 +300,7 @@
 }
 
 .setting-content h4 {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--color-text);
     margin: 0;
@@ -302,9 +311,9 @@
 }
 
 .setting-content p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--color-text-secondary);
-    margin: 3px 0 0;
+    margin: 4px 0 0;
 }
 
 .setting-arrow {
@@ -316,7 +325,9 @@
     transform: translateX(4px);
 }
 
-/* Modal Overlay */
+/* ============================================
+   MODALS
+   ============================================ */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -448,10 +459,6 @@
     color: var(--primary);
 }
 
-.exam-option.selected svg {
-    color: var(--primary);
-}
-
 .modal-footer {
     padding: 16px 24px;
     border-top: 1px solid var(--color-border);
@@ -491,15 +498,26 @@
     }
 
     .profile-header-content {
-        padding: 0 24px 24px;
+        gap: 20px;
+        padding: 0 24px 28px;
     }
 
-    .stats-grid {
-        gap: 12px;
+    .name-row h1 {
+        font-size: 1.5rem;
+    }
+
+    .target-exam-pill {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+
+    .edit-profile-btn {
+        padding: 12px 24px;
     }
 
     .stat-card {
-        padding: 16px 12px;
+        padding: 20px 12px;
+        min-height: 140px;
     }
 
     .stat-icon {
@@ -508,7 +526,7 @@
     }
 
     .stat-content h4 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 }
 
@@ -525,6 +543,7 @@
     }
 
     .profile-header-content {
+        display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
@@ -552,7 +571,6 @@
 
     .edit-profile-btn {
         width: 100%;
-        margin-left: 0;
     }
 
     .profile-grid {
@@ -562,6 +580,14 @@
 
     .stats-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-card {
+        min-height: 130px;
+    }
+
+    .setting-item {
+        flex: unset;
     }
 
     .exam-grid {
@@ -595,8 +621,8 @@
     }
 
     .age-badge {
-        padding: 4px 10px;
-        font-size: 0.75rem;
+        padding: 4px 12px;
+        font-size: 0.8rem;
     }
 
     .user-details {
@@ -605,12 +631,12 @@
 
     .target-exam-pill {
         font-size: 0.8rem;
-        padding: 6px 14px;
+        padding: 8px 14px;
     }
 
     .stats-section,
     .settings-section {
-        padding: 16px;
+        padding: 20px;
         border-radius: 16px;
     }
 
@@ -620,50 +646,50 @@
     }
 
     .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        gap: 10px;
     }
 
     .stat-card {
-        padding: 14px 8px;
-        border-radius: 12px;
+        padding: 16px 10px;
+        min-height: 120px;
+        border-radius: 14px;
     }
 
     .stat-icon {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
 
     .stat-icon svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
     }
 
     .stat-content h4 {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     .stat-content p {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
     }
 
     .setting-item {
-        padding: 12px;
+        padding: 14px;
     }
 
     .setting-icon {
-        width: 38px;
-        height: 38px;
+        width: 42px;
+        height: 42px;
     }
 
     .setting-content h4 {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
     }
 
     .setting-content p {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
     }
 
     .input-row {
@@ -686,7 +712,7 @@
     }
 }
 
-/* Dark Mode Adjustments */
+/* Dark Mode */
 :root.dark .profile-cover {
     background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
 }
