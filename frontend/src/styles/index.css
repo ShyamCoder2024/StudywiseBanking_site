@@ -95,31 +95,29 @@
   --surface-alt: #2A2A2A;
 }
 
-/* Global Smooth Theme Transition */
+/* Global Smooth Theme Transition - Optimized for Performance */
 *,
 *::before,
 *::after {
-  transition: background-color 0.25s ease-out,
-    color 0.25s ease-out,
-    border-color 0.25s ease-out,
-    box-shadow 0.25s ease-out,
-    fill 0.25s ease-out,
-    stroke 0.25s ease-out;
+  transition: background-color 0.15s ease-out,
+    color 0.1s ease-out,
+    border-color 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    fill 0.1s ease-out,
+    stroke 0.1s ease-out;
 }
 
 /* Disable transition for elements that shouldn't animate */
 input,
 textarea,
-button,
-a,
 .no-transition {
-  transition: none;
+  transition: none !important;
 }
 
-/* Re-enable specific transitions for buttons/links */
+/* Optimized button/link transitions */
 button,
 a {
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.12s ease, opacity 0.12s ease, background-color 0.15s ease-out;
 }
 
 /* ============================================

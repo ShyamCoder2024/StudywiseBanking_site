@@ -294,3 +294,160 @@
     background: linear-gradient(135deg, rgba(138, 117, 186, 0.25), rgba(110, 188, 195, 0.2));
     border-color: #a78bfa;
 }
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .leaderboard-container {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .leaderboard-header {
+        margin-bottom: 24px;
+    }
+
+    .leaderboard-header h3 {
+        font-size: 1rem;
+    }
+
+    .top-three {
+        gap: 10px;
+        height: 160px;
+        margin-bottom: 28px;
+    }
+
+    .podium-item {
+        width: 70px;
+    }
+
+    .podium-name {
+        font-size: 0.7rem;
+        max-width: 70px;
+    }
+
+    .podium-score {
+        font-size: 0.75rem;
+    }
+
+    .podium-time {
+        font-size: 0.65rem;
+    }
+
+    .crown-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .leaderboard-list {
+        gap: 8px;
+    }
+
+    .list-header-row {
+        padding: 6px 10px;
+        font-size: 0.65rem;
+        gap: 10px;
+    }
+
+    .list-header-row .w-rank {
+        width: 24px;
+    }
+
+    .list-header-row .w-score {
+        width: 50px;
+    }
+
+    .list-header-row .w-time {
+        width: 40px;
+    }
+
+    .leaderboard-row {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .rank-number {
+        width: 24px;
+        font-size: 0.8rem;
+    }
+
+    .user-info {
+        gap: 8px;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .user-name {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    .user-score {
+        width: 50px;
+        font-size: 0.85rem;
+    }
+
+    .user-time {
+        width: 40px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboard-container {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .top-three {
+        gap: 6px;
+        height: 140px;
+        margin-bottom: 20px;
+    }
+
+    .podium-item {
+        width: 60px;
+    }
+
+    .podium-item.first {
+        transform: translateY(-12px);
+    }
+
+    .podium-name {
+        font-size: 0.65rem;
+        max-width: 60px;
+    }
+
+    .podium-score {
+        font-size: 0.7rem;
+    }
+
+    .rank-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
+
+    .leaderboard-row {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .user-name {
+        max-width: 80px;
+        font-size: 0.8rem;
+    }
+
+    .user-time span {
+        display: none;
+    }
+
+    .user-time svg {
+        display: none;
+    }
+}

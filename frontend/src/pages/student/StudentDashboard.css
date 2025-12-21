@@ -1501,3 +1501,228 @@ a:focus-visible {
 :root.dark .todo-tag-exam-update {
     background: rgba(239, 68, 68, 0.2);
 }
+
+/* ============================================
+   ENHANCED MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+/* Hero Tile (Purple Card) - Mobile Optimization */
+@media (max-width: 600px) {
+    .hero-tile {
+        min-height: 200px;
+        padding: 20px;
+    }
+
+    .hero-content-bento {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .exam-countdown {
+        width: 100%;
+    }
+
+    .exam-countdown .label {
+        font-size: 0.7rem;
+        padding: 3px 10px;
+    }
+
+    .exam-countdown h2 {
+        font-size: 1.5rem;
+        margin: 6px 0 16px 0;
+        word-break: break-word;
+    }
+
+    .countdown-timer {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .time-box {
+        padding: 6px 12px;
+        min-width: 50px;
+    }
+
+    .time-unit .num {
+        font-size: 1.2rem;
+    }
+
+    .time-unit .unit {
+        font-size: 0.6rem;
+        margin-top: 3px;
+    }
+
+    .btn-action-glow {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .quiz-notification-badge {
+        top: 12px;
+        right: 12px;
+        padding: 6px 10px;
+    }
+
+    .notification-count {
+        font-size: 0.7rem;
+    }
+
+    .notification-dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Leaderboard on Dashboard - Prevent Overflow */
+@media (max-width: 600px) {
+    .rank-tile {
+        padding: 16px !important;
+        overflow: hidden;
+    }
+
+    .rank-tile .leaderboard-container {
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .rank-tile .top-three {
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+
+    .rank-tile .leaderboard-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .rank-tile .user-name {
+        max-width: 70px;
+    }
+}
+
+/* AI Coach Card - Mobile */
+@media (max-width: 600px) {
+    .ai-coach-card {
+        min-height: 180px;
+    }
+
+    .ai-coach-content {
+        padding: 16px;
+    }
+
+    .coach-ring-container {
+        width: 70px;
+        height: 70px;
+    }
+
+    .coach-info h4 {
+        font-size: 0.85rem;
+    }
+
+    .coach-info p {
+        font-size: 0.75rem;
+    }
+
+    .coach-prompt {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
+}
+
+/* Graph Tile - Mobile */
+@media (max-width: 600px) {
+    .graph-tile {
+        min-height: 180px;
+    }
+
+    .graph-bars {
+        height: 100px;
+    }
+
+    .graph-bar {
+        width: 70%;
+    }
+
+    .bar-label {
+        font-size: 0.65rem;
+    }
+}
+
+/* Stats Tiles - Mobile */
+@media (max-width: 600px) {
+
+    .stats-tile-1,
+    .stats-tile-2 {
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .stats-row {
+        gap: 12px;
+    }
+
+    .stat-mini {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .stat-mini .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .stat-mini .stat-label {
+        font-size: 0.7rem;
+    }
+}
+
+/* Video Tile - Mobile */
+@media (max-width: 600px) {
+    .video-tile {
+        padding: 16px;
+    }
+
+    .video-tile iframe,
+    .video-tile .video-placeholder {
+        height: 120px;
+    }
+}
+
+/* Todo Tile - Mobile */
+@media (max-width: 600px) {
+    .todo-tile {
+        max-height: 350px;
+    }
+
+    .todo-list-bento {
+        max-height: 220px;
+    }
+
+    .todo-item-bento {
+        padding: 10px 0;
+    }
+
+    .todo-text {
+        font-size: 0.85rem;
+    }
+}
+
+/* Course Tile - Mobile */
+@media (max-width: 600px) {
+    .course-tile {
+        padding: 16px;
+    }
+}
+
+/* Bottom Nav Safe Area */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    .bento-dashboard {
+        padding-bottom: 100px;
+    }
+}
