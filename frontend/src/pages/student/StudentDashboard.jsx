@@ -178,101 +178,78 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 2. AI Insights Card - Premium Design with Animations */}
+                    {/* 2. AI Insights Card - Premium & Clean */}
                     <motion.div
-                        className="bento-tile dashboard-ai-card clickable"
+                        className="bento-tile ai-premium-card clickable"
                         variants={tile}
                         onClick={() => navigate('/analysis')}
-                        whileHover={{ y: -6 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover="hover"
+                        initial="rest"
                     >
-                        {/* Animated gradient background */}
-                        <div className="dashboard-ai-bg">
-                            <motion.div
-                                className="ai-bg-glow"
-                                animate={{
-                                    scale: [1, 1.2, 1],
-                                    opacity: [0.5, 0.8, 0.5]
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
-                            />
-                        </div>
-
-                        {/* Content */}
-                        <div className="dashboard-ai-content">
-                            <div className="dashboard-ai-header">
+                        <div className="ai-card-content">
+                            <div className="ai-card-header">
+                                <div className="ai-title-group">
+                                    <div className="ai-icon-box">
+                                        <Zap size={16} />
+                                    </div>
+                                    <span className="ai-card-title">AI Coach</span>
+                                </div>
                                 <motion.div
-                                    className="ai-spark-icon"
-                                    animate={{ rotate: [0, 10, -10, 0] }}
-                                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 2 }}
+                                    className="ai-arrow-btn"
+                                    variants={{
+                                        rest: { x: 0, opacity: 0.7 },
+                                        hover: { x: 4, opacity: 1 }
+                                    }}
                                 >
-                                    <Zap size={18} />
+                                    <ArrowRight size={18} />
                                 </motion.div>
-                                <span>AI Insights</span>
-                                <motion.span whileHover={{ x: 4 }}>
-                                    <ArrowRight size={16} className="header-arrow" />
-                                </motion.span>
                             </div>
 
-                            <div className="dashboard-ai-body">
-                                <div className="ai-accuracy-display">
-                                    <motion.div
-                                        className="accuracy-circle"
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ type: "spring", delay: 0.3 }}
-                                    >
-                                        <svg viewBox="0 0 100 100">
-                                            <circle cx="50" cy="50" r="42" className="circle-track" />
-                                            <motion.circle
-                                                cx="50" cy="50" r="42"
-                                                className="circle-progress"
-                                                strokeDasharray={264}
-                                                initial={{ strokeDashoffset: 264 }}
-                                                animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
-                                                transition={{ duration: 1.5, delay: 0.5 }}
-                                            />
-                                        </svg>
-                                        <div className="accuracy-text">
-                                            <span className="accuracy-number">{stats.accuracy}%</span>
-                                            <span className="accuracy-label">Accuracy</span>
-                                        </div>
-                                    </motion.div>
+                            <div className="ai-card-body">
+                                <div className="ai-circle-container">
+                                    <svg viewBox="0 0 100 100" className="premium-ring">
+                                        <circle cx="50" cy="50" r="42" className="ring-bg-track" />
+                                        <motion.circle
+                                            cx="50" cy="50" r="42"
+                                            className="ring-progress-fill"
+                                            strokeDasharray={264}
+                                            initial={{ strokeDashoffset: 264 }}
+                                            animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
+                                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                                        />
+                                    </svg>
+                                    <div className="ai-circle-text">
+                                        <span className="score-number">{stats.accuracy}%</span>
+                                        <span className="score-subtitle">Accuracy</span>
+                                    </div>
                                 </div>
 
-                                <div className="ai-insights-list">
-                                    <motion.div
-                                        className="insight-row strength"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.6 }}
-                                    >
-                                        <span className="insight-icon">✓</span>
-                                        <span className="insight-text">Strong: <strong>Reasoning</strong></span>
-                                    </motion.div>
-                                    <motion.div
-                                        className="insight-row focus"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.7 }}
-                                    >
-                                        <span className="insight-icon">!</span>
-                                        <span className="insight-text">Focus: <strong>Math</strong></span>
-                                    </motion.div>
+                                <div className="ai-insights-column">
+                                    <div className="insight-pill strength">
+                                        <span className="pill-icon">✓</span>
+                                        <div className="pill-info">
+                                            <span className="pill-label">Mastered</span>
+                                            <span className="pill-value">Reasoning</span>
+                                        </div>
+                                    </div>
+                                    <div className="insight-pill focus">
+                                        <span className="pill-icon">!</span>
+                                        <div className="pill-info">
+                                            <span className="pill-label">Focus On</span>
+                                            <span className="pill-value">Math</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <motion.div
-                                className="dashboard-ai-cta"
-                                whileHover={{ scale: 1.02 }}
-                            >
-                                <span>View Full Analysis</span>
-                                <ArrowRight size={14} />
-                            </motion.div>
+                                className="ai-card-glow"
+                                variants={{
+                                    rest: { opacity: 0 },
+                                    hover: { opacity: 1 }
+                                }}
+                                transition={{ duration: 0.3 }}
+                            />
                         </div>
                     </motion.div>
 

@@ -381,6 +381,27 @@
     color: #ea580c;
 }
 
+/* Dark mode icon fix */
+:root.dark .quick-stat-icon.purple {
+    background: rgba(147, 51, 234, 0.2);
+    color: #d8b4fe;
+}
+
+:root.dark .quick-stat-icon.blue {
+    background: rgba(37, 99, 235, 0.2);
+    color: #93c5fd;
+}
+
+:root.dark .quick-stat-icon.green {
+    background: rgba(22, 163, 74, 0.2);
+    color: #86efac;
+}
+
+:root.dark .quick-stat-icon.orange {
+    background: rgba(234, 88, 12, 0.2);
+    color: #fdba74;
+}
+
 .quick-stat-info {
     display: flex;
     flex-direction: column;

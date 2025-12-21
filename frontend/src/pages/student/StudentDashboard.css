@@ -389,123 +389,116 @@
     color: var(--text-secondary);
 }
 
+
+
 /* ============================================
-   DASHBOARD AI INSIGHTS CARD - PREMIUM DESIGN
+   AI INSIGHTS CARD - PREMIUM & CLEAN
    ============================================ */
 
-.dashboard-ai-card {
+.ai-premium-card {
     position: relative;
     background: var(--color-card) !important;
-    border: 2px solid transparent !important;
-    background-clip: padding-box !important;
     overflow: hidden;
-    transition: all 0.3s ease;
+    padding: 0 !important;
+    border: 1px solid var(--color-border);
 }
 
-.dashboard-ai-card::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
-    z-index: -1;
-    border-radius: inherit;
+.ai-premium-card:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.2);
 }
 
-.dashboard-ai-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.ai-bg-glow {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    top: -30px;
-    right: -30px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent 70%);
-    border-radius: 50%;
-}
-
-.dashboard-ai-content {
+.ai-card-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    height: 100%;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.dashboard-ai-header {
+.ai-card-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-text);
+    justify-content: space-between;
+    margin-bottom: 24px;
 }
 
-.ai-spark-icon {
+.ai-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+    color: #9333ea;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
+}
+
+.ai-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+}
+
+.ai-arrow-btn {
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    border-radius: 10px;
-    color: white;
-}
-
-.dashboard-ai-header .header-arrow {
-    margin-left: auto;
+    border-radius: 50%;
+    background: var(--color-background);
     color: var(--color-text-secondary);
-    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
-.dashboard-ai-card:hover .header-arrow {
-    color: var(--color-primary);
-    transform: translateX(3px);
-}
-
-.dashboard-ai-body {
+.ai-card-body {
     flex: 1;
     display: flex;
-    gap: 16px;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.ai-accuracy-display {
+/* LEFT: Circle */
+.ai-circle-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
 }
 
-.accuracy-circle {
-    position: relative;
-    width: 90px;
-    height: 90px;
-}
-
-.accuracy-circle svg {
+.premium-ring {
     width: 100%;
     height: 100%;
     transform: rotate(-90deg);
 }
 
-.accuracy-circle .circle-track {
+.ring-bg-track {
     fill: none;
     stroke: var(--color-border);
-    stroke-width: 8;
+    stroke-width: 6;
+    opacity: 0.5;
 }
 
-.accuracy-circle .circle-progress {
+.ring-progress-fill {
     fill: none;
-    stroke: #8b5cf6;
-    stroke-width: 8;
+    stroke: #9333ea;
+    stroke-width: 6;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.4));
+    filter: drop-shadow(0 0 4px rgba(147, 51, 234, 0.3));
 }
 
-.accuracy-text {
+.ai-circle-text {
     position: absolute;
     inset: 0;
     display: flex;
@@ -514,115 +507,149 @@
     justify-content: center;
 }
 
-.accuracy-number {
-    font-size: 1.5rem;
+.score-number {
+    font-size: 1.6rem;
     font-weight: 800;
     color: var(--color-text);
     line-height: 1;
+    letter-spacing: -0.02em;
 }
 
-.accuracy-label {
-    font-size: 0.65rem;
+.score-subtitle {
+    font-size: 0.7rem;
     color: var(--color-text-secondary);
+    font-weight: 600;
     text-transform: uppercase;
     margin-top: 2px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
 }
 
-.ai-insights-list {
+/* RIGHT: Insight Pills */
+.ai-insights-column {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    min-width: 0;
+    /* Prevent overflow */
 }
 
-.insight-row {
+.insight-pill {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    gap: 12px;
+    background: var(--color-background);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
 }
 
-.insight-row.strength {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+.insight-pill:hover {
+    transform: translateX(2px);
 }
 
-.insight-row.focus {
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.insight-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.pill-icon {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    font-size: 0.7rem;
-    font-weight: 700;
-}
-
-.insight-row.strength .insight-icon {
-    background: #10b981;
-    color: white;
-}
-
-.insight-row.focus .insight-icon {
-    background: #f59e0b;
-    color: white;
-}
-
-.insight-text {
-    color: var(--color-text-secondary);
-}
-
-.insight-text strong {
-    color: var(--color-text);
-}
-
-.dashboard-ai-cta {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.insight-pill.strength {
+    background: linear-gradient(to right, rgba(240, 253, 244, 0.8), rgba(240, 253, 244, 0.4));
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.insight-pill.strength .pill-icon {
+    background: #22c55e;
     color: white;
-    font-size: 0.85rem;
+    box-shadow: 0 2px 5px rgba(34, 197, 94, 0.3);
+}
+
+.insight-pill.focus {
+    background: linear-gradient(to right, rgba(254, 252, 232, 0.8), rgba(254, 252, 232, 0.4));
+    border-color: rgba(234, 179, 8, 0.2);
+}
+
+.insight-pill.focus .pill-icon {
+    background: #eab308;
+    color: white;
+    box-shadow: 0 2px 5px rgba(234, 179, 8, 0.3);
+}
+
+.pill-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.pill-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
     font-weight: 600;
-    margin-top: auto;
-    cursor: pointer;
-    transition: all 0.3s;
+    letter-spacing: 0.05em;
 }
 
-.dashboard-ai-cta:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+.pill-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Dark mode */
-:root.dark .dashboard-ai-card {
+.ai-card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(147, 51, 234, 0.08), transparent 60%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* DARK MODE */
+:root.dark .ai-premium-card {
     background: var(--color-card) !important;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-:root.dark .insight-row.strength {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.3);
+:root.dark .ai-icon-box {
+    background: rgba(147, 51, 234, 0.2);
+    color: #d8b4fe;
 }
 
-:root.dark .insight-row.focus {
-    background: rgba(245, 158, 11, 0.15);
-    border-color: rgba(245, 158, 11, 0.3);
+:root.dark .ai-arrow-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #a1a1aa;
 }
 
-:root.dark .ai-bg-glow {
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.4), transparent 70%);
+:root.dark .insight-pill.strength {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.2);
 }
+
+:root.dark .insight-pill.focus {
+    background: rgba(234, 179, 8, 0.1);
+    border-color: rgba(234, 179, 8, 0.2);
+}
+
+:root.dark .ai-card-glow {
+    background: radial-gradient(circle at top right, rgba(147, 51, 234, 0.15), transparent 60%);
+}
+
+/* ============================================
+   END AI INSIGHTS CARD
+   ============================================ */
+
+
+
 
 /* ============================================
    END DASHBOARD AI INSIGHTS CARD
