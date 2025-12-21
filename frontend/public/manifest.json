@@ -1,0 +1,31 @@
+{
+    "name": "StudyWise Banking",
+    "short_name": "StudyWise",
+    "description": "Ace your banking exams with AI-powered learning",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f0f11",
+    "theme_color": "#8A75BA",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/logo_new.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/logo_new.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "lang": "en",
+    "scope": "/",
+    "prefer_related_applications": false
+}
