@@ -1,334 +1,308 @@
-/* ProfilePage.css - DRD Compliant Design - Balanced Layout */
+/* ProfilePage.css - Clean, Aligned Layout */
 
 .profile-page {
     min-height: 100vh;
     background: var(--color-bg);
-    padding: 24px 40px 100px;
+    padding: 24px;
+    padding-bottom: 100px;
 }
 
-.profile-container {
-    max-width: 1100px;
+.profile-wrapper {
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 /* ============================================
-   PROFILE HEADER CARD - Full Width
+   PROFILE CARD - Header Section
    ============================================ */
-.profile-header-card {
+.profile-card {
     background: var(--color-card);
-    border-radius: 24px;
+    border-radius: 20px;
     overflow: hidden;
     border: 1px solid var(--color-border);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
-.profile-cover {
-    height: 140px;
+.profile-banner {
+    height: 120px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    position: relative;
 }
 
-.profile-cover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-}
-
-.profile-header-content {
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
+.profile-main {
+    display: flex;
     align-items: center;
-    gap: 28px;
-    padding: 0 36px 32px;
-    margin-top: -60px;
-    position: relative;
+    gap: 24px;
+    padding: 20px 28px 28px;
+    margin-top: -50px;
 }
 
-.avatar-section {
+.profile-avatar-wrap {
     position: relative;
     flex-shrink: 0;
 }
 
-.avatar-edit-btn {
+.edit-avatar-btn {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
-    width: 34px;
-    height: 34px;
+    bottom: 4px;
+    right: 4px;
+    width: 28px;
+    height: 28px;
     background: var(--primary);
-    border: 3px solid var(--color-card);
+    border: 2px solid var(--color-card);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: white;
-    transition: all 0.2s;
+    transition: transform 0.2s;
 }
 
-.avatar-edit-btn:hover {
-    background: var(--primary-dark);
+.edit-avatar-btn:hover {
     transform: scale(1.1);
 }
 
-.user-info {
-    padding-top: 60px;
+.profile-info {
+    flex: 1;
+    min-width: 0;
 }
 
-.name-row {
+.profile-name-line {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
-.name-row h1 {
-    font-size: 1.75rem;
+.profile-name-line h1 {
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0;
+    white-space: nowrap;
 }
 
-.age-badge {
+.badge-age {
     background: var(--color-bg);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
 }
 
-.user-details {
+.profile-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: var(--color-text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.target-exam-pill {
+.profile-exam-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-    padding: 12px 20px;
-    border-radius: 14px;
-    font-size: 0.9rem;
+    gap: 6px;
+    background: rgba(139, 92, 246, 0.08);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
     color: var(--primary);
-    border: 1px solid rgba(139, 92, 246, 0.25);
-    white-space: nowrap;
+    border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
-.target-exam-pill strong {
-    color: var(--primary);
-}
-
-.edit-profile-btn {
-    padding: 14px 32px;
+.btn-edit-profile {
+    padding: 12px 28px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: 14px;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--color-text);
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.edit-profile-btn:hover {
+.btn-edit-profile:hover {
     background: var(--color-border);
-    transform: translateY(-2px);
 }
 
 /* ============================================
-   PROFILE GRID - Equal Height Cards
+   TWO COLUMN LAYOUT
    ============================================ */
-.profile-grid {
+.profile-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: stretch;
+    gap: 20px;
 }
 
-.stats-section,
-.settings-section {
+.profile-section {
     background: var(--color-card);
-    border-radius: 20px;
-    padding: 28px;
+    border-radius: 16px;
+    padding: 24px;
     border: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
 }
 
-.section-title {
-    font-size: 1.1rem;
+.section-label {
+    font-size: 1rem;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 24px;
+    margin: 0 0 16px;
 }
 
 /* ============================================
-   STATS GRID - Equal Size Cards
+   STATS ROW - Compact Boxes
    ============================================ */
-.stats-grid {
+.stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    flex: 1;
+    gap: 12px;
 }
 
-.stat-card {
+.stat-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
-    padding: 24px 16px;
+    padding: 16px 12px;
     background: var(--color-bg);
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid var(--color-border);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 160px;
+    transition: all 0.2s;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+.stat-box:hover {
     border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.stat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+.stat-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
-.stat-icon.purple {
+.stat-icon-wrap.purple {
     background: linear-gradient(135deg, #8b5cf6, #a78bfa);
     color: white;
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
 }
 
-.stat-icon.blue {
+.stat-icon-wrap.blue {
     background: linear-gradient(135deg, #3b82f6, #60a5fa);
     color: white;
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
-.stat-icon.orange {
+.stat-icon-wrap.orange {
     background: linear-gradient(135deg, #f97316, #fb923c);
     color: white;
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
 }
 
-.stat-content h4 {
-    font-size: 1.6rem;
+.stat-num {
+    font-size: 1.4rem;
     font-weight: 800;
     color: var(--color-text);
-    margin: 0;
-    line-height: 1.2;
+    line-height: 1;
 }
 
-.stat-content p {
-    font-size: 0.85rem;
+.stat-text {
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
-    margin: 8px 0 0;
+    margin-top: 4px;
 }
 
 /* ============================================
-   SETTINGS LIST - Fill Available Space
+   SETTINGS MENU
    ============================================ */
-.settings-list {
+.settings-menu {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    gap: 4px;
 }
 
-.setting-item {
+.menu-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 18px;
-    border-radius: 14px;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    flex: 1;
 }
 
-.setting-item:hover {
+.menu-item:hover {
     background: var(--color-bg);
-    transform: translateX(4px);
 }
 
-.setting-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+.menu-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.setting-icon.purple {
+.menu-icon.purple {
     background: rgba(139, 92, 246, 0.1);
     color: #8b5cf6;
 }
 
-.setting-icon.blue {
+.menu-icon.blue {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
 }
 
-.setting-icon.red {
+.menu-icon.red {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
 }
 
-.setting-content {
+.menu-text {
     flex: 1;
 }
 
-.setting-content h4 {
-    font-size: 1rem;
+.menu-text h4 {
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-text);
     margin: 0;
 }
 
-.setting-item.logout .setting-content h4 {
+.menu-item.danger .menu-text h4 {
     color: #ef4444;
 }
 
-.setting-content p {
-    font-size: 0.85rem;
+.menu-text p {
+    font-size: 0.8rem;
     color: var(--color-text-secondary);
-    margin: 4px 0 0;
+    margin: 2px 0 0;
 }
 
-.setting-arrow {
+.menu-arrow {
     color: var(--color-text-muted);
-    transition: transform 0.2s;
-}
-
-.setting-item:hover .setting-arrow {
-    transform: translateX(4px);
 }
 
 /* ============================================
    MODALS
    ============================================ */
-.modal-overlay {
+.modal-bg {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -337,45 +311,44 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 20px;
+    padding: 16px;
 }
 
-.modal-card,
-.avatar-modal {
+.modal-box {
     background: var(--color-card);
-    border-radius: 24px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-.modal-header {
-    padding: 24px 24px 16px;
+.modal-top {
+    padding: 20px 24px 16px;
     border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-.modal-header h2 {
-    font-size: 1.25rem;
+.modal-top h2 {
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0;
 }
 
-.modal-header p {
+.modal-top p {
     font-size: 0.85rem;
     color: var(--color-text-secondary);
     margin: 4px 0 0;
 }
 
-.close-btn {
-    width: 36px;
-    height: 36px;
+.btn-close {
+    width: 32px;
+    height: 32px;
     border: none;
     background: var(--color-bg);
     border-radius: 50%;
@@ -384,30 +357,24 @@
     justify-content: center;
     cursor: pointer;
     color: var(--color-text-secondary);
-    transition: all 0.2s;
 }
 
-.close-btn:hover {
-    background: var(--color-border);
-    color: var(--color-text);
-}
-
-.modal-body {
-    padding: 24px;
+.modal-content {
+    padding: 20px 24px;
     overflow-y: auto;
 }
 
-.form-group {
+.form-section {
     margin-bottom: 20px;
 }
 
-.form-group:last-child {
+.form-section:last-child {
     margin-bottom: 0;
 }
 
-.form-group label {
+.form-section label {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     margin-bottom: 10px;
@@ -415,27 +382,23 @@
     letter-spacing: 0.5px;
 }
 
-.input-row {
+.form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-bottom: 12px;
 }
 
-.input-row:last-child {
-    margin-bottom: 0;
-}
-
-.exam-grid {
+.exam-options {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
-.exam-option {
-    padding: 10px 12px;
+.exam-chip {
+    padding: 10px;
     border: 1px solid var(--color-border);
-    border-radius: 10px;
+    border-radius: 8px;
     text-align: center;
     cursor: pointer;
     font-size: 0.8rem;
@@ -445,21 +408,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
 }
 
-.exam-option:hover {
+.exam-chip:hover {
+    border-color: var(--primary);
+}
+
+.exam-chip.active {
+    background: rgba(139, 92, 246, 0.1);
     border-color: var(--primary);
     color: var(--primary);
 }
 
-.exam-option.selected {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.modal-footer {
+.modal-bottom {
     padding: 16px 24px;
     border-top: 1px solid var(--color-border);
     display: flex;
@@ -467,260 +429,171 @@
     justify-content: flex-end;
 }
 
-.modal-footer .w-full {
+.modal-bottom .w-full {
     width: 100%;
 }
 
-/* Avatar Modal */
-.avatar-grid-container {
+/* Avatar Picker */
+.avatar-picker .avatar-list {
     padding: 16px 24px;
-    overflow-y: auto;
-    max-height: 400px;
-}
-
-.avatar-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
+    max-height: 350px;
+    overflow-y: auto;
 }
 
-.avatar-item {
+.avatar-opt {
     display: flex;
     justify-content: center;
+    cursor: pointer;
 }
 
 /* ============================================
-   RESPONSIVE - TABLET (768px - 1024px)
-   ============================================ */
-@media (max-width: 1024px) {
-    .profile-page {
-        padding: 20px 24px 100px;
-    }
-
-    .profile-header-content {
-        gap: 20px;
-        padding: 0 24px 28px;
-    }
-
-    .name-row h1 {
-        font-size: 1.5rem;
-    }
-
-    .target-exam-pill {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-    }
-
-    .edit-profile-btn {
-        padding: 12px 24px;
-    }
-
-    .stat-card {
-        padding: 20px 12px;
-        min-height: 140px;
-    }
-
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-    }
-
-    .stat-content h4 {
-        font-size: 1.4rem;
-    }
-}
-
-/* ============================================
-   RESPONSIVE - SMALL TABLET / LARGE MOBILE
+   RESPONSIVE - TABLET
    ============================================ */
 @media (max-width: 768px) {
     .profile-page {
-        padding: 16px 16px 100px;
+        padding: 16px;
+        padding-bottom: 100px;
     }
 
-    .profile-cover {
+    .profile-banner {
         height: 100px;
     }
 
-    .profile-header-content {
-        display: flex;
+    .profile-main {
         flex-direction: column;
-        align-items: center;
         text-align: center;
-        padding: 0 20px 24px;
-        margin-top: -50px;
+        margin-top: -45px;
         gap: 16px;
+        padding: 16px 20px 24px;
     }
 
-    .user-info {
-        padding-top: 0;
-        text-align: center;
-    }
-
-    .name-row {
+    .profile-name-line {
         justify-content: center;
     }
 
-    .user-details {
+    .profile-name-line h1 {
+        font-size: 1.3rem;
+    }
+
+    .profile-meta {
         justify-content: center;
     }
 
-    .target-exam-pill {
-        margin: 0 auto;
-    }
-
-    .edit-profile-btn {
+    .btn-edit-profile {
         width: 100%;
     }
 
-    .profile-grid {
+    .profile-columns {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .stats-row {
+        gap: 10px;
     }
 
-    .stat-card {
-        min-height: 130px;
-    }
-
-    .setting-item {
-        flex: unset;
-    }
-
-    .exam-grid {
+    .exam-options {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .avatar-grid {
+    .avatar-picker .avatar-list {
         grid-template-columns: repeat(4, 1fr);
     }
 }
 
 /* ============================================
-   RESPONSIVE - MOBILE (< 480px)
+   RESPONSIVE - MOBILE
    ============================================ */
 @media (max-width: 480px) {
     .profile-page {
-        padding: 12px 12px 100px;
+        padding: 12px;
+        padding-bottom: 100px;
     }
 
-    .profile-cover {
+    .profile-banner {
         height: 80px;
     }
 
-    .profile-header-content {
+    .profile-main {
         margin-top: -40px;
-        padding: 0 16px 20px;
+        padding: 12px 16px 20px;
     }
 
-    .name-row h1 {
-        font-size: 1.3rem;
-    }
-
-    .age-badge {
-        padding: 4px 12px;
-        font-size: 0.8rem;
-    }
-
-    .user-details {
-        font-size: 0.85rem;
-    }
-
-    .target-exam-pill {
-        font-size: 0.8rem;
-        padding: 8px 14px;
-    }
-
-    .stats-section,
-    .settings-section {
-        padding: 20px;
-        border-radius: 16px;
-    }
-
-    .section-title {
-        font-size: 1rem;
-        margin-bottom: 16px;
-    }
-
-    .stats-grid {
-        gap: 10px;
-    }
-
-    .stat-card {
-        padding: 16px 10px;
-        min-height: 120px;
-        border-radius: 14px;
-    }
-
-    .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-    }
-
-    .stat-icon svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .stat-content h4 {
+    .profile-name-line h1 {
         font-size: 1.2rem;
     }
 
-    .stat-content p {
+    .badge-age {
         font-size: 0.75rem;
+        padding: 3px 10px;
     }
 
-    .setting-item {
-        padding: 14px;
+    .profile-meta {
+        font-size: 0.85rem;
     }
 
-    .setting-icon {
-        width: 42px;
-        height: 42px;
-    }
-
-    .setting-content h4 {
-        font-size: 0.95rem;
-    }
-
-    .setting-content p {
+    .profile-exam-badge {
         font-size: 0.8rem;
+        padding: 6px 12px;
     }
 
-    .input-row {
+    .profile-section {
+        padding: 16px;
+    }
+
+    .stat-box {
+        padding: 12px 8px;
+    }
+
+    .stat-icon-wrap {
+        width: 38px;
+        height: 38px;
+    }
+
+    .stat-num {
+        font-size: 1.2rem;
+    }
+
+    .stat-text {
+        font-size: 0.7rem;
+    }
+
+    .menu-item {
+        padding: 12px;
+    }
+
+    .menu-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .form-row {
         grid-template-columns: 1fr;
     }
 
-    .exam-grid {
+    .exam-options {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .avatar-grid {
+    .avatar-picker .avatar-list {
         grid-template-columns: repeat(4, 1fr);
         gap: 8px;
     }
 
-    .modal-card,
-    .avatar-modal {
-        max-height: 85vh;
-        border-radius: 20px;
+    .modal-box {
+        border-radius: 16px;
     }
 }
 
 /* Dark Mode */
-:root.dark .profile-cover {
+:root.dark .profile-banner {
     background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
 }
 
-:root.dark .stat-card:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-:root.dark .setting-item:hover {
+:root.dark .stat-box:hover,
+:root.dark .menu-item:hover {
     background: rgba(255, 255, 255, 0.03);
 }

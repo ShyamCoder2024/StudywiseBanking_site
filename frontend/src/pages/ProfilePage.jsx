@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { AvatarDisplay } from '../components/ui/AvatarDisplay';
 import {
-    CheckCircle2, Target, BookOpen, Pencil, Lock, Bell, LogOut,
-    ChevronRight, ClipboardList, TrendingUp, Flame, X
+    CheckCircle2, Target, Pencil, Lock, Bell, LogOut,
+    ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin
 } from 'lucide-react';
 import { CARTOON_AVATARS } from '../utils/avatars';
 import api from '../services/api';
@@ -50,7 +49,6 @@ export function ProfilePage() {
         targetExam: user?.targetExam || 'ibps-po'
     });
 
-    // Fetch real stats from backend
     useEffect(() => {
         fetchUserStats();
     }, []);
@@ -71,16 +69,13 @@ export function ProfilePage() {
         }
     };
 
-    // Body Scroll Lock for Modal
     useEffect(() => {
         if (showAvatarPicker || isEditing) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
         }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
+        return () => { document.body.style.overflow = 'unset'; };
     }, [showAvatarPicker, isEditing]);
 
     useEffect(() => {
@@ -106,7 +101,6 @@ export function ProfilePage() {
         const updatedUser = { ...user, ...formData, avatar: selectedAvatar };
         updateUser(updatedUser);
         setIsEditing(false);
-
         try {
             await api.put('/auth/profile', { ...formData, avatar: selectedAvatar });
         } catch (error) {
@@ -117,7 +111,6 @@ export function ProfilePage() {
     const handleAvatarSelect = async (avatar) => {
         setSelectedAvatar(avatar);
         updateUser({ ...user, avatar: avatar });
-
         try {
             await api.put('/auth/profile', { avatar });
         } catch (error) {
@@ -125,185 +118,116 @@ export function ProfilePage() {
         }
     };
 
-    // Animation variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
-    };
-
     return (
         <div className="profile-page">
-            <motion.div
-                className="profile-container"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-            >
-                {/* Profile Header Card */}
-                <motion.div className="profile-header-card" variants={itemVariants}>
-                    <div className="profile-cover"></div>
-                    <div className="profile-header-content">
-                        <motion.div
-                            className="avatar-section"
-                            whileHover={{ scale: 1.02 }}
-                        >
-                            <AvatarDisplay avatar={selectedAvatar} size={120} />
-                            <motion.button
-                                className="avatar-edit-btn"
-                                onClick={() => setShowAvatarPicker(true)}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <Pencil size={14} />
-                            </motion.button>
-                        </motion.div>
-
-                        <div className="user-info">
-                            <div className="name-row">
+            <div className="profile-wrapper">
+                {/* Profile Header */}
+                <motion.div
+                    className="profile-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <div className="profile-banner"></div>
+                    <div className="profile-main">
+                        <div className="profile-avatar-wrap">
+                            <AvatarDisplay avatar={selectedAvatar} size={110} />
+                            <button className="edit-avatar-btn" onClick={() => setShowAvatarPicker(true)}>
+                                <Pencil size={12} />
+                            </button>
+                        </div>
+                        <div className="profile-info">
+                            <div className="profile-name-line">
                                 <h1>{formData.firstName} {formData.lastName}</h1>
-                                {formData.age && <span className="age-badge">{formData.age} yrs</span>}
+                                {formData.age && <span className="badge-age">{formData.age} yrs</span>}
                             </div>
-
-                            <p className="user-details">
-                                {formData.city && <span>📍 {formData.city} • </span>}
-                                {user?.email}
-                            </p>
-
-                            <div className="target-exam-pill">
+                            <div className="profile-meta">
+                                {formData.city && (
+                                    <span className="meta-item">
+                                        <MapPin size={14} />
+                                        {formData.city}
+                                    </span>
+                                )}
+                                <span className="meta-item">{user?.email}</span>
+                            </div>
+                            <div className="profile-exam-badge">
                                 <Target size={14} />
                                 <span>Preparing for <strong>{TARGET_EXAMS.find(e => e.id === formData.targetExam)?.label || 'Banking Exams'}</strong></span>
                             </div>
                         </div>
-
-                        <motion.button
-                            className="edit-profile-btn"
-                            onClick={() => setIsEditing(true)}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
+                        <button className="btn-edit-profile" onClick={() => setIsEditing(true)}>
                             Edit Profile
-                        </motion.button>
+                        </button>
                     </div>
                 </motion.div>
 
-                <div className="profile-grid">
-                    {/* Stats Section */}
-                    <motion.div className="stats-section" variants={itemVariants}>
-                        <h3 className="section-title">Performance Stats</h3>
-                        <div className="stats-grid">
-                            <motion.div
-                                className="stat-card"
-                                whileHover={{ y: -4, boxShadow: '0 8px 25px rgba(139, 92, 246, 0.15)' }}
-                            >
-                                <div className="stat-icon purple">
-                                    <ClipboardList size={22} />
+                {/* Two Column Layout */}
+                <div className="profile-columns">
+                    {/* Performance Stats */}
+                    <motion.div
+                        className="profile-section"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                    >
+                        <h3 className="section-label">Performance Stats</h3>
+                        <div className="stats-row">
+                            <motion.div className="stat-box" whileHover={{ y: -3 }}>
+                                <div className="stat-icon-wrap purple">
+                                    <ClipboardList size={20} />
                                 </div>
-                                <div className="stat-content">
-                                    <motion.h4
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ delay: 0.3, type: 'spring' }}
-                                    >
-                                        {stats.testsCompleted}
-                                    </motion.h4>
-                                    <p>Tests Taken</p>
-                                </div>
+                                <span className="stat-num">{stats.testsCompleted}</span>
+                                <span className="stat-text">Tests Taken</span>
                             </motion.div>
-
-                            <motion.div
-                                className="stat-card"
-                                whileHover={{ y: -4, boxShadow: '0 8px 25px rgba(59, 130, 246, 0.15)' }}
-                            >
-                                <div className="stat-icon blue">
-                                    <TrendingUp size={22} />
+                            <motion.div className="stat-box" whileHover={{ y: -3 }}>
+                                <div className="stat-icon-wrap blue">
+                                    <TrendingUp size={20} />
                                 </div>
-                                <div className="stat-content">
-                                    <motion.h4
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ delay: 0.4, type: 'spring' }}
-                                    >
-                                        {stats.averageScore}%
-                                    </motion.h4>
-                                    <p>Avg. Score</p>
-                                </div>
+                                <span className="stat-num">{stats.averageScore}%</span>
+                                <span className="stat-text">Avg. Score</span>
                             </motion.div>
-
-                            <motion.div
-                                className="stat-card"
-                                whileHover={{ y: -4, boxShadow: '0 8px 25px rgba(249, 115, 22, 0.15)' }}
-                            >
-                                <div className="stat-icon orange">
-                                    <Flame size={22} />
+                            <motion.div className="stat-box" whileHover={{ y: -3 }}>
+                                <div className="stat-icon-wrap orange">
+                                    <Flame size={20} />
                                 </div>
-                                <div className="stat-content">
-                                    <motion.h4
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ delay: 0.5, type: 'spring' }}
-                                    >
-                                        {stats.streak} Days
-                                    </motion.h4>
-                                    <p>Active Streak</p>
-                                </div>
+                                <span className="stat-num">{stats.streak}</span>
+                                <span className="stat-text">Day Streak</span>
                             </motion.div>
                         </div>
                     </motion.div>
 
-                    {/* Settings Section */}
-                    <motion.div className="settings-section" variants={itemVariants}>
-                        <h3 className="section-title">Account Settings</h3>
-                        <div className="settings-list">
-                            <motion.div
-                                className="setting-item"
-                                whileHover={{ x: 4 }}
-                                whileTap={{ scale: 0.99 }}
-                            >
-                                <div className="setting-icon purple">
-                                    <Lock size={18} />
-                                </div>
-                                <div className="setting-content">
+                    {/* Account Settings */}
+                    <motion.div
+                        className="profile-section"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <h3 className="section-label">Account Settings</h3>
+                        <div className="settings-menu">
+                            <div className="menu-item">
+                                <div className="menu-icon purple"><Lock size={16} /></div>
+                                <div className="menu-text">
                                     <h4>Change Password</h4>
                                     <p>Update your security credentials</p>
                                 </div>
-                                <ChevronRight size={18} className="setting-arrow" />
-                            </motion.div>
-
-                            <motion.div
-                                className="setting-item"
-                                whileHover={{ x: 4 }}
-                                whileTap={{ scale: 0.99 }}
-                            >
-                                <div className="setting-icon blue">
-                                    <Bell size={18} />
-                                </div>
-                                <div className="setting-content">
+                                <ChevronRight size={16} className="menu-arrow" />
+                            </div>
+                            <div className="menu-item">
+                                <div className="menu-icon blue"><Bell size={16} /></div>
+                                <div className="menu-text">
                                     <h4>Notifications</h4>
                                     <p>Manage email and push alerts</p>
                                 </div>
-                                <ChevronRight size={18} className="setting-arrow" />
-                            </motion.div>
-
-                            <motion.div
-                                className="setting-item logout"
-                                onClick={handleLogout}
-                                whileHover={{ x: 4 }}
-                                whileTap={{ scale: 0.99 }}
-                            >
-                                <div className="setting-icon red">
-                                    <LogOut size={18} />
-                                </div>
-                                <div className="setting-content">
+                                <ChevronRight size={16} className="menu-arrow" />
+                            </div>
+                            <div className="menu-item danger" onClick={handleLogout}>
+                                <div className="menu-icon red"><LogOut size={16} /></div>
+                                <div className="menu-text">
                                     <h4>Logout</h4>
                                     <p>Sign out of your account</p>
                                 </div>
-                                <ChevronRight size={18} className="setting-arrow" />
-                            </motion.div>
+                                <ChevronRight size={16} className="menu-arrow" />
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -312,83 +236,50 @@ export function ProfilePage() {
                 <AnimatePresence>
                     {isEditing && (
                         <motion.div
-                            className="modal-overlay"
+                            className="modal-bg"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                         >
                             <motion.div
-                                className="modal-card"
-                                initial={{ scale: 0.9, opacity: 0 }}
+                                className="modal-box"
+                                initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.9, opacity: 0 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
                             >
-                                <div className="modal-header">
+                                <div className="modal-top">
                                     <h2>Edit Profile</h2>
-                                    <button onClick={() => setIsEditing(false)} className="close-btn">
-                                        <X size={20} />
-                                    </button>
+                                    <button onClick={() => setIsEditing(false)} className="btn-close"><X size={18} /></button>
                                 </div>
-
-                                <div className="modal-body">
-                                    <div className="form-group">
+                                <div className="modal-content">
+                                    <div className="form-section">
                                         <label>Personal Details</label>
-                                        <div className="input-row">
-                                            <Input
-                                                value={formData.firstName}
-                                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                                placeholder="First Name"
-                                            />
-                                            <Input
-                                                value={formData.lastName}
-                                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                                placeholder="Last Name"
-                                            />
+                                        <div className="form-row">
+                                            <Input value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} placeholder="First Name" />
+                                            <Input value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} placeholder="Last Name" />
                                         </div>
-                                        <div className="input-row">
-                                            <Input
-                                                value={formData.age}
-                                                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                                                placeholder="Age"
-                                                type="number"
-                                            />
-                                            <Input
-                                                value={formData.city}
-                                                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                                placeholder="City"
-                                            />
+                                        <div className="form-row">
+                                            <Input value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} placeholder="Age" type="number" />
+                                            <Input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} placeholder="City" />
                                         </div>
                                     </div>
-
-                                    <div className="form-group">
+                                    <div className="form-section">
                                         <label>Contact Info</label>
-                                        <Input
-                                            value={formData.mobile}
-                                            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                                            placeholder="+91 98765 43210"
-                                        />
+                                        <Input value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} placeholder="+91 98765 43210" />
                                     </div>
-
-                                    <div className="form-group">
+                                    <div className="form-section">
                                         <label>Target Exam</label>
-                                        <div className="exam-grid">
+                                        <div className="exam-options">
                                             {TARGET_EXAMS.map(exam => (
-                                                <motion.div
-                                                    key={exam.id}
-                                                    className={`exam-option ${formData.targetExam === exam.id ? 'selected' : ''}`}
-                                                    onClick={() => setFormData({ ...formData, targetExam: exam.id })}
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
-                                                >
-                                                    <span>{exam.label}</span>
-                                                    {formData.targetExam === exam.id && <CheckCircle2 size={16} />}
-                                                </motion.div>
+                                                <div key={exam.id} className={`exam-chip ${formData.targetExam === exam.id ? 'active' : ''}`} onClick={() => setFormData({ ...formData, targetExam: exam.id })}>
+                                                    {exam.label}
+                                                    {formData.targetExam === exam.id && <CheckCircle2 size={14} />}
+                                                </div>
                                             ))}
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="modal-footer">
+                                <div className="modal-bottom">
                                     <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
                                     <Button variant="primary" onClick={handleSaveProfile}>Save Changes</Button>
                                 </div>
@@ -400,53 +291,27 @@ export function ProfilePage() {
                 {/* Avatar Picker Modal */}
                 <AnimatePresence>
                     {showAvatarPicker && (
-                        <motion.div
-                            className="modal-overlay"
-                            onClick={() => setShowAvatarPicker(false)}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
-                            <motion.div
-                                className="avatar-modal"
-                                onClick={e => e.stopPropagation()}
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.9, opacity: 0 }}
-                            >
-                                <div className="modal-header">
+                        <motion.div className="modal-bg" onClick={() => setShowAvatarPicker(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <motion.div className="modal-box avatar-picker" onClick={e => e.stopPropagation()} initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
+                                <div className="modal-top">
                                     <h2>Choose Avatar</h2>
                                     <p>Select a persona that represents you</p>
                                 </div>
-
-                                <div className="avatar-grid-container">
-                                    <div className="avatar-grid">
-                                        {AVATARS.map(avatar => (
-                                            <motion.div
-                                                key={avatar.id}
-                                                className="avatar-item"
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.95 }}
-                                            >
-                                                <AvatarDisplay
-                                                    avatar={avatar}
-                                                    size={70}
-                                                    selected={selectedAvatar.id === avatar.id}
-                                                    onClick={() => handleAvatarSelect(avatar)}
-                                                />
-                                            </motion.div>
-                                        ))}
-                                    </div>
+                                <div className="avatar-list">
+                                    {AVATARS.map(avatar => (
+                                        <div key={avatar.id} className="avatar-opt" onClick={() => handleAvatarSelect(avatar)}>
+                                            <AvatarDisplay avatar={avatar} size={64} selected={selectedAvatar.id === avatar.id} />
+                                        </div>
+                                    ))}
                                 </div>
-
-                                <div className="modal-footer">
+                                <div className="modal-bottom">
                                     <Button className="w-full" onClick={() => setShowAvatarPicker(false)}>Done</Button>
                                 </div>
                             </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
+            </div>
         </div>
     );
 }
