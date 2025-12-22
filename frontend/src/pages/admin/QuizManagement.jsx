@@ -247,6 +247,12 @@ export function QuizManagement() {
                                                             Questions ({quiz.questionCount || 0})
                                                         </button>
                                                     </Link>
+                                                    <Link to={`/admin/quizzes/${quiz._id}/stats`} style={{ textDecoration: 'none' }}>
+                                                        <button style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.successLight, color: BRAND.success, fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>
+                                                            <BarChart3 size={14} />
+                                                            Analytics
+                                                        </button>
+                                                    </Link>
                                                     <button onClick={() => openModal(quiz)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.primaryLight, color: BRAND.primary, fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>
                                                         <Edit2 size={14} />
                                                         Edit
