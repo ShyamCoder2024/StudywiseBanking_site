@@ -1,7 +1,7 @@
 /* StudentDashboard.css - Final Polish */
 
 .bento-dashboard {
-    padding-bottom: 90px;
+    padding-bottom: 24px;
     padding-top: 24px;
     background: var(--color-bg);
     min-height: 100vh;
@@ -173,24 +173,12 @@
     font-weight: 700;
 }
 
-/* Mobile Bottom Nav - RE-ADDED FIX */
+/* Mobile Bottom Nav - REMOVED (component deleted) */
+/*
 .mobile-bottom-nav {
     display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: var(--color-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 10px 20px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    z-index: 1000;
-    justify-content: space-between;
-    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.08);
-    /* Stronger shadow */
 }
+*/
 
 .nav-item {
     display: flex;
@@ -207,17 +195,6 @@
     border-radius: 16px;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     min-width: 60px;
-}
-
-.nav-item.active {
-    color: #4f46e5;
-    background: #eef2ff;
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.nav-item:active {
-    transform: scale(0.9);
 }
 
 /* 1. Hero (Span 2) */
@@ -1603,32 +1580,87 @@ a:focus-visible {
     }
 }
 
-/* AI Coach Card - Mobile */
-@media (max-width: 600px) {
+/* AI Coach Card - Mobile & Tablet Optimization */
+@media (max-width: 1024px) {
     .ai-coach-card {
-        min-height: 180px;
+        min-height: auto;
     }
 
-    .ai-coach-content {
-        padding: 16px;
+    .ai-coach-main {
+        flex-direction: column;
+        gap: 16px;
     }
 
     .coach-ring-container {
-        width: 70px;
-        height: 70px;
+        width: 80px;
+        height: 80px;
     }
 
-    .coach-info h4 {
-        font-size: 0.85rem;
+    .coach-num {
+        font-size: 1.4rem;
     }
 
-    .coach-info p {
+    .coach-insights {
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .coach-item {
+        flex: 1;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .ai-coach-card {
+        min-height: 160px;
+    }
+
+    .ai-coach-content {
+        padding: 14px;
+    }
+
+    .ai-coach-header {
+        margin-bottom: 12px;
+    }
+
+    .coach-badge {
+        padding: 4px 8px;
+    }
+
+    .coach-badge span {
+        font-size: 0.65rem;
+    }
+
+    .coach-ring-container {
+        width: 65px;
+        height: 65px;
+    }
+
+    .coach-num {
+        font-size: 1.2rem;
+    }
+
+    .coach-insights {
+        gap: 6px;
+    }
+
+    .coach-item {
+        padding: 5px 8px;
+    }
+
+    .coach-t-label {
+        font-size: 0.55rem;
+    }
+
+    .coach-t-val {
         font-size: 0.75rem;
     }
 
-    .coach-prompt {
-        font-size: 0.8rem;
-        padding: 10px;
+    .sparkle-icon {
+        width: 12px;
+        height: 12px;
     }
 }
 
@@ -1716,13 +1748,5 @@ a:focus-visible {
     }
 }
 
-/* Bottom Nav Safe Area */
-@media (max-width: 768px) {
-    .mobile-bottom-nav {
-        display: flex;
-    }
-
-    .bento-dashboard {
-        padding-bottom: 100px;
-    }
-}
+/* Bottom Nav - REMOVED */
+/* Previously at max-width: 768px this would show the bottom nav */

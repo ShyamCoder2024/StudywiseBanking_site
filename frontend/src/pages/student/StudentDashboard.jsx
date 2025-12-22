@@ -139,7 +139,7 @@ export function StudentDashboard() {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
-            transition: { staggerChildren: 0.05 }
+            transition: { staggerChildren: 0.03 }
         }
     };
 
@@ -286,7 +286,6 @@ export function StudentDashboard() {
                                     </svg>
                                     <div className="coach-score">
                                         <span className="coach-num">{stats.accuracy}%</span>
-                                        <span className="coach-lbl">Accuracy</span>
                                     </div>
                                 </div>
 
@@ -428,36 +427,10 @@ export function StudentDashboard() {
                     </motion.div>
                 </motion.div>
             </div>
-
-            <BottomNav />
         </div >
     );
 }
 
-function BottomNav() {
-    const navigate = useNavigate();
-    const navItems = [
-        { id: '/dashboard', icon: <Activity size={20} />, label: 'Home' },
-        { id: '/subjects', icon: <BookOpen size={20} />, label: 'Subjects' },
-        { id: '/tasks', icon: <CheckCircle2 size={20} />, label: 'Tasks' },
-        { id: '/analysis', icon: <Zap size={20} />, label: 'AI' },
-        { id: '/leaderboard', icon: <Award size={20} />, label: 'Rank' },
-    ];
-
-    return (
-        <div className="mobile-bottom-nav">
-            {navItems.map((item) => (
-                <button
-                    key={item.id}
-                    className={`nav-item ${window.location.pathname === item.id ? 'active' : ''}`}
-                    onClick={() => navigate(item.id)}
-                >
-                    {item.icon}
-                    <span>{item.label}</span>
-                </button>
-            ))}
-        </div>
-    );
-}
-
 export default StudentDashboard;
+
+

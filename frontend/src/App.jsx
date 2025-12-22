@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
@@ -69,13 +68,13 @@ function PublicRoute({ children }) {
   return children;
 }
 
-// Page Transition
+// Page Transition - Optimized for faster perceived performance
 const PageTransition = ({ children }) => (
   <motion.div
-    initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
-    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-    exit={{ opacity: 0, y: -10, filter: 'blur(5px)' }}
-    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+    initial={{ opacity: 0, y: 8 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
     style={{ width: '100%', height: '100%' }}
   >
     {children}
@@ -83,17 +82,8 @@ const PageTransition = ({ children }) => (
 );
 
 function AppContent() {
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin } = useAuth();
   const location = useLocation();
-  const [AIChatbot, setAIChatbot] = useState(null);
-
-  useEffect(() => {
-    if (isAuthenticated && !isAdmin) {
-      import('./components/ai/AIChatbot').then(module => {
-        setAIChatbot(() => module.AIChatbot);
-      });
-    }
-  }, [isAuthenticated, isAdmin]);
 
   // Check localStorage for navbar visibility (faster than context)
   const storedUser = localStorage.getItem('user');
@@ -143,8 +133,6 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </AnimatePresence>
-
-      {AIChatbot && <AIChatbot />}
     </>
   );
 }

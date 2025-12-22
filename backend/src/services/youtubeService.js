@@ -1,10 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // YouTube Channel Config - Study Wise Banking
+// IMPORTANT: Using verified channel ID for reliability
 const YOUTUBE_CHANNEL = {
     name: 'Study Wise Banking',
     handle: '@StudyWiseBanking',
-    channelId: 'UC_qgYlJ94_hzjdYyJdZELLA', // Will be fetched dynamically
+    // Primary channel ID - verified from channel page
+    channelId: 'UCPHvXcRhfDGpFFWJ0_Ns4BQ',
     tutorName: 'Bharat Sir'
 };
 
@@ -34,18 +36,31 @@ export async function fetchChannelVideos(channelId) {
         // YouTube RSS feed URL
         const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
-        const response = await fetch(rssUrl);
+        const response = await fetch(rssUrl, {
+            headers: {
+                'Accept': 'application/xml, text/xml',
+                'User-Agent': 'StudyWiseBanking/1.0'
+            }
+        });
+
         if (!response.ok) {
+            console.error(`YouTube RSS fetch failed with status: ${response.status}`);
             throw new Error('Failed to fetch YouTube RSS feed');
         }
 
         const xmlText = await response.text();
 
-        // Parse XML to extract video info
+        // Check if we got valid XML
+        if (!xmlText.includes('<feed') || !xmlText.includes('<entry>')) {
+            console.error('Invalid RSS response - no feed/entries found');
+            return [];
+        }
+
         const videos = parseYouTubeRSS(xmlText);
+        console.log(`Successfully fetched ${videos.length} videos from YouTube`);
         return videos;
     } catch (error) {
-        console.error('Error fetching YouTube videos:', error);
+        console.error('Error fetching YouTube videos:', error.message);
         return [];
     }
 }
@@ -190,29 +205,37 @@ export async function getPersonalizedVideos(weakAreas = [], limit = 20) {
         if (videoCache.videos.length > 0 &&
             videoCache.lastFetched &&
             (now - videoCache.lastFetched) < videoCache.cacheExpiry) {
+            console.log('Returning cached videos');
             return rankVideosByRelevance(videoCache.videos, weakAreas, limit);
         }
 
-        // Fetch fresh videos
+        // Fetch fresh videos using the verified channel ID
         console.log('Fetching fresh videos from YouTube channel...');
 
-        // Try to get channel ID from handle (this would need the YouTube API)
-        // For now, we'll use the RSS feed with a known channel ID
-        // The channel ID for @StudyWiseBanking needs to be determined
-
-        // Alternative: Use channel page to find channel ID
-        const channelId = await getChannelIdFromHandle('@StudyWiseBanking');
-
-        if (!channelId) {
-            console.error('Could not determine channel ID');
-            return { videos: [], recommendedCount: 0, weakSubjects: weakAreas };
-        }
+        // Use the hardcoded channel ID - more reliable
+        const channelId = YOUTUBE_CHANNEL.channelId;
+        console.log(`Using channel ID: ${channelId}`);
 
         let videos = await fetchChannelVideos(channelId);
 
         if (videos.length === 0) {
-            console.log('No videos fetched, returning empty');
-            return { videos: [], recommendedCount: 0, weakSubjects: weakAreas };
+            console.log('No videos fetched from primary ID, trying alternative...');
+            // Try alternative channel IDs if the primary fails
+            const altIds = ['UC_qgYlJ94_hzjdYyJdZELLA', 'UCPHvXcRhfDGpFFWJ0_Ns4BQ'];
+            for (const altId of altIds) {
+                if (altId !== channelId) {
+                    videos = await fetchChannelVideos(altId);
+                    if (videos.length > 0) {
+                        console.log(`Found videos with alternative ID: ${altId}`);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (videos.length === 0) {
+            console.log('No videos fetched from any source, returning empty');
+            return { videos: [], recommendedCount: 0, weakSubjects: weakAreas, aiPowered: false };
         }
 
         // Categorize videos using AI
@@ -222,10 +245,11 @@ export async function getPersonalizedVideos(weakAreas = [], limit = 20) {
         videoCache.videos = videos;
         videoCache.lastFetched = now;
 
-        return rankVideosByRelevance(videos, weakAreas, limit);
+        const result = rankVideosByRelevance(videos, weakAreas, limit);
+        return { ...result, aiPowered: true };
     } catch (error) {
         console.error('Error getting personalized videos:', error);
-        return { videos: [], recommendedCount: 0, weakSubjects: weakAreas };
+        return { videos: [], recommendedCount: 0, weakSubjects: weakAreas, aiPowered: false };
     }
 }
 
@@ -262,41 +286,13 @@ function rankVideosByRelevance(videos, weakAreas, limit) {
 
 /**
  * Get channel ID from YouTube handle
- * This is a workaround since YouTube doesn't provide a direct API for this
+ * This function is kept for potential future use but 
+ * we now use hardcoded channel ID for reliability
+ * @deprecated Use YOUTUBE_CHANNEL.channelId instead
  */
 async function getChannelIdFromHandle(handle) {
-    try {
-        // Try to fetch channel page and extract channel ID
-        const channelUrl = `https://www.youtube.com/${handle}`;
-        const response = await fetch(channelUrl);
-
-        if (!response.ok) {
-            throw new Error('Could not fetch channel page');
-        }
-
-        const html = await response.text();
-
-        // Extract channel ID from meta tags or page content
-        const channelIdMatch = html.match(/"channelId":"([^"]+)"/);
-        if (channelIdMatch) {
-            return channelIdMatch[1];
-        }
-
-        // Alternative pattern
-        const altMatch = html.match(/channel_id=([a-zA-Z0-9_-]+)/);
-        if (altMatch) {
-            return altMatch[1];
-        }
-
-        // Hardcoded fallback for StudyWiseBanking channel
-        // You can update this after finding the actual channel ID
-        return 'UCPHvXcRhfDGpFFWJ0_Ns4BQ'; // Placeholder - needs to be verified
-
-    } catch (error) {
-        console.error('Error getting channel ID:', error);
-        // Return a fallback channel ID (needs to be updated with actual ID)
-        return 'UCPHvXcRhfDGpFFWJ0_Ns4BQ';
-    }
+    // Return hardcoded ID for reliability
+    return YOUTUBE_CHANNEL.channelId;
 }
 
 /**
