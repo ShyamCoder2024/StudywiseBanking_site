@@ -325,42 +325,45 @@ router.delete('/questions/:id', async (req, res, next) => {
 
 router.get('/students', async (req, res, next) => {
     try {
-        const students = await User.find({ role: 'student' });
+        // Use lean() for faster query - returns plain JS objects, not Mongoose docs
+        const students = await User.find({ role: 'student' }).lean();
 
-        // Fetch all attempts for ranking calculation
-        const allAttempts = await Attempt.find();
-        const studentScores = {}; // Map: userId -> totalScore
-
-        allAttempts.forEach(a => {
-            if (a.user) {
-                studentScores[a.user.toString()] = (studentScores[a.user.toString()] || 0) + a.score;
+        // Use aggregation for efficient attempt counting
+        const attemptStats = await Attempt.aggregate([
+            {
+                $group: {
+                    _id: '$user',
+                    totalAttempts: { $sum: 1 },
+                    totalScore: { $sum: '$score' },
+                    avgScore: { $avg: '$score' }
+                }
             }
+        ]);
+
+        // Create a map for O(1) lookup
+        const statsMap = {};
+        attemptStats.forEach(stat => {
+            statsMap[stat._id?.toString()] = stat;
         });
 
-        // Sort student IDs by score descending to determine rank
-        const sortedStudentIds = Object.keys(studentScores).sort((a, b) => studentScores[b] - studentScores[a]);
+        // Sort for ranking
+        const sortedByScore = [...attemptStats].sort((a, b) => b.totalScore - a.totalScore);
+        const rankMap = {};
+        sortedByScore.forEach((stat, index) => {
+            rankMap[stat._id?.toString()] = index + 1;
+        });
 
-        const studentsWithStats = await Promise.all(
-            students.map(async (s) => {
-                const sAttempts = allAttempts.filter(a => a.user?.toString() === s._id.toString());
-                const avgScore = sAttempts.length > 0
-                    ? Math.round(sAttempts.reduce((sum, a) => sum + a.score, 0) / sAttempts.length)
-                    : 0;
+        // Map students with their stats
+        const studentsWithStats = students.map(s => {
+            const stats = statsMap[s._id.toString()] || { totalAttempts: 0, avgScore: 0 };
+            return {
+                ...s,
+                totalAttempts: stats.totalAttempts || 0,
+                avgScore: Math.round(stats.avgScore || 0),
+                rank: rankMap[s._id.toString()] || students.length
+            };
+        });
 
-                const rankIndex = sortedStudentIds.indexOf(s._id.toString());
-                const rank = rankIndex !== -1 ? rankIndex + 1 : students.length; // Default to last if no attempts
-
-                return {
-                    ...s.toObject(),
-                    totalAttempts: sAttempts.length,
-                    avgScore,
-                    rank,
-                    // Ensure age/gender are returned (User model selects them by default, but verifying)
-                    age: s.age,
-                    gender: s.gender
-                };
-            })
-        );
         res.json({ success: true, data: studentsWithStats });
     } catch (error) { next(error); }
 });
