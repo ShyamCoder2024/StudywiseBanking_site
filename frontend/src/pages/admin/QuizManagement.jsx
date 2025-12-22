@@ -93,25 +93,44 @@ export function QuizManagement() {
     };
 
     const handleSave = async () => {
-        if (!formData.title.trim()) return;
+        if (!formData.title.trim()) {
+            alert('Please enter a quiz title');
+            return;
+        }
         setSaving(true);
         const payload = { ...formData };
         if (payload.isBigQuiz) payload.topicId = null;
 
         try {
-            if (editingQuiz) await api.put(`/admin/quizzes/${editingQuiz._id}`, payload);
-            else await api.post('/admin/quizzes', payload);
+            if (editingQuiz) {
+                await api.put(`/admin/quizzes/${editingQuiz._id}`, payload);
+                alert('✅ Quiz updated successfully!');
+            } else {
+                await api.post('/admin/quizzes', payload);
+                alert('✅ Quiz created successfully! Now add questions to it.');
+            }
             fetchData();
             setShowModal(false);
-        } catch {
-            setShowModal(false);
-        } finally { setSaving(false); }
+        } catch (error) {
+            console.error('Save error:', error);
+            const message = error.response?.data?.message || error.message || 'Failed to save quiz';
+            alert(`❌ Error: ${message}\n\nPlease try again. If the issue persists, refresh the page.`);
+        } finally {
+            setSaving(false);
+        }
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('Delete this quiz?')) return;
-        try { await api.delete(`/admin/quizzes/${id}`); fetchData(); }
-        catch { setQuizzes(quizzes.filter(q => q._id !== id)); }
+        if (!confirm('Are you sure you want to delete this quiz? This cannot be undone.')) return;
+        try {
+            await api.delete(`/admin/quizzes/${id}`);
+            alert('✅ Quiz deleted successfully!');
+            fetchData();
+        } catch (error) {
+            console.error('Delete error:', error);
+            const message = error.response?.data?.message || error.message || 'Failed to delete quiz';
+            alert(`❌ Error: ${message}\n\nPlease try again.`);
+        }
     };
 
     return (

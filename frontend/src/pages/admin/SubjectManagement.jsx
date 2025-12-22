@@ -52,38 +52,42 @@ export function SubjectManagement() {
     };
 
     const handleSave = async () => {
-        if (!formData.name.trim()) return;
+        if (!formData.name.trim()) {
+            alert('Please enter a subject name');
+            return;
+        }
 
         setSaving(true);
         try {
             if (editingSubject) {
                 await api.put(`/admin/subjects/${editingSubject._id}`, formData);
+                alert('✅ Subject updated successfully!');
             } else {
                 await api.post('/admin/subjects', formData);
+                alert('✅ Subject created successfully!');
             }
             fetchSubjects();
             setShowModal(false);
         } catch (error) {
             console.error('Save failed:', error);
-            if (editingSubject) {
-                setSubjects(subjects.map(s => s._id === editingSubject._id ? { ...s, ...formData } : s));
-            } else {
-                setSubjects([...subjects, { _id: Date.now().toString(), ...formData, topicCount: 0 }]);
-            }
-            setShowModal(false);
+            const message = error.response?.data?.message || error.message || 'Failed to save subject';
+            alert(`❌ Error: ${message}\n\nPlease try again.`);
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('Are you sure you want to delete this subject?')) return;
+        if (!confirm('Are you sure you want to delete this subject? All topics under it will also be deleted.')) return;
 
         try {
             await api.delete(`/admin/subjects/${id}`);
+            alert('✅ Subject deleted successfully!');
             fetchSubjects();
         } catch (error) {
-            setSubjects(subjects.filter(s => s._id !== id));
+            console.error('Delete failed:', error);
+            const message = error.response?.data?.message || error.message || 'Failed to delete subject';
+            alert(`❌ Error: ${message}\n\nPlease try again.`);
         }
     };
 
