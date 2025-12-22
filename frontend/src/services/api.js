@@ -53,8 +53,13 @@ api.interceptors.response.use(
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
 
-                // Redirect admin users to admin login, students to regular login
-                // Use a small timeout to allow React to handle state properly
+                // Create auth error to reject immediately (allows catch blocks to handle)
+                const authError = new Error('Session expired. Redirecting to login...');
+                authError.response = error.response;
+                authError.status = 401;
+                authError.isAuthError = true;
+
+                // Redirect after a brief delay
                 setTimeout(() => {
                     if (currentPath.startsWith('/admin')) {
                         window.location.href = '/admin-login';
@@ -63,8 +68,8 @@ api.interceptors.response.use(
                     }
                 }, 100);
 
-                // Return a pending promise to prevent further processing
-                return new Promise(() => { });
+                // Reject immediately so catch blocks can handle loading states
+                return Promise.reject(authError);
             }
 
             // Preserve original error for better debugging
