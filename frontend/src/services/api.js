@@ -36,12 +36,35 @@ api.interceptors.response.use(
         });
 
         if (error.response) {
-            // Handle specific error codes
+            // Handle 401 Unauthorized
             if (error.response.status === 401) {
-                // Unauthorized - clear token and redirect to login
+                const currentPath = window.location.pathname;
+
+                // Don't redirect if already on a login page (prevent loops)
+                if (currentPath === '/login' || currentPath === '/admin-login') {
+                    // Just reject the error, don't redirect
+                    const authError = new Error('Authentication failed. Please check your credentials.');
+                    authError.response = error.response;
+                    authError.status = 401;
+                    return Promise.reject(authError);
+                }
+
+                // Clear auth data
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/login';
+
+                // Redirect admin users to admin login, students to regular login
+                // Use a small timeout to allow React to handle state properly
+                setTimeout(() => {
+                    if (currentPath.startsWith('/admin')) {
+                        window.location.href = '/admin-login';
+                    } else {
+                        window.location.href = '/login';
+                    }
+                }, 100);
+
+                // Return a pending promise to prevent further processing
+                return new Promise(() => { });
             }
 
             // Preserve original error for better debugging

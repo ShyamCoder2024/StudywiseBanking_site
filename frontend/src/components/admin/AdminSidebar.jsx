@@ -76,7 +76,7 @@ export function AdminSidebar({ isOpen, onClose, isDesktop }) {
 
     const handleLogout = () => {
         logout();
-        navigate('/admin/login');
+        navigate('/admin-login');
     };
 
     const navItems = [
