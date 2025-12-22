@@ -245,8 +245,8 @@ export function AdminDashboard() {
                                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = BRAND.primaryLight}
                                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                     >
-                                        <td style={{ padding: '14px 20px', fontWeight: '500', color: BRAND.text }}>{quiz.title}</td>
-                                        <td style={{ padding: '14px 20px', color: BRAND.textSecondary }}>{quiz.topic || quiz.subjectName || 'N/A'}</td>
+                                        <td style={{ padding: '14px 20px', fontWeight: '500', color: BRAND.text }}>{quiz.title || 'Untitled'}</td>
+                                        <td style={{ padding: '14px 20px', color: BRAND.textSecondary }}>{typeof quiz.topic === 'object' ? (quiz.topic?.name || 'N/A') : (quiz.topic || quiz.subjectName || 'N/A')}</td>
                                         <td style={{ padding: '14px 20px', textAlign: 'center' }}>
                                             <span style={{
                                                 display: 'inline-block',
