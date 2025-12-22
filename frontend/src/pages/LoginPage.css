@@ -495,3 +495,95 @@
         align-items: center;
     }
 }
+
+/* ============================================
+   REGISTER FORM POLISH - Mobile
+   ============================================ */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Better form row styling for mobile */
+@media (max-width: 768px) {
+    .register-form .flex {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .register-form .flex.gap-3 {
+        gap: 14px;
+    }
+
+    /* Override horizontal flex on small screens */
+    .auth-form.register-form .flex {
+        flex-direction: column;
+    }
+
+    /* Form section visual enhancement */
+    .auth-form input,
+    .auth-form select {
+        transition: all 0.2s ease;
+        font-size: 16px !important;
+        /* Prevent zoom on iOS */
+    }
+
+    .auth-form input:focus,
+    .auth-form select:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(138, 117, 186, 0.15);
+    }
+
+    /* Better radio group styling */
+    .auth-form .radio-group {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .auth-form .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+        min-width: 80px;
+        justify-content: center;
+    }
+
+    .auth-form .radio-group input:checked+label,
+    .auth-form .radio-group label:has(input:checked) {
+        background: rgba(138, 117, 186, 0.1);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+    }
+}
+
+/* Visual polish for all screen sizes */
+.auth-form.register-form {
+    gap: 12px;
+}
+
+.auth-form.register-form>div {
+    margin-bottom: 4px;
+}
+
+/* Premium form field hover effect */
+.auth-form input:hover,
+.auth-form select:hover {
+    border-color: rgba(138, 117, 186, 0.5);
+}
+
+/* Error state styling */
+.auth-form input.error,
+.auth-form select.error {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
