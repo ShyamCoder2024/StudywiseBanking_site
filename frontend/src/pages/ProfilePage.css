@@ -458,24 +458,52 @@
    RESPONSIVE - LAPTOP (Fix header alignment)
    ============================================ */
 @media (min-width: 769px) {
+    .profile-card {
+        margin-bottom: 24px;
+    }
+
+    .profile-banner {
+        height: 140px;
+    }
+
     .profile-main {
-        padding: 24px 32px 32px;
-        gap: 28px;
-        margin-top: -55px;
+        display: flex;
+        align-items: flex-start;
+        padding: 20px 40px 30px;
+        gap: 24px;
+        margin-top: -60px;
+        flex-wrap: nowrap;
+    }
+
+    .profile-avatar-wrap {
+        flex-shrink: 0;
+    }
+
+    .profile-info {
+        flex: 1;
+        min-width: 0;
+        padding-top: 35px;
+        /* Push text below the banner area */
+    }
+
+    .profile-name-line {
+        margin-bottom: 8px;
     }
 
     .profile-name-line h1 {
-        font-size: 1.6rem;
+        font-size: 1.75rem;
+        color: var(--color-text);
+    }
+
+    .badge-age {
+        font-size: 0.85rem;
     }
 
     .profile-meta {
         font-size: 0.95rem;
-        gap: 16px;
-        margin-bottom: 12px;
-    }
-
-    .meta-item {
-        gap: 6px;
+        gap: 12px;
+        margin-bottom: 14px;
+        color: var(--color-text-secondary);
     }
 
     .profile-exam-badge {
@@ -484,13 +512,12 @@
     }
 
     .btn-edit-profile {
-        padding: 14px 32px;
-        font-size: 0.95rem;
-        margin-left: auto;
-    }
-
-    .profile-info {
-        padding-right: 20px;
+        padding: 12px 28px;
+        font-size: 0.9rem;
+        align-self: center;
+        flex-shrink: 0;
+        margin-top: 30px;
+        /* Align with text content */
     }
 }
 
