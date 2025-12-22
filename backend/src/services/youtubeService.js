@@ -2,15 +2,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // YouTube Channel Config - Study Wise Banking
 // Channel URL: https://www.youtube.com/@studywisebanking
+// Channel ID verified: UCf4zQHKUxolJGexoP5TtYCg
 const YOUTUBE_CHANNEL = {
     name: 'Study Wise Banking',
     handle: '@studywisebanking',
     channelUrl: 'https://www.youtube.com/@studywisebanking',
-    // List of possible channel IDs to try (YouTube RSS requires channel ID)
+    // VERIFIED CHANNEL ID - this is the correct one!
     channelIds: [
-        'UCvJmB4b_K6_Q7Q8x3c9Y7Zg',  // Potential ID
-        'UCPHvXcRhfDGpFFWJ0_Ns4BQ',  // Alternative
-        'UC_qgYlJ94_hzjdYyJdZELLA',  // Alternative
+        'UCf4zQHKUxolJGexoP5TtYCg',  // VERIFIED - correct channel ID
     ],
     tutorName: 'Bharat Sir'
 };
