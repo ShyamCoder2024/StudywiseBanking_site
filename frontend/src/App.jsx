@@ -26,6 +26,7 @@ import AIAnalysisPage from './pages/student/AIAnalysisPage';
 import TestCenterPage from './pages/student/TestCenterPage';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
 import SubjectManagement from './pages/admin/SubjectManagement';
 import TopicManagement from './pages/admin/TopicManagement';
 import QuizManagement from './pages/admin/QuizManagement';
@@ -98,6 +99,7 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<PublicRoute><PageTransition><LoginPage /></PageTransition></PublicRoute>} />
+          <Route path="/admin-login" element={<PublicRoute><PageTransition><AdminLoginPage /></PageTransition></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><PageTransition><RegisterPage /></PageTransition></PublicRoute>} />
           <Route path="/forgot-password" element={<PublicRoute><PageTransition><ForgotPasswordPage /></PageTransition></PublicRoute>} />
 
