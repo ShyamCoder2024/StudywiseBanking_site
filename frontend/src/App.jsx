@@ -48,7 +48,17 @@ function ProtectedRoute({ children, adminOnly = false }) {
     return <Navigate to="/login" replace />;
   }
 
-  const userData = JSON.parse(storedUser);
+  // Safe JSON parse with fallback
+  let userData;
+  try {
+    userData = JSON.parse(storedUser);
+  } catch (e) {
+    // Corrupted data - clear and redirect to login
+    console.error('Invalid user data in localStorage:', e);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    return <Navigate to="/login" replace />;
+  }
 
   if (adminOnly && userData.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
@@ -63,7 +73,17 @@ function PublicRoute({ children }) {
   const storedToken = localStorage.getItem('token');
 
   if (storedUser && storedToken) {
-    const userData = JSON.parse(storedUser);
+    // Safe JSON parse with fallback
+    let userData;
+    try {
+      userData = JSON.parse(storedUser);
+    } catch (e) {
+      // Corrupted data - clear it
+      console.error('Invalid user data in localStorage:', e);
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      return children;
+    }
     return <Navigate to={userData.role === 'admin' ? '/admin' : '/dashboard'} replace />;
   }
 
@@ -89,7 +109,15 @@ function AppContent() {
 
   // Check localStorage for navbar visibility (faster than context)
   const storedUser = localStorage.getItem('user');
-  const showNavbar = storedUser ? JSON.parse(storedUser).role !== 'admin' : true;
+  let showNavbar = true;
+  if (storedUser) {
+    try {
+      showNavbar = JSON.parse(storedUser).role !== 'admin';
+    } catch (e) {
+      // Invalid JSON, show navbar by default
+      showNavbar = true;
+    }
+  }
 
   return (
     <>
