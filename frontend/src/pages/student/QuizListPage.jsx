@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { CheckCircle, Play, Eye, Clock, FileQuestion } from 'lucide-react';
 import api from '../../services/api';
 import './ContentPages.css';
 
@@ -25,13 +27,7 @@ export function QuizListPage() {
             }
         } catch (error) {
             console.error('Failed to fetch quizzes:', error);
-            // Mock data
-            setTopic({ name: 'Number Series', subjectId: '1' });
-            setQuizzes([
-                { _id: '1', title: 'Number Series - Basics', questionCount: 10, duration: 15, difficulty: 'Easy' },
-                { _id: '2', title: 'Number Series - Intermediate', questionCount: 15, duration: 20, difficulty: 'Medium' },
-                { _id: '3', title: 'Number Series - Advanced', questionCount: 20, duration: 30, difficulty: 'Hard' },
-            ]);
+            setQuizzes([]);
         } finally {
             setLoading(false);
         }
@@ -39,6 +35,10 @@ export function QuizListPage() {
 
     const handleStartQuiz = (quizId) => {
         navigate(`/quiz/${quizId}`);
+    };
+
+    const handleViewResult = (attemptId) => {
+        navigate(`/result/${attemptId}`);
     };
 
     if (loading) {
@@ -58,41 +58,75 @@ export function QuizListPage() {
 
                 <div className="page-header">
                     <h1 className="text-page-title">{topic?.name || 'Quizzes'}</h1>
-                    <p className="text-secondary">Choose a quiz to start practicing</p>
+                    <p className="text-secondary">Choose a quiz to practice</p>
                 </div>
 
-                <div className="content-grid">
-                    {quizzes.map((quiz) => (
-                        <Card key={quiz._id} className="quiz-card">
-                            <div className="quiz-card-header">
-                                <div className="quiz-card-info">
-                                    <h3 className="text-card-title">{quiz.title}</h3>
-                                    <span className={`badge badge-${quiz.difficulty === 'Easy' ? 'success' : quiz.difficulty === 'Medium' ? 'primary' : 'warning'}`}>
-                                        {quiz.difficulty}
-                                    </span>
+                <div className="content-grid quiz-grid">
+                    {quizzes.map((quiz, index) => (
+                        <motion.div
+                            key={quiz._id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                        >
+                            <Card className={`quiz-card ${quiz.isCompleted ? 'completed' : ''}`}>
+                                <div className="quiz-card-header">
+                                    <div className="quiz-card-info">
+                                        <h3 className="text-card-title">{quiz.title}</h3>
+                                        <div className="quiz-badges">
+                                            <span className={`badge badge-${quiz.difficulty === 'Easy' ? 'success' : quiz.difficulty === 'Medium' ? 'primary' : 'warning'}`}>
+                                                {quiz.difficulty}
+                                            </span>
+                                            {quiz.isCompleted && (
+                                                <span className="badge badge-completed">
+                                                    <CheckCircle size={12} /> Completed
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="quiz-card-meta">
-                                <div className="quiz-meta-item">
-                                    <span>📝</span>
-                                    <span>{quiz.questionCount} Questions</span>
+                                <div className="quiz-card-meta">
+                                    <div className="quiz-meta-item">
+                                        <FileQuestion size={16} />
+                                        <span>{quiz.questionCount} Questions</span>
+                                    </div>
+                                    <div className="quiz-meta-item">
+                                        <Clock size={16} />
+                                        <span>{quiz.duration} mins</span>
+                                    </div>
                                 </div>
-                                <div className="quiz-meta-item">
-                                    <span>⏱️</span>
-                                    <span>{quiz.duration} mins</span>
-                                </div>
-                            </div>
 
-                            <div className="quiz-card-footer">
-                                <Button
-                                    variant="primary"
-                                    onClick={() => handleStartQuiz(quiz._id)}
-                                >
-                                    Start Quiz
-                                </Button>
-                            </div>
-                        </Card>
+                                {quiz.isCompleted && quiz.score !== null && (
+                                    <div className="quiz-score-display">
+                                        <span className={`score-badge ${quiz.score >= 70 ? 'high' : quiz.score >= 50 ? 'medium' : 'low'}`}>
+                                            Score: {quiz.score}%
+                                        </span>
+                                    </div>
+                                )}
+
+                                <div className="quiz-card-footer">
+                                    {quiz.isCompleted ? (
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => handleViewResult(quiz.attemptId)}
+                                            className="view-result-btn"
+                                        >
+                                            <Eye size={16} />
+                                            View Results
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => handleStartQuiz(quiz._id)}
+                                        >
+                                            <Play size={16} />
+                                            Start Quiz
+                                        </Button>
+                                    )}
+                                </div>
+                            </Card>
+                        </motion.div>
                     ))}
                 </div>
 

@@ -60,7 +60,23 @@ export function QuizPage() {
             }
         } catch (error) {
             console.error('Failed to fetch quiz:', error);
-            // Mock data for demo
+
+            // Check if quiz was already completed
+            if (error.response?.data?.alreadyCompleted) {
+                const attemptId = error.response.data.attemptId;
+                alert('You have already completed this test. Redirecting to your results...');
+                navigate(`/result/${attemptId}`);
+                return;
+            }
+
+            // Other errors - show message
+            if (error.response?.data?.message) {
+                alert(error.response.data.message);
+                navigate(-1);
+                return;
+            }
+
+            // Mock data for demo (development only)
             setQuiz({ title: 'Number Series - Basics', duration: 15 });
             setQuestions([
                 {

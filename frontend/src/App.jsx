@@ -24,6 +24,7 @@ import PerformancePage from './pages/student/PerformancePage';
 import LeaderboardPage from './pages/student/LeaderboardPage';
 import AIAnalysisPage from './pages/student/AIAnalysisPage';
 import TestCenterPage from './pages/student/TestCenterPage';
+import TestReviewPage from './pages/student/TestReviewPage';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -118,6 +119,7 @@ function AppContent() {
           <Route path="/leaderboard" element={<ProtectedRoute><PageTransition><LeaderboardPage /></PageTransition></ProtectedRoute>} />
           <Route path="/analysis" element={<ProtectedRoute><PageTransition><AIAnalysisPage /></PageTransition></ProtectedRoute>} />
           <Route path="/tests" element={<ProtectedRoute><PageTransition><TestCenterPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/test-review/:attemptId" element={<ProtectedRoute><PageTransition><TestReviewPage /></PageTransition></ProtectedRoute>} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute adminOnly><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />

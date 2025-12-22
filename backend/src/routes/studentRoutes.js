@@ -202,28 +202,54 @@ router.get('/subjects/:id/topics', async (req, res, next) => {
 });
 
 // @route   GET /api/topics/:id/quizzes
-// @desc    Get quizzes for a topic (only published quizzes)
+// @desc    Get quizzes for a topic (only published quizzes) with completion status
 // @access  Private
 router.get('/topics/:id/quizzes', async (req, res, next) => {
     try {
         const topic = await Topic.findById(req.params.id);
+        const userId = req.user._id;
+
         // Only show published quizzes to students
         const quizzes = await Quiz.find({
             topic: req.params.id,
             isPublished: true
         }).populate('questionCount');
 
+        // Get user's attempts for these quizzes
+        const quizIds = quizzes.map(q => q._id);
+        const attempts = await Attempt.find({
+            user: userId,
+            quiz: { $in: quizIds }
+        });
+
+        // Create a map of quiz ID to attempt
+        const attemptMap = {};
+        attempts.forEach(a => {
+            attemptMap[a.quiz.toString()] = {
+                attemptId: a._id,
+                score: a.score,
+                submittedAt: a.submittedAt
+            };
+        });
+
         res.json({
             success: true,
             data: {
                 topic: { name: topic?.name, subjectId: topic?.subject },
-                quizzes: quizzes.map((q) => ({
-                    _id: q._id,
-                    title: q.title,
-                    duration: q.duration,
-                    difficulty: q.difficulty,
-                    questionCount: q.questionCount || 0,
-                })),
+                quizzes: quizzes.map((q) => {
+                    const attemptInfo = attemptMap[q._id.toString()];
+                    return {
+                        _id: q._id,
+                        title: q.title,
+                        duration: q.duration,
+                        difficulty: q.difficulty,
+                        questionCount: q.questionCount || 0,
+                        isCompleted: !!attemptInfo,
+                        attemptId: attemptInfo?.attemptId || null,
+                        score: attemptInfo?.score || null,
+                        completedAt: attemptInfo?.submittedAt || null
+                    };
+                }),
             },
         });
     } catch (error) {

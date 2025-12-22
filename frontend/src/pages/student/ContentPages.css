@@ -122,6 +122,67 @@
 .quiz-card-footer {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
+}
+
+/* Quiz Completion Status */
+.quiz-card.completed {
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: linear-gradient(135deg, var(--color-card) 0%, rgba(16, 185, 129, 0.03) 100%);
+}
+
+.quiz-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.badge-completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.quiz-score-display {
+    margin-bottom: 12px;
+}
+
+.score-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.score-badge.high {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.score-badge.medium {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.score-badge.low {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.view-result-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Quiz Grid responsiveness */
+.quiz-grid {
+    gap: 16px;
 }
 
 /* Empty State */

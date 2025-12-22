@@ -23,6 +23,21 @@ router.get('/quizzes/:id/start', protect, async (req, res, next) => {
             });
         }
 
+        // RE-ATTEMPT PREVENTION: Check if user has already completed this quiz
+        const existingAttempt = await Attempt.findOne({
+            user: req.user._id,
+            quiz: req.params.id
+        });
+
+        if (existingAttempt) {
+            return res.status(403).json({
+                success: false,
+                alreadyCompleted: true,
+                attemptId: existingAttempt._id,
+                message: 'You have already completed this test. You cannot retake it.'
+            });
+        }
+
         const questions = await Question.find({ quiz: req.params.id }).sort({ order: 1 });
 
         // Return questions without answers
@@ -256,6 +271,64 @@ router.get('/attempts/:id', protect, async (req, res, next) => {
                 } : null,
                 recommendations: [],
             },
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// @route   GET /api/attempts/:id/review
+// @desc    Get detailed test review with all questions and answers
+// @access  Private
+router.get('/attempts/:id/review', protect, async (req, res, next) => {
+    try {
+        const attempt = await Attempt.findById(req.params.id)
+            .populate('quiz', 'title duration')
+            .populate({
+                path: 'answers.question',
+                select: 'text type options correctAnswer explanation'
+            });
+
+        if (!attempt) throw new NotFoundError('Attempt');
+
+        // Format questions with student answers and correct answers
+        const reviewData = attempt.answers.map((answerItem, index) => {
+            const question = answerItem.question;
+            if (!question) return null;
+
+            return {
+                questionNumber: index + 1,
+                questionId: question._id,
+                questionText: question.text,
+                questionType: question.type,
+                options: question.options || [],
+                studentAnswer: answerItem.answer,
+                correctAnswer: question.correctAnswer,
+                isCorrect: answerItem.isCorrect,
+                explanation: question.explanation || null
+            };
+        }).filter(Boolean);
+
+        // Calculate time taken
+        const diffMs = attempt.submittedAt - attempt.startedAt;
+        const mins = Math.floor(diffMs / 60000);
+        const secs = Math.floor((diffMs % 60000) / 1000);
+        const timeTaken = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        res.json({
+            success: true,
+            data: {
+                quizTitle: attempt.quiz?.title,
+                quizDuration: attempt.quiz?.duration,
+                score: attempt.score,
+                totalQuestions: attempt.totalQuestions,
+                correctAnswers: attempt.correctAnswers,
+                wrongAnswers: attempt.wrongAnswers,
+                unanswered: attempt.unanswered,
+                timeTaken,
+                submittedAt: attempt.submittedAt.toISOString().split('T')[0],
+                questions: reviewData
+            }
         });
     } catch (error) {
         next(error);

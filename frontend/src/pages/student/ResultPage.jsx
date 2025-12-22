@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { CheckCircle, XCircle, SkipForward, Clock, Sparkles, ArrowRight, Brain } from 'lucide-react';
+import { CheckCircle, XCircle, SkipForward, Clock, Sparkles, ArrowRight, Brain, Eye } from 'lucide-react';
 import api from '../../services/api';
 import './ResultPage.css';
 
@@ -307,6 +307,15 @@ export function ResultPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1 }}
                 >
+                    <Button
+                        variant="secondary"
+                        size="lg"
+                        onClick={() => navigate(`/test-review/${attemptId}`)}
+                        style={{ marginRight: '12px' }}
+                    >
+                        <Eye size={18} style={{ marginRight: '8px' }} />
+                        View Test Details
+                    </Button>
                     <Link to="/subjects">
                         <Button variant="primary" size="lg">
                             Take Another Test
