@@ -72,10 +72,11 @@ class ErrorBoundary extends Component {
                         >
                             Clear & Login
                         </button>
-                        {process.env.NODE_ENV !== 'production' && this.state.error && (
-                            <details style={{ marginTop: '24px', textAlign: 'left' }}>
+                        {/* Always show error details for debugging */}
+                        {this.state.error && (
+                            <details style={{ marginTop: '24px', textAlign: 'left' }} open>
                                 <summary style={{ cursor: 'pointer', color: '#718096' }}>
-                                    Error Details
+                                    Error Details (click to expand)
                                 </summary>
                                 <pre style={{
                                     background: '#f7fafc',
@@ -84,7 +85,9 @@ class ErrorBoundary extends Component {
                                     overflow: 'auto',
                                     fontSize: '12px',
                                     color: '#e53e3e',
-                                    marginTop: '12px'
+                                    marginTop: '12px',
+                                    whiteSpace: 'pre-wrap',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {this.state.error.toString()}
                                     {this.state.errorInfo?.componentStack}
