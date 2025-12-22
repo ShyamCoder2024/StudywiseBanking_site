@@ -50,19 +50,30 @@ export function StudentDashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchDashboardData();
-        fetchTodos();
-        fetchNewQuizzes();
+        // Fetch all data in parallel for faster initial load
+        const fetchAllData = async () => {
+            try {
+                await Promise.all([
+                    fetchDashboardData(),
+                    fetchTodos(),
+                    fetchNewQuizzes()
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Auto-refresh quizzes every 30 seconds for real-time updates
+        fetchAllData();
+
+        // Auto-refresh quizzes every 60 seconds for real-time updates (reduced frequency)
         const quizInterval = setInterval(() => {
             fetchNewQuizzes();
-        }, 30000); // 30 seconds
+        }, 60000); // 60 seconds
 
-        // Auto-refresh todos every 60 seconds
+        // Auto-refresh todos every 120 seconds (reduced frequency)
         const todoInterval = setInterval(() => {
             fetchTodos();
-        }, 60000); // 60 seconds
+        }, 120000); // 120 seconds
 
         // Cleanup on unmount
         return () => {
@@ -79,8 +90,6 @@ export function StudentDashboard() {
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
             // Will use mock data as fallback
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -150,26 +159,26 @@ export function StudentDashboard() {
         }
     };
 
-    // Grid Animation Variants
+    // Grid Animation Variants - Optimized for faster perceived load
     const container = {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
-            transition: { staggerChildren: 0.03 }
+            transition: { staggerChildren: 0.02 }
         }
     };
 
     const tile = {
-        hidden: { y: 20, opacity: 0 },
+        hidden: { y: 15, opacity: 0 },
         show: {
             y: 0,
             opacity: 1,
-            transition: { type: "spring", stiffness: 120, damping: 12 }
+            transition: { type: "spring", stiffness: 150, damping: 14 }
         }
     };
 
     return (
-        <div className="bento-dashboard">
+        <div className="bento-dashboard" >
             <div className="dashboard-container">
                 {/* Header Welcome */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dashboard-header-row">

@@ -139,26 +139,31 @@
 }
 
 /* ============================================
-   TWO COLUMN LAYOUT
+   TWO COLUMN LAYOUT - Enhanced for Laptop
    ============================================ */
 .profile-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    align-items: start;
 }
 
 .profile-section {
     background: var(--color-card);
     border-radius: 16px;
-    padding: 24px;
+    padding: 28px;
     border: 1px solid var(--color-border);
+    height: fit-content;
 }
 
 .section-label {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 16px;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* ============================================

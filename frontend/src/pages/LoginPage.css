@@ -280,7 +280,7 @@
 }
 
 /* ============================================
-   Responsive Design
+   Responsive Design - Enhanced Mobile
    ============================================ */
 
 @media (max-width: 1024px) {
@@ -298,15 +298,15 @@
         flex-direction: column;
         height: auto;
         min-height: 100vh;
+        min-height: 100dvh;
+        /* Dynamic viewport height for mobile browsers */
         overflow-y: auto;
     }
 
     .login-brand-section {
         order: 1;
-        /* Brand on top */
-        padding: 60px 24px;
-        min-height: 400px;
-        /* Reduced height for mobile header */
+        padding: 50px 24px 60px;
+        min-height: 320px;
         flex: 0 0 auto;
     }
 
@@ -320,16 +320,44 @@
 
     .login-form-section {
         order: 2;
-        /* Form below */
-        padding: 32px 24px;
+        padding: 32px 24px 40px;
         flex: 1 0 auto;
         background: var(--color-bg);
         border-radius: 30px 30px 0 0;
-        /* Rounded top on mobile */
         margin-top: -30px;
-        /* Overlap slightly */
         z-index: 30;
         position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .login-form-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .login-form {
+        flex: 1;
+    }
+
+    /* Proper footer placement on mobile */
+    .login-footer {
+        margin-top: auto;
+        padding-top: 20px;
+        padding-bottom: 16px;
+        position: relative;
+    }
+
+    .login-footer p {
+        font-size: 15px;
+    }
+
+    .login-footer a {
+        display: inline-block;
+        padding: 4px 0;
+        font-size: 15px;
     }
 
     .brand-content {
@@ -342,13 +370,13 @@
     }
 
     .brand-content h2 {
-        font-size: 32px !important;
+        font-size: 28px !important;
         margin-bottom: 12px;
     }
 
     .brand-content p {
-        font-size: 16px !important;
-        margin-bottom: 24px !important;
+        font-size: 15px !important;
+        margin-bottom: 20px !important;
     }
 
     .brand-stats {
@@ -364,21 +392,106 @@
     }
 
     .login-header h1 {
-        font-size: 28px;
+        font-size: 26px;
+    }
+
+    .login-header p {
+        font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
     .login-brand-section {
-        min-height: 350px;
-        padding: 40px 20px;
+        min-height: 280px;
+        padding: 40px 20px 50px;
     }
 
     .brand-content h2 {
-        font-size: 28px !important;
+        font-size: 24px !important;
     }
 
     .login-form-section {
-        padding: 24px 20px;
+        padding: 28px 20px 32px;
+        border-radius: 24px 24px 0 0;
+    }
+
+    .login-header {
+        margin-bottom: 24px;
+    }
+
+    .login-header h1 {
+        font-size: 24px;
+    }
+
+    .login-forgot {
+        margin-bottom: 20px;
+    }
+
+    .login-footer {
+        padding-top: 16px;
+        border-top-width: 1px;
+    }
+
+    .login-footer p {
+        font-size: 14px;
+    }
+}
+
+/* ============================================
+   Entrance Animation for First Visit
+   ============================================ */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.login-form-section {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.login-brand-section {
+    animation: scaleIn 0.8s ease-out;
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+
+    .login-footer a,
+    .login-forgot a {
+        padding: 8px 4px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
     }
 }
