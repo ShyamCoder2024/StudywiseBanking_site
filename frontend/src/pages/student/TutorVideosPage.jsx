@@ -155,7 +155,7 @@ export default function TutorVideosPage() {
                     >
                         <Youtube size={18} style={{ color: '#8b5cf6' }} />
                         <span style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>
-                            {fallbackMessage} <a href="https://www.youtube.com/@study_wise_banking" target="_blank" rel="noopener noreferrer" style={{ color: '#8b5cf6', fontWeight: 600 }}>Visit Channel →</a>
+                            {fallbackMessage} <a href="https://www.youtube.com/@studywisebanking" target="_blank" rel="noopener noreferrer" style={{ color: '#8b5cf6', fontWeight: 600 }}>Visit Channel →</a>
                         </span>
                     </motion.div>
                 )}

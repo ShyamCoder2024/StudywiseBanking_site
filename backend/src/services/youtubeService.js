@@ -1,13 +1,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // YouTube Channel Config - Study Wise Banking
-// Multiple channel IDs to try (different sources give different IDs)
+// Channel URL: https://www.youtube.com/@studywisebanking
 const YOUTUBE_CHANNEL = {
     name: 'Study Wise Banking',
-    handle: '@study_wise_banking',
-    // List of possible channel IDs to try
+    handle: '@studywisebanking',
+    channelUrl: 'https://www.youtube.com/@studywisebanking',
+    // List of possible channel IDs to try (YouTube RSS requires channel ID)
     channelIds: [
-        'UCvJmB4b_K6_Q7Q8x3c9Y7Zg',  // From web search
+        'UCvJmB4b_K6_Q7Q8x3c9Y7Zg',  // Potential ID
         'UCPHvXcRhfDGpFFWJ0_Ns4BQ',  // Alternative
         'UC_qgYlJ94_hzjdYyJdZELLA',  // Alternative
     ],
@@ -15,53 +16,54 @@ const YOUTUBE_CHANNEL = {
 };
 
 // Fallback static videos when YouTube fetch fails
+// These link directly to the channel
 const FALLBACK_VIDEOS = [
     {
-        youtubeId: 'dQw4w9WgXcQ',
+        youtubeId: 'channel-link-1',
         title: 'Banking Awareness Complete Course - RBI, SEBI, NABARD',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'BANKING',
         isRecommended: true
     },
     {
-        youtubeId: 'example2',
+        youtubeId: 'channel-link-2',
         title: 'Quantitative Aptitude Tricks - Speed Math for Bank Exams',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://img.youtube.com/vi/example2/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'MATH',
         isRecommended: false
     },
     {
-        youtubeId: 'example3',
+        youtubeId: 'channel-link-3',
         title: 'Reasoning Puzzles Masterclass - Seating Arrangement',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://img.youtube.com/vi/example3/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'REASONING',
         isRecommended: false
     },
     {
-        youtubeId: 'example4',
+        youtubeId: 'channel-link-4',
         title: 'Current Affairs December 2024 - Banking Exams Special',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://img.youtube.com/vi/example4/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'GK',
         isRecommended: false
     },
     {
-        youtubeId: 'example5',
+        youtubeId: 'channel-link-5',
         title: 'English Grammar for Bank Exams - Error Spotting',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://img.youtube.com/vi/example5/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'ENGLISH',
         isRecommended: false

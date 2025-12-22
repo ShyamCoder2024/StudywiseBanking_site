@@ -15,7 +15,7 @@ export function AboutTutor() {
     const tutorInfo = {
         name: 'Bharat Mangaonkar',
         title: 'Banking Exam Expert & Mentor',
-        youtube: 'https://www.youtube.com/@StudyWiseBanking', // Ideally proper channel ID
+        youtube: 'https://www.youtube.com/@studywisebanking',
         headerBio: "Helping aspirants crack SBI PO, IBPS, and RBI exams with ease.",
         bio: `With over 12 years of dedicated teaching experience, Bharat Mangaonkar has become a trusted name in Banking Exam preparation. His simplified teaching methods, especially in Quantitative Aptitude and Reasoning, have helped over 50,000 students navigate the complex world of competitive exams. He believes in smart work over hard work, focusing on exam-oriented strategies that yield maximum results in minimum time.`,
         features: [
@@ -24,9 +24,9 @@ export function AboutTutor() {
             { icon: <CheckCircle2 size={28} className="text-purple" />, title: 'Personal Mentorship', desc: 'Guidance at every step of your journey.' },
         ],
         videos: [
-            { id: 1, title: 'SBI PO Prelims Strategy 2025', views: '1.2M views', thumb: '/video-thumb-1.jpg' },
-            { id: 2, title: 'Math Tricks: Calculation Speed', views: '850k views', thumb: '/video-thumb-2.jpg' },
-            { id: 3, title: 'Reasoning Puzzles Masterclass', views: '500k views', thumb: '/video-thumb-3.jpg' }
+            { id: 1, title: 'SBI PO Prelims Strategy 2025', views: '1.2M views', url: 'https://www.youtube.com/@studywisebanking' },
+            { id: 2, title: 'Math Tricks: Calculation Speed', views: '850k views', url: 'https://www.youtube.com/@studywisebanking' },
+            { id: 3, title: 'Reasoning Puzzles Masterclass', views: '500k views', url: 'https://www.youtube.com/@studywisebanking' }
         ],
         testimonials: [
             { text: "Detailed explanations and constant motivation. I cleared IBPS PO because of Bharat Sir!", name: "Anjali Singh", role: "IBPS PO 2024" },
@@ -54,7 +54,7 @@ export function AboutTutor() {
                         <p className="hero-tagline">{tutorInfo.headerBio}</p>
 
                         <div className="hero-cta-group">
-                            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="btn-yt-primary">
+                            <a href="https://www.youtube.com/@studywisebanking" target="_blank" rel="noreferrer" className="btn-yt-primary">
                                 <Youtube size={20} /> Subscribe Channel
                             </a>
                             <div className="hero-stat-pill">
@@ -117,10 +117,14 @@ export function AboutTutor() {
                 <h2><Youtube size={28} color="#FF0000" /> Most Watched Sessions</h2>
                 <div className="video-grid-about">
                     {tutorInfo.videos.map((v, i) => (
-                        <motion.div
+                        <motion.a
                             key={v.id}
+                            href={v.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="video-card-about"
                             whileHover={{ y: -5 }}
+                            style={{ textDecoration: 'none' }}
                         >
                             <div className="video-thumb">
                                 <div className="play-overlay"><Play fill="white" size={32} /></div>
@@ -129,7 +133,7 @@ export function AboutTutor() {
                                 <h3>{v.title}</h3>
                                 <span>{v.views}</span>
                             </div>
-                        </motion.div>
+                        </motion.a>
                     ))}
                 </div>
             </section>
