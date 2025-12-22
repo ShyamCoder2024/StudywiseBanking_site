@@ -35,6 +35,13 @@ export function TestCenterPage() {
 
     useEffect(() => {
         fetchQuizzes();
+
+        // Auto-refresh quizzes every 30 seconds for real-time updates
+        const interval = setInterval(() => {
+            fetchQuizzes();
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(interval);
     }, []);
 
     const fetchQuizzes = async () => {

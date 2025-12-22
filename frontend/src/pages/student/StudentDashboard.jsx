@@ -53,6 +53,22 @@ export function StudentDashboard() {
         fetchDashboardData();
         fetchTodos();
         fetchNewQuizzes();
+
+        // Auto-refresh quizzes every 30 seconds for real-time updates
+        const quizInterval = setInterval(() => {
+            fetchNewQuizzes();
+        }, 30000); // 30 seconds
+
+        // Auto-refresh todos every 60 seconds
+        const todoInterval = setInterval(() => {
+            fetchTodos();
+        }, 60000); // 60 seconds
+
+        // Cleanup on unmount
+        return () => {
+            clearInterval(quizInterval);
+            clearInterval(todoInterval);
+        };
     }, []);
 
     // Fetch real dashboard data from backend
@@ -63,6 +79,8 @@ export function StudentDashboard() {
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
             // Will use mock data as fallback
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -72,8 +90,6 @@ export function StudentDashboard() {
             setTodos(res.data.data || []);
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
         }
     };
 
