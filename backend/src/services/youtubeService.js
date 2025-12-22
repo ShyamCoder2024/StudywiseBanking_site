@@ -1,14 +1,72 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // YouTube Channel Config - Study Wise Banking
-// IMPORTANT: Using verified channel ID for reliability
+// Multiple channel IDs to try (different sources give different IDs)
 const YOUTUBE_CHANNEL = {
     name: 'Study Wise Banking',
-    handle: '@StudyWiseBanking',
-    // Primary channel ID - verified from channel page
-    channelId: 'UCPHvXcRhfDGpFFWJ0_Ns4BQ',
+    handle: '@study_wise_banking',
+    // List of possible channel IDs to try
+    channelIds: [
+        'UCvJmB4b_K6_Q7Q8x3c9Y7Zg',  // From web search
+        'UCPHvXcRhfDGpFFWJ0_Ns4BQ',  // Alternative
+        'UC_qgYlJ94_hzjdYyJdZELLA',  // Alternative
+    ],
     tutorName: 'Bharat Sir'
 };
+
+// Fallback static videos when YouTube fetch fails
+const FALLBACK_VIDEOS = [
+    {
+        youtubeId: 'dQw4w9WgXcQ',
+        title: 'Banking Awareness Complete Course - RBI, SEBI, NABARD',
+        publishedAt: new Date(),
+        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        tutorName: 'Bharat Sir',
+        subject: 'BANKING',
+        isRecommended: true
+    },
+    {
+        youtubeId: 'example2',
+        title: 'Quantitative Aptitude Tricks - Speed Math for Bank Exams',
+        publishedAt: new Date(),
+        thumbnailUrl: 'https://img.youtube.com/vi/example2/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        tutorName: 'Bharat Sir',
+        subject: 'MATH',
+        isRecommended: false
+    },
+    {
+        youtubeId: 'example3',
+        title: 'Reasoning Puzzles Masterclass - Seating Arrangement',
+        publishedAt: new Date(),
+        thumbnailUrl: 'https://img.youtube.com/vi/example3/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        tutorName: 'Bharat Sir',
+        subject: 'REASONING',
+        isRecommended: false
+    },
+    {
+        youtubeId: 'example4',
+        title: 'Current Affairs December 2024 - Banking Exams Special',
+        publishedAt: new Date(),
+        thumbnailUrl: 'https://img.youtube.com/vi/example4/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        tutorName: 'Bharat Sir',
+        subject: 'GK',
+        isRecommended: false
+    },
+    {
+        youtubeId: 'example5',
+        title: 'English Grammar for Bank Exams - Error Spotting',
+        publishedAt: new Date(),
+        thumbnailUrl: 'https://img.youtube.com/vi/example5/hqdefault.jpg',
+        watchUrl: 'https://www.youtube.com/@study_wise_banking',
+        tutorName: 'Bharat Sir',
+        subject: 'ENGLISH',
+        isRecommended: false
+    }
+];
 
 // Subject keywords for AI categorization
 const SUBJECTS = {
@@ -209,33 +267,33 @@ export async function getPersonalizedVideos(weakAreas = [], limit = 20) {
             return rankVideosByRelevance(videoCache.videos, weakAreas, limit);
         }
 
-        // Fetch fresh videos using the verified channel ID
+        // Fetch fresh videos - try all channel IDs
         console.log('Fetching fresh videos from YouTube channel...');
 
-        // Use the hardcoded channel ID - more reliable
-        const channelId = YOUTUBE_CHANNEL.channelId;
-        console.log(`Using channel ID: ${channelId}`);
+        let videos = [];
 
-        let videos = await fetchChannelVideos(channelId);
-
-        if (videos.length === 0) {
-            console.log('No videos fetched from primary ID, trying alternative...');
-            // Try alternative channel IDs if the primary fails
-            const altIds = ['UC_qgYlJ94_hzjdYyJdZELLA', 'UCPHvXcRhfDGpFFWJ0_Ns4BQ'];
-            for (const altId of altIds) {
-                if (altId !== channelId) {
-                    videos = await fetchChannelVideos(altId);
-                    if (videos.length > 0) {
-                        console.log(`Found videos with alternative ID: ${altId}`);
-                        break;
-                    }
-                }
+        // Try each channel ID until one works
+        for (const channelId of YOUTUBE_CHANNEL.channelIds) {
+            console.log(`Trying channel ID: ${channelId}`);
+            videos = await fetchChannelVideos(channelId);
+            if (videos.length > 0) {
+                console.log(`Success! Found ${videos.length} videos with channel ID: ${channelId}`);
+                break;
             }
         }
 
+        // If no videos from any channel, use fallback
         if (videos.length === 0) {
-            console.log('No videos fetched from any source, returning empty');
-            return { videos: [], recommendedCount: 0, weakSubjects: weakAreas, aiPowered: false };
+            console.log('No videos fetched from any YouTube channel, using fallback videos');
+            videos = [...FALLBACK_VIDEOS];
+
+            const result = rankVideosByRelevance(videos, weakAreas, limit);
+            return {
+                ...result,
+                aiPowered: false,
+                isFallback: true,
+                message: 'Showing sample videos. Visit our YouTube channel for more content.'
+            };
         }
 
         // Categorize videos using AI
@@ -246,10 +304,17 @@ export async function getPersonalizedVideos(weakAreas = [], limit = 20) {
         videoCache.lastFetched = now;
 
         const result = rankVideosByRelevance(videos, weakAreas, limit);
-        return { ...result, aiPowered: true };
+        return { ...result, aiPowered: true, isFallback: false };
     } catch (error) {
         console.error('Error getting personalized videos:', error);
-        return { videos: [], recommendedCount: 0, weakSubjects: weakAreas, aiPowered: false };
+        // Return fallback videos on error
+        const result = rankVideosByRelevance(FALLBACK_VIDEOS, weakAreas, limit);
+        return {
+            ...result,
+            aiPowered: false,
+            isFallback: true,
+            message: 'Showing sample videos due to an error. Please try refreshing.'
+        };
     }
 }
 

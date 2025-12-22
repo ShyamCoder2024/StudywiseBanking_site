@@ -12,6 +12,8 @@ export default function TutorVideosPage() {
     const [refreshing, setRefreshing] = useState(false);
     const [recommendedCount, setRecommendedCount] = useState(0);
     const [aiPowered, setAiPowered] = useState(false);
+    const [isFallback, setIsFallback] = useState(false);
+    const [fallbackMessage, setFallbackMessage] = useState('');
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -26,6 +28,8 @@ export default function TutorVideosPage() {
                 setVideos(res.data.data.videos || []);
                 setRecommendedCount(res.data.data.recommendedCount || 0);
                 setAiPowered(res.data.data.aiPowered || false);
+                setIsFallback(res.data.data.isFallback || false);
+                setFallbackMessage(res.data.data.message || '');
             }
         } catch (err) {
             console.error('Failed to fetch videos:', err);
@@ -130,6 +134,28 @@ export default function TutorVideosPage() {
                         <Sparkles size={18} style={{ color: '#f59e0b' }} />
                         <span style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>
                             <strong>{recommendedCount} videos</strong> personalized for your weak areas. Watch these first!
+                        </span>
+                    </motion.div>
+                )}
+
+                {isFallback && fallbackMessage && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.05))',
+                            border: '1px solid rgba(139, 92, 246, 0.2)',
+                            borderRadius: '12px',
+                            padding: '12px 16px',
+                            marginBottom: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                        }}
+                    >
+                        <Youtube size={18} style={{ color: '#8b5cf6' }} />
+                        <span style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>
+                            {fallbackMessage} <a href="https://www.youtube.com/@study_wise_banking" target="_blank" rel="noopener noreferrer" style={{ color: '#8b5cf6', fontWeight: 600 }}>Visit Channel →</a>
                         </span>
                     </motion.div>
                 )}
