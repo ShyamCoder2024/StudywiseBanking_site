@@ -150,30 +150,20 @@ export function AdminLayout({ children }) {
                     </motion.header>
                 )}
 
-                {/* Animated Page Content with Slide Effect */}
-                <AnimatePresence mode="popLayout" initial={false}>
-                    <motion.main
-                        key={location.pathname}
-                        variants={pageVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        style={{
-                            padding: isDesktop ? '28px 32px' : '16px',
-                            maxWidth: '1400px',
-                            margin: '0 auto',
-                            willChange: 'transform, opacity' // GPU acceleration
-                        }}
-                    >
-                        <motion.div
-                            variants={containerVariants}
-                            initial="initial"
-                            animate="animate"
-                        >
-                            {children}
-                        </motion.div>
-                    </motion.main>
-                </AnimatePresence>
+                {/* Animated Page Content - Simplified for stability */}
+                <motion.main
+                    key={location.pathname}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                        padding: isDesktop ? '28px 32px' : '16px',
+                        maxWidth: '1400px',
+                        margin: '0 auto'
+                    }}
+                >
+                    {children}
+                </motion.main>
             </div>
 
             {/* Mobile Sidebar Overlay with blur */}
