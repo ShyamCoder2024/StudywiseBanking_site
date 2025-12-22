@@ -58,12 +58,17 @@ export function TaskManagementPage() {
 
     const fetchData = async () => {
         setLoading(true);
+        setError('');
         try {
             const [tasksRes, studentsRes, subjectsRes] = await Promise.all([
                 api.get('/admin/global-tasks'),
                 api.get('/admin/students'),
                 api.get('/admin/subjects')
             ]);
+
+            console.log('Tasks Response:', tasksRes.data);
+            console.log('Students Response:', studentsRes.data);
+            console.log('Subjects Response:', subjectsRes.data);
 
             const taskList = tasksRes.data.data || [];
             setAllTasks(taskList);
@@ -73,14 +78,21 @@ export function TaskManagementPage() {
             const subjectList = subjectsRes.data.data || [];
             setSubjects(['General', ...subjectList.map(s => s.name)]);
 
-            // Filter students with 0 attempts
+            // Filter students with 0 attempts (have not taken any test)
             const allStudents = studentsRes.data.data || [];
+            console.log('All Students:', allStudents.length);
+            console.log('Sample Student:', allStudents[0]);
+
             const inactive = allStudents.filter(s => (s.totalAttempts || 0) === 0);
+            console.log('Inactive Students (0 attempts):', inactive.length);
+
             setAllInactiveStudents(inactive);
             setInactiveStudents(inactive.slice(0, 10)); // Show only top 10
         } catch (error) {
-            console.error("Failed to fetch data", error);
-            setError('Failed to load data');
+            console.error("Failed to fetch data:", error);
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to load data';
+            setError(errorMessage);
+            alert(`❌ Error loading data: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
