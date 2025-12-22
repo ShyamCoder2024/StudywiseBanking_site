@@ -19,21 +19,21 @@ export const authService = {
         return response.data;
     },
 
-    // Forgot Password - Send OTP
-    async sendOTP(email) {
+    // Request Password Reset - sends email with reset link
+    async requestPasswordReset(email) {
         const response = await api.post('/auth/forgot-password', { email });
         return response.data;
     },
 
-    // Verify OTP
-    async verifyOTP(email, otp) {
-        const response = await api.post('/auth/verify-otp', { email, otp });
+    // Validate Reset Token
+    async validateResetToken(token) {
+        const response = await api.get(`/auth/reset-password/${token}`);
         return response.data;
     },
 
-    // Reset Password
-    async resetPassword(email, otp, newPassword) {
-        const response = await api.post('/auth/reset-password', { email, otp, newPassword });
+    // Reset Password with Token
+    async resetPassword(token, newPassword) {
+        const response = await api.post(`/auth/reset-password/${token}`, { newPassword });
         return response.data;
     },
 

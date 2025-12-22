@@ -1,7 +1,9 @@
 import express from 'express';
+import crypto from 'crypto';
 import User from '../models/User.js';
 import { generateToken, protect } from '../middleware/authMiddleware.js';
 import { ValidationError, AuthError, NotFoundError, ConflictError } from '../middleware/errorMiddleware.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -135,94 +137,120 @@ router.post('/admin/login', async (req, res, next) => {
 });
 
 // @route   POST /api/auth/forgot-password
-// @desc    Send OTP to email
+// @desc    Request password reset - sends email with reset link
 // @access  Public
 router.post('/forgot-password', async (req, res, next) => {
     try {
         const { email } = req.body;
 
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) {
-            throw new NotFoundError('User with this email');
+        if (!email) {
+            throw new ValidationError('Email is required');
         }
 
-        // Generate 6-digit OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const user = await User.findOne({ email: email.toLowerCase() });
 
-        // Save OTP with expiry (10 minutes)
-        user.resetOTP = otp;
-        user.resetOTPExpiry = new Date(Date.now() + 10 * 60 * 1000);
-        await user.save();
+        // SECURITY: Always return success message to prevent email enumeration
+        // But only actually send email if user exists
+        if (user) {
+            // Generate secure random token (32 bytes = 64 hex chars)
+            const resetToken = crypto.randomBytes(32).toString('hex');
 
-        // TODO: Send OTP via email service
-        // For demo, log OTP (remove in production)
-        console.log(`OTP for ${email}: ${otp}`);
+            // Hash token before storing in database
+            const hashedToken = crypto
+                .createHash('sha256')
+                .update(resetToken)
+                .digest('hex');
 
+            // Save hashed token with 15-minute expiry
+            user.resetPasswordToken = hashedToken;
+            user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
+            await user.save();
+
+            // Build reset URL with raw token (not hashed)
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+            // Send email (will fallback to console if not configured)
+            await sendPasswordResetEmail(email, resetUrl, user.firstName);
+        }
+
+        // Always return success (don't reveal if email exists)
         res.json({
             success: true,
-            message: 'OTP sent to your email',
+            message: 'If an account with that email exists, you will receive a password reset link.',
         });
     } catch (error) {
         next(error);
     }
 });
 
-// @route   POST /api/auth/verify-otp
-// @desc    Verify OTP
+// @route   GET /api/auth/reset-password/:token
+// @desc    Validate reset token (check if valid and not expired)
 // @access  Public
-router.post('/verify-otp', async (req, res, next) => {
+router.get('/reset-password/:token', async (req, res, next) => {
     try {
-        const { email, otp } = req.body;
+        const { token } = req.params;
+
+        // Hash the incoming token to compare with stored hash
+        const hashedToken = crypto
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
 
         const user = await User.findOne({
-            email: email.toLowerCase(),
-            resetOTP: otp,
-            resetOTPExpiry: { $gt: new Date() },
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: new Date() },
         });
 
         if (!user) {
-            throw new ValidationError('Invalid or expired OTP');
+            throw new ValidationError('Password reset link is invalid or has expired');
         }
 
         res.json({
             success: true,
-            message: 'OTP verified successfully',
+            message: 'Token is valid',
         });
     } catch (error) {
         next(error);
     }
 });
 
-// @route   POST /api/auth/reset-password
-// @desc    Reset password
+// @route   POST /api/auth/reset-password/:token
+// @desc    Reset password using token
 // @access  Public
-router.post('/reset-password', async (req, res, next) => {
+router.post('/reset-password/:token', async (req, res, next) => {
     try {
-        const { email, otp, newPassword } = req.body;
+        const { token } = req.params;
+        const { newPassword } = req.body;
 
         if (!newPassword || newPassword.length < 6) {
             throw new ValidationError('Password must be at least 6 characters');
         }
 
+        // Hash the incoming token to compare with stored hash
+        const hashedToken = crypto
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
+
         const user = await User.findOne({
-            email: email.toLowerCase(),
-            resetOTP: otp,
-            resetOTPExpiry: { $gt: new Date() },
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: new Date() },
         });
 
         if (!user) {
-            throw new ValidationError('Invalid or expired OTP');
+            throw new ValidationError('Password reset link is invalid or has expired');
         }
 
-        // Update password and clear OTP
+        // Update password and clear reset token (single-use)
         user.password = newPassword;
-        user.resetOTP = undefined;
-        user.resetOTPExpiry = undefined;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
         await user.save();
 
         res.json({
             success: true,
-            message: 'Password reset successful',
+            message: 'Password reset successful! You can now login with your new password.',
         });
     } catch (error) {
         next(error);

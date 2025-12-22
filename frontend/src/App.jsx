@@ -10,6 +10,7 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import StudentDashboard from './pages/student/StudentDashboard';
 import SubjectsPage from './pages/student/SubjectsPage';
 import TopicsPage from './pages/student/TopicsPage';
@@ -131,6 +132,7 @@ function AppContent() {
           <Route path="/admin-login" element={<PublicRoute><PageTransition><AdminLoginPage /></PageTransition></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><PageTransition><RegisterPage /></PageTransition></PublicRoute>} />
           <Route path="/forgot-password" element={<PublicRoute><PageTransition><ForgotPasswordPage /></PageTransition></PublicRoute>} />
+          <Route path="/reset-password/:token" element={<PublicRoute><PageTransition><ResetPasswordPage /></PageTransition></PublicRoute>} />
 
           {/* Student Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><PageTransition><StudentDashboard /></PageTransition></ProtectedRoute>} />
