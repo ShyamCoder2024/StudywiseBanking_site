@@ -80,13 +80,13 @@ export default function TutorVideosPage() {
                     <button onClick={() => navigate('/dashboard')} className="btn-back">
                         <ArrowLeft size={24} />
                     </button>
-                    <div style={{ flex: 1 }}>
+                    <div className="header-content">
                         <h1>Tutor's Desk 🎓</h1>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '4px 0 0 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Youtube size={14} style={{ color: '#FF0000' }} />
-                            Videos from Study Wise Banking
+                        <p className="header-subtitle">
+                            <Youtube size={14} className="yt-icon" />
+                            <span>Videos from Study Wise Banking</span>
                             {aiPowered && (
-                                <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600, marginLeft: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <span className="ai-badge">
                                     <Zap size={10} /> AI Personalized
                                 </span>
                             )}
@@ -96,22 +96,9 @@ export default function TutorVideosPage() {
                         onClick={handleRefresh}
                         className="btn-refresh"
                         disabled={refreshing}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '8px 16px',
-                            background: 'var(--color-card)',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: '10px',
-                            color: 'var(--color-text)',
-                            cursor: refreshing ? 'wait' : 'pointer',
-                            fontSize: '0.85rem',
-                            fontWeight: 500
-                        }}
                     >
-                        <RefreshCw size={16} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-                        {refreshing ? 'Refreshing...' : 'Refresh'}
+                        <RefreshCw size={16} className={refreshing ? 'spinning' : ''} />
+                        <span className="refresh-text">{refreshing ? 'Refreshing...' : 'Refresh'}</span>
                     </button>
                 </div>
 

@@ -32,11 +32,18 @@
     cursor: pointer;
     transition: all 0.2s;
     color: var(--color-text);
+    flex-shrink: 0;
 }
 
 .btn-back:hover {
     background: #f8fafc;
     transform: translateX(-4px);
+}
+
+/* Header Content */
+.header-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .page-header h1 {
@@ -48,6 +55,65 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.header-subtitle {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 4px 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.yt-icon {
+    color: #FF0000;
+    flex-shrink: 0;
+}
+
+.ai-badge {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Refresh Button */
+.btn-refresh {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+.btn-refresh:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
 }
 
 /* Video Grid */
@@ -380,34 +446,44 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: space-between;
         gap: 12px;
         margin-bottom: 20px;
-        flex-wrap: nowrap;
     }
 
     .btn-back {
         width: 36px;
         height: 36px;
         border-radius: 10px;
-        flex-shrink: 0;
+    }
+
+    .header-content {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
     }
 
     .page-header h1 {
-        font-size: 1.3rem;
-        flex: 1;
+        font-size: 1.2rem;
         margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Hide subtitle on mobile for cleaner look */
+    .header-subtitle {
+        display: none;
     }
 
     .btn-refresh {
-        flex-shrink: 0;
-        padding: 8px 14px !important;
-        font-size: 0.85rem !important;
-        border-radius: 10px !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+    }
+
+    /* Hide refresh text on small screens */
+    .refresh-text {
+        display: none;
     }
 
     .video-grid-premium {
