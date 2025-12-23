@@ -634,21 +634,21 @@ router.get('/courses', async (req, res, next) => {
 
 // ============ Video Courses (Private YouTube) ============
 
-// Get all published video courses
+// Get all published video courses - OPTIMIZED (no large thumbnails)
 router.get('/video-courses', async (req, res, next) => {
     try {
         const courses = await Course.find({ isPublished: true })
-            .select('title thumbnail subject batchName description lectureCount lectures')
-            .sort({ createdAt: -1 });
+            .select('title subject batchName description lectures createdAt')
+            .sort({ createdAt: -1 })
+            .lean();
 
-        // Return courses with lecture count but hide YouTube links
+        // Return courses with lecture count only - NO thumbnails for fast loading
         const coursesForStudent = courses.map(course => ({
             _id: course._id,
             title: course.title,
-            thumbnail: course.thumbnail,
             subject: course.subject,
             batchName: course.batchName,
-            description: course.description,
+            description: course.description?.substring(0, 100) || '',
             lectureCount: course.lectures?.length || 0
         }));
 
