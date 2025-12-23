@@ -1488,49 +1488,48 @@ a:focus-visible {
     .hero-tile {
         min-height: auto;
         padding: 16px;
+        padding-top: 40px;
+        /* Space for notification badge */
         border-radius: 16px;
+        position: relative;
     }
 
     .hero-content-bento {
         flex-direction: column;
-        gap: 16px;
-        align-items: center;
-        text-align: center;
+        gap: 14px;
+        align-items: flex-start;
     }
 
     .exam-countdown {
         width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
 
     .exam-countdown .label {
         font-size: 0.65rem;
         padding: 4px 10px;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
 
     .exam-countdown h2 {
-        font-size: 1.25rem;
-        margin: 4px 0 12px 0;
+        font-size: 1.2rem;
+        margin: 6px 0 10px 0;
         word-break: break-word;
         line-height: 1.3;
     }
 
-    /* Countdown Timer - Clean Grid Layout */
+    /* Countdown Timer - Proper Grid */
     .countdown-timer {
         display: flex;
-        justify-content: center;
         gap: 8px;
-        width: 100%;
+        flex-wrap: nowrap;
     }
 
     .time-box {
-        padding: 8px 10px;
-        min-width: 52px;
+        padding: 10px 14px;
+        min-width: 60px;
         text-align: center;
         border-radius: 10px;
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .time-unit {
@@ -1540,45 +1539,47 @@ a:focus-visible {
     }
 
     .time-unit .num {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         font-weight: 700;
         line-height: 1.2;
     }
 
     .time-unit .unit {
-        font-size: 0.55rem;
-        margin-top: 2px;
+        font-size: 0.6rem;
+        margin-top: 3px;
         text-transform: uppercase;
         opacity: 0.85;
+        letter-spacing: 0.5px;
     }
 
-    /* Take Test Button - Full Width */
+    /* Take Test Button */
     .btn-action-glow {
-        padding: 10px 20px;
-        font-size: 0.8rem;
-        width: 100%;
-        justify-content: center;
-        border-radius: 24px;
-        margin-top: 4px;
+        padding: 12px 24px;
+        font-size: 0.85rem;
+        width: auto;
+        border-radius: 30px;
+        margin-top: 6px;
     }
 
-    /* Notification Badge - Smaller & Subtle */
+    /* Notification Badge - Fixed Position */
     .quiz-notification-badge {
-        top: 10px;
-        right: 10px;
-        padding: 5px 8px;
-        gap: 5px;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 6px 10px;
+        gap: 6px;
         border-radius: 20px;
+        z-index: 10;
     }
 
     .notification-count {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
         letter-spacing: 0.3px;
     }
 
     .notification-dot {
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
     }
 }
 
