@@ -46,6 +46,7 @@ export function StudentDashboard() {
     // Dashboard data state (real + mock fallback)
     const [dashboardData, setDashboardData] = useState(null);
     const [todos, setTodos] = useState([]);
+    const [todosLoaded, setTodosLoaded] = useState(false);
     const [taskProgress, setTaskProgress] = useState({ completed: 0, total: 0, percent: 0 });
     const [newQuizzes, setNewQuizzes] = useState([]);
     const [examSettings, setExamSettings] = useState(null);
@@ -146,6 +147,8 @@ export function StudentDashboard() {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setTodosLoaded(true);
         }
     };
 
@@ -468,7 +471,21 @@ export function StudentDashboard() {
                             <span className="badge">{todos.filter(t => !t.done).length}</span>
                         </div>
                         <div className="todo-list-bento">
-                            {todos.length > 0 ? todos.map(task => (
+                            {!todosLoaded ? (
+                                /* Loading skeleton */
+                                <div className="todo-loading-skeleton">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="skeleton-item" style={{
+                                            height: '40px',
+                                            background: 'var(--color-border)',
+                                            borderRadius: '8px',
+                                            marginBottom: '8px',
+                                            opacity: 0.6,
+                                            animation: 'pulse 1.5s infinite'
+                                        }} />
+                                    ))}
+                                </div>
+                            ) : todos.length > 0 ? todos.map(task => (
                                 <div key={task._id} className="todo-item-bento">
                                     <div
                                         className={`checkbox ${task.isCompleted ? 'checked' : ''}`}
