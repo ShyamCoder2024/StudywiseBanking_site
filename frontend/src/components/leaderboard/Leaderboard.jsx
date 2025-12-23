@@ -138,8 +138,8 @@ export function Leaderboard({ limit }) {
                 <div className="list-header-row">
                     <span className="w-rank">#</span>
                     <span className="w-user">Student</span>
-                    <span className="w-score">Score</span>
-                    <span className="w-time">Time</span>
+                    <span className="w-score">XP</span>
+                    <span className="w-time">Tests</span>
                 </div>
                 {listData.map((student, index) => (
                     <motion.div
@@ -157,8 +157,7 @@ export function Leaderboard({ limit }) {
                         </div>
                         <span className="user-score font-bold">{student.score}</span>
                         <div className="user-time">
-                            <Timer size={14} className="text-gray-400 mr-1" />
-                            <span>{Math.floor(student.timeTaken / 60)}m</span>
+                            <span>{student.testsCompleted || 0}</span>
                         </div>
                     </motion.div>
                 ))}

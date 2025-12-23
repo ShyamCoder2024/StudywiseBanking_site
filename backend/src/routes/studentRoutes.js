@@ -446,38 +446,80 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
 // ============ Leaderboard ============
 
 // @route   GET /api/student/leaderboard
-// @desc    Get leaderboard ranked by XP points
+// @desc    Get leaderboard ranked by XP points and test performance
 // @access  Private
 router.get('/leaderboard', async (req, res, next) => {
     try {
-        // Get top 50 students by XP
-        const topStudents = await User.find({ role: 'student' })
+        // Get all non-admin users
+        const allUsers = await User.find({ role: { $ne: 'admin' } })
             .select('firstName lastName xpPoints streakCount avatar')
-            .sort({ xpPoints: -1 })
-            .limit(50);
+            .lean();
+
+        // Get attempt stats for all users
+        const attempts = await Attempt.aggregate([
+            {
+                $group: {
+                    _id: '$user',
+                    totalAttempts: { $sum: 1 },
+                    avgScore: { $avg: '$score' },
+                    totalCorrect: { $sum: '$correctAnswers' },
+                    totalQuestions: { $sum: '$totalQuestions' }
+                }
+            }
+        ]);
+
+        // Create a map of user stats
+        const statsMap = {};
+        attempts.forEach(stat => {
+            statsMap[stat._id.toString()] = {
+                totalAttempts: stat.totalAttempts || 0,
+                avgScore: Math.round(stat.avgScore || 0),
+                accuracy: stat.totalQuestions > 0
+                    ? Math.round((stat.totalCorrect / stat.totalQuestions) * 100)
+                    : 0
+            };
+        });
+
+        // Combine user data with stats
+        const studentsWithStats = allUsers.map(user => {
+            const userStats = statsMap[user._id.toString()] || { totalAttempts: 0, avgScore: 0, accuracy: 0 };
+            return {
+                _id: user._id,
+                name: `${user.firstName || 'Student'} ${user.lastName || ''}`.trim(),
+                xpPoints: user.xpPoints || 0,
+                streakCount: user.streakCount || 0,
+                avatar: user.avatar,
+                testsCompleted: userStats.totalAttempts,
+                avgScore: userStats.avgScore,
+                accuracy: userStats.accuracy,
+                // Combined score for ranking: XP + (avgScore * 10) + (accuracy * 5)
+                rankScore: (user.xpPoints || 0) + (userStats.avgScore * 10) + (userStats.accuracy * 5)
+            };
+        });
+
+        // Sort by combined rank score (descending)
+        studentsWithStats.sort((a, b) => b.rankScore - a.rankScore);
 
         // Get current user's rank
-        const currentUserId = req.user._id;
-        const allStudentsByXP = await User.find({ role: 'student' })
-            .select('_id xpPoints')
-            .sort({ xpPoints: -1 });
-
+        const currentUserId = req.user._id.toString();
         let currentUserRank = 0;
-        allStudentsByXP.forEach((student, index) => {
-            if (student._id.toString() === currentUserId.toString()) {
+        studentsWithStats.forEach((student, index) => {
+            if (student._id.toString() === currentUserId) {
                 currentUserRank = index + 1;
             }
         });
 
-        // Format leaderboard data
-        const leaderboard = topStudents.map((student, index) => ({
+        // Format leaderboard data (top 50)
+        const leaderboard = studentsWithStats.slice(0, 50).map((student, index) => ({
             rank: index + 1,
             _id: student._id,
-            name: `${student.firstName} ${student.lastName}`,
-            xpPoints: student.xpPoints || 0,
-            streakCount: student.streakCount || 0,
+            name: student.name,
+            xpPoints: student.xpPoints,
+            streakCount: student.streakCount,
+            testsCompleted: student.testsCompleted,
+            avgScore: student.avgScore,
             avatar: student.avatar,
-            isCurrentUser: student._id.toString() === currentUserId.toString()
+            isCurrentUser: student._id.toString() === currentUserId
         }));
 
         res.json({
@@ -485,7 +527,7 @@ router.get('/leaderboard', async (req, res, next) => {
             data: {
                 leaderboard,
                 currentUserRank,
-                totalStudents: allStudentsByXP.length
+                totalStudents: studentsWithStats.length
             }
         });
     } catch (error) {

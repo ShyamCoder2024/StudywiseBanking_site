@@ -23,6 +23,8 @@
     .bento-dashboard {
         padding-top: 32px;
         /* More space from header */
+        padding-bottom: 100px;
+        /* Space for bottom nav */
     }
 }
 
