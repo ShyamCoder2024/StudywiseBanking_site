@@ -134,9 +134,9 @@
         display: grid;
     }
 
-    /* Add padding to body to account for bottom nav */
+    /* Add padding to body to account for bottom nav - increased for safety */
     body {
-        padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
     }
 }
 

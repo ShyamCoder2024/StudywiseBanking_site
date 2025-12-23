@@ -89,8 +89,10 @@ export function Navbar() {
                         </>
                     )}
 
-                    {/* Clean Toggle */}
-                    <CleanToggle isDark={isDark} onToggle={toggleTheme} />
+                    {/* Clean Toggle - Hidden on mobile (shown in profile instead) */}
+                    <div className="hide-on-mobile">
+                        <CleanToggle isDark={isDark} onToggle={toggleTheme} />
+                    </div>
 
                     {/* Profile */}
                     {isAuthenticated && (
