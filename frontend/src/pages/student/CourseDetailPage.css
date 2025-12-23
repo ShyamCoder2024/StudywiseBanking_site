@@ -1,5 +1,5 @@
-/* CourseDetailPage - Final Premium Design */
-/* Full-width thumbnail, Two-column layout: Description LEFT, Lectures RIGHT */
+/* CourseDetailPage - DRD Premium Design */
+/* Wireframe Layout: LEFT (thumbnail + description), RIGHT (lectures) */
 
 .cdp {
     min-height: 100vh;
@@ -7,94 +7,110 @@
     padding-bottom: 100px;
 }
 
+/* Loading State */
 .cdp-loader {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 50vh;
-    gap: 10px;
+    min-height: 60vh;
+    gap: 12px;
     color: var(--color-text-muted);
 }
 
 .cdp-spin {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border: 3px solid var(--color-border);
     border-top-color: var(--color-primary);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+.cdp-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
 }
 
-/* Back Button - Floating */
-.cdp-back {
-    position: absolute;
-    top: 80px;
-    left: 16px;
+/* Header with Back Button */
+.cdp-header {
+    padding: 12px 20px;
+    background: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 60px;
     z-index: 10;
-    display: flex;
+}
+
+.cdp-back {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
     border-radius: 8px;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
     color: var(--color-text);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
 }
 
-/* THUMBNAIL - Contained with max height, shows full image */
-.cdp-thumbnail {
-    width: 100%;
-    max-height: 350px;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.cdp-back:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
-.cdp-thumbnail img {
-    width: 100%;
-    height: 100%;
-    max-height: 350px;
-    object-fit: contain;
-    display: block;
-}
-
-.cdp-thumb-placeholder {
-    width: 100%;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--color-primary), #6366f1);
-    color: rgba(255, 255, 255, 0.4);
-}
-
-/* TWO COLUMN LAYOUT */
-.cdp-content {
+/* Two Column Grid */
+.cdp-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     max-width: 1100px;
     margin: 0 auto;
     padding: 24px 20px;
+    align-items: start;
 }
 
-/* LEFT COLUMN - Description & Info */
+/* LEFT Column */
 .cdp-left {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+}
+
+/* Thumbnail */
+.cdp-thumb {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cdp-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.cdp-thumb-empty {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary), #7C3AED);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Course Info */
+.cdp-info {
+    background: var(--color-card);
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    padding: 20px;
 }
 
 .cdp-badge {
@@ -106,12 +122,12 @@
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 12px;
-    width: fit-content;
+    letter-spacing: 0.3px;
+    margin-bottom: 10px;
 }
 
-.cdp-left h1 {
-    font-size: 24px;
+.cdp-info h1 {
+    font-size: 22px;
     font-weight: 700;
     margin: 0 0 8px;
     color: var(--color-text);
@@ -119,35 +135,53 @@
 }
 
 .cdp-meta {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-text-secondary);
-    margin: 0 0 16px;
+    margin: 0 0 14px;
 }
 
+/* Description with YouTube-style "more" */
 .cdp-desc {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .cdp-desc p {
     font-size: 14px;
     color: var(--color-text-secondary);
     line-height: 1.6;
-    margin: 0 0 8px;
+    margin: 0;
+    display: inline;
 }
 
 .cdp-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    display: inline;
     padding: 0;
     border: none;
     background: none;
-    color: var(--color-primary);
+    color: var(--color-text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.cdp-more:hover {
+    color: var(--color-text);
+}
+
+.cdp-less {
+    display: block;
+    margin-top: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
 }
 
+/* Enroll Button */
 .cdp-enroll {
     display: inline-flex;
     align-items: center;
@@ -161,49 +195,60 @@
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(138, 117, 186, 0.3);
-    width: fit-content;
+    transition: box-shadow 0.2s;
 }
 
-/* RIGHT COLUMN - Lectures */
+.cdp-enroll:hover {
+    box-shadow: 0 6px 20px rgba(138, 117, 186, 0.4);
+}
+
+/* RIGHT Column - Lectures */
 .cdp-right {
+    position: sticky;
+    top: 120px;
+}
+
+.cdp-lectures-card {
     background: var(--color-card);
     border-radius: 14px;
     border: 1px solid var(--color-border);
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.cdp-right h2 {
+.cdp-lectures-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 15px;
-    font-weight: 700;
-    margin: 0;
-    padding: 14px 16px;
+    padding: 16px 18px;
     border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    font-size: 15px;
+    font-weight: 600;
     color: var(--color-text);
 }
 
-.cdp-right h2 svg {
+.cdp-lectures-header svg {
     color: var(--color-primary);
 }
 
-.cdp-right h2 span {
-    font-weight: 400;
+.cdp-count {
     color: var(--color-text-muted);
+    font-weight: 400;
     font-size: 13px;
 }
 
-.cdp-lectures {
-    max-height: 400px;
+.cdp-lectures-list {
+    max-height: 450px;
     overflow-y: auto;
 }
 
+/* Lecture Item */
 .cdp-lec {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 14px 18px;
     border-bottom: 1px solid var(--color-border);
     cursor: pointer;
     transition: background 0.15s;
@@ -213,26 +258,22 @@
     border-bottom: none;
 }
 
-.cdp-lec:hover {
-    background: var(--color-bg);
-}
-
 .cdp-lec.locked {
-    opacity: 0.6;
+    opacity: 0.55;
 }
 
 .cdp-lec-num {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 700;
+    flex-shrink: 0;
     background: var(--color-primary-light, #EDE9F6);
     color: var(--color-primary);
-    flex-shrink: 0;
 }
 
 .cdp-lec.locked .cdp-lec-num {
@@ -240,12 +281,12 @@
     color: var(--color-text-muted);
 }
 
-.cdp-lec-info {
+.cdp-lec-content {
     flex: 1;
     min-width: 0;
 }
 
-.cdp-lec-info span {
+.cdp-lec-title {
     display: block;
     font-size: 13px;
     font-weight: 500;
@@ -255,25 +296,26 @@
     text-overflow: ellipsis;
 }
 
-.cdp-lec-info small {
+.cdp-lec-dur {
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 11px;
     color: var(--color-text-muted);
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 .cdp-lec-icon {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    flex-shrink: 0;
     background: var(--color-primary);
     color: #fff;
-    flex-shrink: 0;
+    transition: transform 0.2s;
 }
 
 .cdp-lec.locked .cdp-lec-icon {
@@ -285,30 +327,32 @@
 .cdp-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 16px;
+    padding: 20px;
 }
 
 .cdp-modal {
     position: relative;
     width: 100%;
-    max-width: 320px;
+    max-width: 340px;
     background: var(--color-card);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 28px 24px;
     text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
-.cdp-close {
+.cdp-modal-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -317,11 +361,16 @@
     background: var(--color-bg);
     color: var(--color-text-muted);
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cdp-modal-close:hover {
+    background: var(--color-border);
 }
 
 .cdp-modal-icon {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     margin: 0 auto 16px;
     display: flex;
     align-items: center;
@@ -332,105 +381,208 @@
 }
 
 .cdp-modal h3 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     margin: 0 0 8px;
     color: var(--color-text);
 }
 
 .cdp-modal p {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--color-text-secondary);
-    margin: 0 0 20px;
+    margin: 0 0 16px;
     line-height: 1.5;
+}
+
+.cdp-modal-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.cdp-modal-features div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.cdp-modal-features svg {
+    color: var(--color-success, #6EBCC3);
+    flex-shrink: 0;
 }
 
 .cdp-modal-btn {
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 14px;
+    border-radius: 12px;
     border: none;
     background: linear-gradient(135deg, var(--color-primary), #7C3AED);
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(138, 117, 186, 0.35);
 }
 
-/* TABLET - Stack columns */
-@media (max-width: 800px) {
-    .cdp-content {
+/* ============ TABLET ============ */
+@media (max-width: 900px) {
+    .cdp-grid {
         grid-template-columns: 1fr;
         gap: 20px;
         padding: 20px 16px;
     }
 
     .cdp-right {
-        max-height: none;
+        position: static;
     }
 
-    .cdp-lectures {
+    .cdp-lectures-list {
         max-height: none;
     }
 }
 
-/* MOBILE */
-@media (max-width: 480px) {
+/* ============ MOBILE ============ */
+@media (max-width: 600px) {
+    .cdp-header {
+        padding: 10px 14px;
+        top: 56px;
+    }
+
     .cdp-back {
-        top: 70px;
-        left: 12px;
         padding: 6px 10px;
         font-size: 12px;
     }
 
-    .cdp-thumbnail {
-        max-height: 220px;
+    .cdp-grid {
+        gap: 14px;
+        padding: 14px 12px;
     }
 
-    .cdp-content {
-        padding: 16px 12px;
-        gap: 16px;
+    .cdp-left {
+        gap: 12px;
     }
 
-    .cdp-left h1 {
-        font-size: 18px;
+    .cdp-thumb {
+        border-radius: 10px;
+    }
+
+    .cdp-info {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .cdp-badge {
+        font-size: 9px;
+        padding: 4px 10px;
+    }
+
+    .cdp-info h1 {
+        font-size: 17px;
     }
 
     .cdp-meta {
         font-size: 12px;
+        margin-bottom: 10px;
     }
 
-    .cdp-desc p {
+    .cdp-desc p,
+    .cdp-more {
         font-size: 13px;
     }
 
     .cdp-enroll {
-        padding: 10px 16px;
+        width: 100%;
+        justify-content: center;
+        padding: 11px 16px;
         font-size: 13px;
     }
 
-    .cdp-right h2 {
-        font-size: 14px;
+    .cdp-lectures-card {
+        border-radius: 10px;
+    }
+
+    .cdp-lectures-header {
         padding: 12px 14px;
+        font-size: 14px;
     }
 
     .cdp-lec {
-        padding: 10px 14px;
+        padding: 12px 14px;
         gap: 10px;
     }
 
     .cdp-lec-num {
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         font-size: 10px;
+        border-radius: 6px;
     }
 
-    .cdp-lec-info span {
+    .cdp-lec-title {
         font-size: 12px;
     }
 
+    .cdp-lec-dur {
+        font-size: 10px;
+    }
+
     .cdp-lec-icon {
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .cdp-lec-icon svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    .cdp-modal {
+        padding: 22px 18px;
+        border-radius: 14px;
+    }
+
+    .cdp-modal-icon {
+        width: 54px;
+        height: 54px;
+    }
+
+    .cdp-modal h3 {
+        font-size: 17px;
+    }
+
+    .cdp-modal p {
+        font-size: 13px;
+    }
+
+    .cdp-modal-btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
+
+/* ============ SMALL MOBILE ============ */
+@media (max-width: 380px) {
+    .cdp-grid {
+        padding: 10px 8px;
+    }
+
+    .cdp-info {
+        padding: 12px;
+    }
+
+    .cdp-info h1 {
+        font-size: 15px;
+    }
+
+    .cdp-lec {
+        padding: 10px 12px;
+    }
+
+    .cdp-lec-title {
+        font-size: 11px;
     }
 }
