@@ -242,170 +242,107 @@
 }
 
 /* ========================================
-   Premium Enrollment CTA Card
+   Compact Enrollment CTA Card
    ======================================== */
 .enroll-cta-card {
     position: relative;
-    margin-top: 28px;
-    padding: 28px 24px;
-    background: linear-gradient(135deg, #8A75BA 0%, #6366f1 50%, #7C3AED 100%);
-    border-radius: 20px;
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #8A75BA 0%, #6366f1 100%);
+    border-radius: 14px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 20px;
-    box-shadow: 0 10px 40px rgba(138, 117, 186, 0.35);
-    cursor: pointer;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(138, 117, 186, 0.25);
+    transition: all 0.2s ease;
 }
 
-/* Animated Background Circles */
+/* Subtle Background Circles */
 .enroll-bg-elements {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    overflow: hidden;
 }
 
 .floating-circle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    animation: floatCircle 6s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .floating-circle.c1 {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     top: -30px;
-    right: -30px;
-    animation-delay: 0s;
+    right: -20px;
 }
 
 .floating-circle.c2 {
-    width: 80px;
-    height: 80px;
-    bottom: -20px;
-    left: -20px;
-    animation-delay: 2s;
-}
-
-.floating-circle.c3 {
     width: 50px;
     height: 50px;
-    top: 50%;
-    left: 60%;
-    animation-delay: 4s;
+    bottom: -15px;
+    left: -15px;
 }
 
-@keyframes floatCircle {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.1;
-    }
-
-    50% {
-        transform: translateY(-15px) scale(1.1);
-        opacity: 0.2;
-    }
-}
-
-/* Content Layout */
-.enroll-content {
+/* Horizontal Row Layout */
+.enroll-row {
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.enroll-left {
+    display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Animated Icon */
-.enroll-icon {
-    width: 64px;
-    height: 64px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.enroll-icon-small {
     color: #fff;
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
 }
 
-/* Text */
-.enroll-text h3 {
-    font-size: 20px;
+.enroll-text-compact h3 {
+    font-size: 15px;
     font-weight: 700;
     color: #fff;
     margin: 0;
-    line-height: 1.3;
 }
 
-.enroll-text p {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
-    margin: 6px 0 0;
-    max-width: 280px;
-    line-height: 1.5;
+.enroll-text-compact p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 2px 0 0;
 }
 
-/* CTA Button */
-.enroll-btn {
-    position: relative;
-    z-index: 1;
+/* WhatsApp Button */
+.whatsapp-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 14px 28px;
-    background: #fff;
-    color: var(--color-primary);
-    font-size: 15px;
-    font-weight: 700;
+    padding: 10px 18px;
+    background: #25D366;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(37, 211, 102, 0.3);
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
-.enroll-btn:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+.whatsapp-btn:hover {
+    background: #22c55e;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
 }
 
-.enroll-btn svg {
-    transition: transform 0.2s ease;
-}
-
-.enroll-btn:hover svg {
-    transform: translateX(4px);
-}
-
-/* Trust Badges */
-.enroll-badges {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    gap: 16px;
-    margin-top: 4px;
-}
-
-.enroll-badges span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.enroll-badges svg {
-    color: #fbbf24;
+.whatsapp-btn svg {
+    flex-shrink: 0;
 }
 
 /* Empty State */
@@ -524,57 +461,48 @@
         padding: 3px 6px;
     }
 
-    /* Enrollment Card Mobile */
+    /* Compact Enrollment Card - Mobile */
     .enroll-cta-card {
-        padding: 24px 18px;
-        border-radius: 16px;
-        gap: 16px;
-        margin-top: 20px;
+        padding: 14px 16px;
+        margin-top: 16px;
     }
 
-    .enroll-icon {
-        width: 56px;
-        height: 56px;
-    }
-
-    .enroll-icon svg {
-        width: 28px;
-        height: 28px;
-    }
-
-    .enroll-text h3 {
-        font-size: 17px;
-    }
-
-    .enroll-text p {
-        font-size: 12px;
-        max-width: 260px;
-    }
-
-    .enroll-btn {
-        padding: 12px 22px;
-        font-size: 14px;
-    }
-
-    .enroll-badges {
+    .enroll-row {
+        flex-direction: column;
+        align-items: flex-start;
         gap: 12px;
     }
 
-    .enroll-badges span {
-        font-size: 10px;
+    .enroll-left {
+        gap: 10px;
+    }
+
+    .enroll-icon-small {
+        width: 22px;
+        height: 22px;
+    }
+
+    .enroll-text-compact h3 {
+        font-size: 14px;
+    }
+
+    .enroll-text-compact p {
+        font-size: 11px;
+    }
+
+    .whatsapp-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 13px;
     }
 
     .floating-circle.c1 {
-        width: 80px;
-        height: 80px;
-    }
-
-    .floating-circle.c2 {
         width: 60px;
         height: 60px;
     }
 
-    .floating-circle.c3 {
+    .floating-circle.c2 {
         width: 40px;
         height: 40px;
     }
