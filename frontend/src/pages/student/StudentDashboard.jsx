@@ -53,6 +53,7 @@ export function StudentDashboard() {
     const [loading, setLoading] = useState(true);
     // Enrollment and courses state
     const [enrollment, setEnrollment] = useState({ isPaid: false, courses: [] });
+    const [enrollmentLoaded, setEnrollmentLoaded] = useState(false);
     const [videoCourses, setVideoCourses] = useState([]);
     // Live countdown state
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -187,6 +188,8 @@ export function StudentDashboard() {
             setEnrollment(res.data.data || { isPaid: false, courses: [] });
         } catch (error) {
             console.error('Failed to fetch enrollment:', error);
+        } finally {
+            setEnrollmentLoaded(true);
         }
     };
 
@@ -470,13 +473,20 @@ export function StudentDashboard() {
 
                     {/* 5. Dynamic Course Card - Paid vs Free */}
                     <motion.div
-                        className={`bento-tile course-card-dynamic ${enrollment.isPaid ? 'paid' : 'free'} clickable`}
+                        className={`bento-tile course-card-dynamic ${enrollmentLoaded ? (enrollment.isPaid ? 'paid' : 'free') : 'loading'} clickable`}
                         variants={tile}
                         onClick={() => navigate('/courses')}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        {enrollment.isPaid ? (
+                        {!enrollmentLoaded ? (
+                            /* Loading Skeleton */
+                            <div className="course-card-loading">
+                                <div className="skeleton-badge" />
+                                <div className="skeleton-title" />
+                                <div className="skeleton-meta" />
+                            </div>
+                        ) : enrollment.isPaid ? (
                             /* Paid User - Show Course Progress */
                             <>
                                 <div className="course-card-header">
