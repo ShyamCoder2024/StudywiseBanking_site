@@ -66,6 +66,9 @@ export function Navbar() {
                         <NavLink to="/subjects" className={({ isActive }) => `drd-nav-link ${isActive ? 'active' : ''}`}>
                             Subjects
                         </NavLink>
+                        <NavLink to="/courses" className={({ isActive }) => `drd-nav-link ${isActive ? 'active' : ''}`}>
+                            Courses
+                        </NavLink>
                         <NavLink to="/about-tutor" className={({ isActive }) => `drd-nav-link ${isActive ? 'active' : ''}`}>
                             About
                         </NavLink>
