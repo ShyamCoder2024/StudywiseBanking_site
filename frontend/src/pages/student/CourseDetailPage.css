@@ -1,321 +1,247 @@
-/* CourseDetailPage - Premium DRD Hero Design */
+/* CourseDetailPage - Simple Robust Design */
 
 .cdp {
     min-height: 100vh;
     background: var(--color-bg);
+    padding-bottom: 100px;
 }
 
-/* Loading State */
 .cdp-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 60vh;
-    gap: 12px;
-    color: var(--color-text-secondary);
+    min-height: 50vh;
+    gap: 10px;
+    color: var(--color-text-muted);
 }
 
 .cdp-spinner {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: 3px solid var(--color-border);
     border-top-color: var(--color-primary);
     border-radius: 50%;
-    animation: cdp-spin 1s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
-@keyframes cdp-spin {
+@keyframes spin {
     to {
         transform: rotate(360deg);
     }
 }
 
-.cdp-back-link {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 500;
+/* Navigation */
+.cdp-nav {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-card);
 }
 
-/* Hero Section - Thumbnail as Full Background */
-.cdp-hero {
-    position: relative;
-    min-height: 320px;
+.cdp-nav button {
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.cdp-hero-bg {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--color-primary), #6366f1);
-}
-
-.cdp-hero-bg-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.cdp-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.3) 0%,
-            rgba(0, 0, 0, 0.6) 50%,
-            rgba(0, 0, 0, 0.85) 100%);
-}
-
-.cdp-hero-content {
-    position: relative;
-    z-index: 2;
-    padding: 16px 20px 28px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-/* Back Button */
-.cdp-back {
-    display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 8px 12px;
     border-radius: 8px;
-    border: none;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    color: #fff;
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    color: var(--color-text);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
-    width: fit-content;
-    margin-bottom: 20px;
 }
 
-.cdp-back:hover {
-    background: rgba(255, 255, 255, 0.25);
+/* Course Card */
+.cdp-card {
+    max-width: 700px;
+    margin: 16px auto;
+    padding: 0 16px;
 }
 
-/* Hero Info */
-.cdp-hero-info {
-    margin-top: auto;
-    color: #fff;
+/* Thumbnail */
+.cdp-thumb {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+}
+
+.cdp-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Info Section */
+.cdp-info {
+    background: var(--color-card);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    padding: 16px;
 }
 
 .cdp-badge {
     display: inline-block;
-    padding: 5px 12px;
+    padding: 4px 10px;
     background: var(--color-primary);
-    border-radius: 14px;
+    color: #fff;
+    border-radius: 12px;
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin-bottom: 10px;
 }
 
-.cdp-title {
-    font-size: 26px;
+.cdp-info h1 {
+    font-size: 20px;
     font-weight: 700;
-    margin: 0 0 10px;
-    line-height: 1.2;
+    margin: 0 0 8px;
+    color: var(--color-text);
+    line-height: 1.3;
 }
 
 .cdp-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 12px;
-}
-
-.cdp-meta span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
     font-size: 13px;
-    opacity: 0.9;
+    color: var(--color-text-secondary);
+    margin: 0 0 10px;
 }
 
 .cdp-desc {
     font-size: 13px;
+    color: var(--color-text-muted);
     line-height: 1.5;
-    margin: 0 0 16px;
-    opacity: 0.85;
-    max-width: 600px;
+    margin: 0 0 14px;
 }
 
-.cdp-enroll-btn {
+.cdp-enroll {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border-radius: 10px;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 8px;
     border: none;
-    background: linear-gradient(135deg, var(--color-primary), #7C3AED);
+    background: var(--color-primary);
     color: #fff;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 15px rgba(138, 117, 186, 0.4);
-}
-
-.cdp-enroll-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(138, 117, 186, 0.5);
 }
 
 /* Lectures Section */
 .cdp-lectures {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 24px 20px 100px;
+    max-width: 700px;
+    margin: 20px auto 0;
+    padding: 0 16px;
 }
 
-.cdp-lectures-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-.cdp-lectures-header h2 {
+.cdp-lectures h2 {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
+    margin: 0 0 12px;
     color: var(--color-text);
-    margin: 0;
 }
 
-.cdp-lectures-header h2 svg {
+.cdp-lectures h2 svg {
     color: var(--color-primary);
 }
 
-.cdp-lecture-count {
-    font-size: 12px;
-    color: var(--color-text-muted);
-    background: var(--color-bg);
-    padding: 4px 10px;
-    border-radius: 12px;
-}
-
-/* Lectures Grid */
-.cdp-lectures-grid {
+/* Lecture List */
+.cdp-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-/* Lecture Card */
-.cdp-lecture {
+.cdp-lec {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
+    gap: 10px;
+    padding: 12px;
     background: var(--color-card);
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid var(--color-border);
     cursor: pointer;
-    transition: all 0.15s;
 }
 
-.cdp-lecture:hover {
+.cdp-lec:hover {
     border-color: var(--color-primary);
-    box-shadow: 0 2px 10px rgba(138, 117, 186, 0.12);
 }
 
-.cdp-lecture.locked {
+.cdp-lec.locked {
     opacity: 0.6;
 }
 
-.cdp-lecture.locked:hover {
-    opacity: 0.7;
-    border-color: var(--color-border);
-}
-
-.cdp-lecture-num {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-    background: var(--color-primary-light, #EDE9F6);
-    color: var(--color-primary);
-}
-
-.cdp-lecture.locked .cdp-lecture-num {
-    background: var(--color-bg);
-    color: var(--color-text-muted);
-}
-
-.cdp-lecture-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.cdp-lecture-info h3 {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.cdp-lecture-info span {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: var(--color-text-muted);
-    margin-top: 3px;
-}
-
-.cdp-lecture-icon {
+.cdp-lec-num {
     width: 28px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--color-primary-light, #EDE9F6);
+    color: var(--color-primary);
     flex-shrink: 0;
-    background: var(--color-primary);
-    color: #fff;
 }
 
-.cdp-lecture.locked .cdp-lecture-icon {
+.cdp-lec.locked .cdp-lec-num {
     background: var(--color-bg);
     color: var(--color-text-muted);
 }
 
-.cdp-no-lectures {
+.cdp-lec-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cdp-lec-info span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cdp-lec-info small {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    gap: 4px;
+    font-size: 10px;
     color: var(--color-text-muted);
-    gap: 8px;
+    margin-top: 2px;
+}
+
+.cdp-lec-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.cdp-lec.locked .cdp-lec-icon {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
 }
 
 /* Modal */
-.cdp-modal-overlay {
+.cdp-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -326,18 +252,17 @@
 .cdp-modal {
     position: relative;
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     background: var(--color-card);
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 24px 20px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.cdp-modal-close {
+.cdp-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     width: 28px;
     height: 28px;
     display: flex;
@@ -350,161 +275,101 @@
     cursor: pointer;
 }
 
-.cdp-modal-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--color-primary-light, #EDE9F6);
+.cdp-modal svg:first-of-type {
     color: var(--color-primary);
+    margin-bottom: 10px;
 }
 
-.cdp-modal h2 {
-    font-size: 18px;
+.cdp-modal h3 {
+    font-size: 16px;
     font-weight: 700;
-    color: var(--color-text);
     margin: 0 0 8px;
+    color: var(--color-text);
 }
 
 .cdp-modal p {
     font-size: 13px;
     color: var(--color-text-secondary);
-    line-height: 1.5;
     margin: 0 0 16px;
-}
-
-.cdp-modal-features {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-    text-align: left;
-}
-
-.cdp-modal-features div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--color-text);
-}
-
-.cdp-modal-features svg {
-    color: var(--color-success, #6EBCC3);
-    flex-shrink: 0;
 }
 
 .cdp-modal-btn {
     width: 100%;
-    padding: 12px 16px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 8px;
     border: none;
-    background: linear-gradient(135deg, var(--color-primary), #7C3AED);
+    background: var(--color-primary);
     color: #fff;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.3);
 }
 
-/* Responsive - Tablet */
-@media (max-width: 768px) {
-    .cdp-hero {
-        min-height: 280px;
-    }
-
-    .cdp-title {
-        font-size: 22px;
-    }
-
-    .cdp-lectures {
-        padding: 20px 16px 100px;
-    }
-}
-
-/* Responsive - Mobile */
+/* Mobile */
 @media (max-width: 480px) {
-    .cdp-hero {
-        min-height: 260px;
+    .cdp-card {
+        padding: 0 12px;
+        margin: 12px auto;
     }
 
-    .cdp-hero-content {
-        padding: 12px 14px 20px;
+    .cdp-thumb {
+        border-radius: 10px;
+        margin-bottom: 12px;
     }
 
-    .cdp-back {
-        padding: 6px 10px;
-        font-size: 12px;
-        margin-bottom: 16px;
+    .cdp-info {
+        padding: 14px;
+        border-radius: 10px;
     }
 
-    .cdp-badge {
-        font-size: 9px;
-        padding: 4px 10px;
-    }
-
-    .cdp-title {
-        font-size: 18px;
-        margin-bottom: 8px;
+    .cdp-info h1 {
+        font-size: 17px;
     }
 
     .cdp-meta {
-        gap: 12px;
-        margin-bottom: 10px;
-    }
-
-    .cdp-meta span {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .cdp-desc {
         font-size: 12px;
-        margin-bottom: 14px;
     }
 
-    .cdp-enroll-btn {
-        padding: 10px 16px;
-        font-size: 13px;
-    }
-
-    .cdp-lectures {
-        padding: 16px 12px 100px;
-    }
-
-    .cdp-lectures-header h2 {
-        font-size: 14px;
-    }
-
-    .cdp-lecture {
-        padding: 12px;
-        gap: 10px;
-        border-radius: 10px;
-    }
-
-    .cdp-lecture-num {
-        width: 28px;
-        height: 28px;
-        font-size: 10px;
-    }
-
-    .cdp-lecture-info h3 {
+    .cdp-enroll {
+        padding: 9px 14px;
         font-size: 12px;
     }
 
-    .cdp-lecture-info span {
+    .cdp-lectures {
+        padding: 0 12px;
+        margin-top: 16px;
+    }
+
+    .cdp-lectures h2 {
+        font-size: 14px;
+    }
+
+    .cdp-list {
+        gap: 6px;
+    }
+
+    .cdp-lec {
+        padding: 10px;
+        gap: 8px;
+        border-radius: 8px;
+    }
+
+    .cdp-lec-num {
+        width: 24px;
+        height: 24px;
         font-size: 10px;
     }
 
-    .cdp-lecture-icon {
-        width: 24px;
-        height: 24px;
+    .cdp-lec-info span {
+        font-size: 12px;
     }
 
-    .cdp-lecture-icon svg {
-        width: 12px;
-        height: 12px;
+    .cdp-lec-icon {
+        width: 22px;
+        height: 22px;
     }
 }

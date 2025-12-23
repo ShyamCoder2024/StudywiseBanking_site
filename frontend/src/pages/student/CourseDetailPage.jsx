@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Lock, BookOpen, Clock, CheckCircle, X, Play, Users, Award } from 'lucide-react';
+import { ArrowLeft, Lock, BookOpen, Clock, CheckCircle, X, Play } from 'lucide-react';
 import api from '../../services/api';
 import './CourseDetailPage.css';
 
@@ -40,7 +40,7 @@ export function CourseDetailPage() {
             <div className="cdp">
                 <div className="cdp-loading">
                     <div className="cdp-spinner"></div>
-                    <p>Loading course...</p>
+                    <p>Loading...</p>
                 </div>
             </div>
         );
@@ -50,125 +50,89 @@ export function CourseDetailPage() {
         return (
             <div className="cdp">
                 <div className="cdp-loading">
-                    <h2>Course not found</h2>
-                    <Link to="/courses" className="cdp-back-link">← Back to Courses</Link>
+                    <p>Course not found</p>
+                    <Link to="/courses">← Back</Link>
                 </div>
             </div>
         );
     }
 
-    // Truncate long description for display
-    const shortDesc = course.description && course.description.length > 200
-        ? course.description.substring(0, 200) + '...'
-        : course.description;
-
     return (
         <div className="cdp">
-            {/* Hero Section with Thumbnail */}
-            <div className="cdp-hero">
-                <div className="cdp-hero-bg">
-                    {course.thumbnail && <img src={course.thumbnail} alt="" className="cdp-hero-bg-img" />}
-                </div>
-                <div className="cdp-hero-overlay"></div>
-
-                <div className="cdp-hero-content">
-                    <button className="cdp-back" onClick={() => navigate('/courses')}>
-                        <ArrowLeft size={18} />
-                        <span>Back</span>
-                    </button>
-
-                    <div className="cdp-hero-info">
-                        <span className="cdp-badge">{course.subject}</span>
-                        <h1 className="cdp-title">{course.title}</h1>
-                        <div className="cdp-meta">
-                            <span><BookOpen size={14} />{course.batchName}</span>
-                            <span><Play size={14} />{course.lectureCount} Lectures</span>
-                        </div>
-                        {shortDesc && <p className="cdp-desc">{shortDesc}</p>}
-
-                        {!course.isPaid && (
-                            <button className="cdp-enroll-btn" onClick={() => setShowEnrollModal(true)}>
-                                <Lock size={16} />
-                                Enroll to Unlock All Lectures
-                            </button>
-                        )}
-                    </div>
-                </div>
+            {/* Back Button */}
+            <div className="cdp-nav">
+                <button onClick={() => navigate('/courses')}>
+                    <ArrowLeft size={16} /> Back
+                </button>
             </div>
 
-            {/* Lectures Section */}
-            <div className="cdp-lectures">
-                <div className="cdp-lectures-header">
-                    <h2><BookOpen size={18} /> Course Lectures</h2>
-                    <span className="cdp-lecture-count">{course.lectureCount} Videos</span>
-                </div>
+            {/* Course Card */}
+            <div className="cdp-card">
+                {/* Thumbnail */}
+                {course.thumbnail && (
+                    <div className="cdp-thumb">
+                        <img src={course.thumbnail} alt={course.title} />
+                    </div>
+                )}
 
-                <div className="cdp-lectures-grid">
-                    {course.lectures && course.lectures.length > 0 ? (
-                        course.lectures.map((lecture, index) => (
-                            <motion.div
-                                key={lecture._id}
-                                className={`cdp-lecture ${lecture.isLocked ? 'locked' : ''}`}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.03 * index }}
-                                onClick={() => handleLectureClick(lecture)}
-                            >
-                                <div className="cdp-lecture-num">
-                                    {lecture.isLocked ? <Lock size={14} /> : String(lecture.lectureNumber).padStart(2, '0')}
-                                </div>
-                                <div className="cdp-lecture-info">
-                                    <h3>{lecture.title}</h3>
-                                    {lecture.duration && <span><Clock size={10} /> {lecture.duration}</span>}
-                                </div>
-                                <div className="cdp-lecture-icon">
-                                    {lecture.isLocked ? <Lock size={14} /> : <Play size={14} />}
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className="cdp-no-lectures">
-                            <BookOpen size={32} />
-                            <p>No lectures available yet</p>
-                        </div>
+                {/* Info */}
+                <div className="cdp-info">
+                    <span className="cdp-badge">{course.subject}</span>
+                    <h1>{course.title}</h1>
+                    <p className="cdp-meta">{course.batchName} • {course.lectureCount} Lectures</p>
+
+                    {course.description && (
+                        <p className="cdp-desc">
+                            {course.description.length > 150
+                                ? course.description.substring(0, 150) + '...'
+                                : course.description}
+                        </p>
+                    )}
+
+                    {!course.isPaid && (
+                        <button className="cdp-enroll" onClick={() => setShowEnrollModal(true)}>
+                            <Lock size={14} /> Enroll to Unlock
+                        </button>
                     )}
                 </div>
             </div>
 
-            {/* Enrollment Modal */}
+            {/* Lectures */}
+            <div className="cdp-lectures">
+                <h2><BookOpen size={16} /> Lectures ({course.lectureCount})</h2>
+
+                <div className="cdp-list">
+                    {course.lectures?.map((lec, i) => (
+                        <div
+                            key={lec._id}
+                            className={`cdp-lec ${lec.isLocked ? 'locked' : ''}`}
+                            onClick={() => handleLectureClick(lec)}
+                        >
+                            <div className="cdp-lec-num">
+                                {lec.isLocked ? <Lock size={12} /> : String(lec.lectureNumber).padStart(2, '0')}
+                            </div>
+                            <div className="cdp-lec-info">
+                                <span>{lec.title}</span>
+                                {lec.duration && <small><Clock size={10} /> {lec.duration}</small>}
+                            </div>
+                            <div className="cdp-lec-icon">
+                                {lec.isLocked ? <Lock size={12} /> : <Play size={12} />}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Modal */}
             <AnimatePresence>
                 {showEnrollModal && (
-                    <motion.div
-                        className="cdp-modal-overlay"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setShowEnrollModal(false)}
-                    >
-                        <motion.div
-                            className="cdp-modal"
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={e => e.stopPropagation()}
-                        >
-                            <button className="cdp-modal-close" onClick={() => setShowEnrollModal(false)}>
-                                <X size={18} />
-                            </button>
-
-                            <div className="cdp-modal-icon"><Lock size={32} /></div>
-                            <h2>Enroll to Access</h2>
-                            <p>Join this premium course to unlock all {course.lectureCount} video lectures.</p>
-
-                            <div className="cdp-modal-features">
-                                <div><CheckCircle size={14} /><span>All lectures unlocked</span></div>
-                                <div><CheckCircle size={14} /><span>Private YouTube videos</span></div>
-                                <div><CheckCircle size={14} /><span>Lifetime access</span></div>
-                            </div>
-
-                            <button className="cdp-modal-btn" onClick={() => navigate('/about')}>
-                                Contact to Enroll
-                            </button>
+                    <motion.div className="cdp-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowEnrollModal(false)}>
+                        <motion.div className="cdp-modal" initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} onClick={e => e.stopPropagation()}>
+                            <button className="cdp-close" onClick={() => setShowEnrollModal(false)}><X size={16} /></button>
+                            <Lock size={28} />
+                            <h3>Enroll to Access</h3>
+                            <p>Contact the tutor to unlock all {course.lectureCount} lectures.</p>
+                            <button className="cdp-modal-btn" onClick={() => navigate('/about')}>Contact Tutor</button>
                         </motion.div>
                     </motion.div>
                 )}
