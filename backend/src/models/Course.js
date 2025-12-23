@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const LectureSchema = new mongoose.Schema({
     lectureNumber: {
@@ -30,7 +30,7 @@ const CourseSchema = new mongoose.Schema({
         trim: true
     },
     thumbnail: {
-        type: String, // URL to thumbnail image
+        type: String, // URL or Base64 thumbnail image
         default: ''
     },
     subject: {
@@ -70,4 +70,4 @@ CourseSchema.virtual('lectureCount').get(function () {
 CourseSchema.set('toJSON', { virtuals: true });
 CourseSchema.set('toObject', { virtuals: true });
 
-module.exports = mongoose.model('Course', CourseSchema);
+export default mongoose.model('Course', CourseSchema);
