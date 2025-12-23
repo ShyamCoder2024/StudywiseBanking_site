@@ -51,6 +51,9 @@ export function StudentDashboard() {
     const [newQuizzes, setNewQuizzes] = useState([]);
     const [examSettings, setExamSettings] = useState(null);
     const [loading, setLoading] = useState(true);
+    // Enrollment and courses state
+    const [enrollment, setEnrollment] = useState({ isPaid: false, courses: [] });
+    const [videoCourses, setVideoCourses] = useState([]);
     // Live countdown state
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -62,7 +65,9 @@ export function StudentDashboard() {
                     fetchDashboardData(),
                     fetchTodos(),
                     fetchNewQuizzes(),
-                    fetchExamSettings()
+                    fetchExamSettings(),
+                    fetchEnrollment(),
+                    fetchVideoCourses()
                 ]);
             } finally {
                 setLoading(false);
@@ -163,7 +168,6 @@ export function StudentDashboard() {
         }
     };
 
-    // Fetch new quizzes that user hasn't seen yet
     const fetchNewQuizzes = async () => {
         try {
             const res = await api.get('/student/quizzes/all');
@@ -173,6 +177,26 @@ export function StudentDashboard() {
             setNewQuizzes(pendingQuizzes);
         } catch (error) {
             console.error('Failed to fetch quizzes:', error);
+        }
+    };
+
+    // Fetch enrollment status
+    const fetchEnrollment = async () => {
+        try {
+            const res = await api.get('/student/enrollment');
+            setEnrollment(res.data.data || { isPaid: false, courses: [] });
+        } catch (error) {
+            console.error('Failed to fetch enrollment:', error);
+        }
+    };
+
+    // Fetch video courses
+    const fetchVideoCourses = async () => {
+        try {
+            const res = await api.get('/student/video-courses');
+            setVideoCourses(res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch courses:', error);
         }
     };
 
@@ -444,24 +468,76 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 5. My Courses (New Section) */}
-                    <motion.div className="bento-tile course-tile clickable" variants={tile} onClick={() => navigate('/subjects')}>
-                        <div className="tile-header">
-                            <h3><GraduationCap size={20} className="text-blue" /> My Courses</h3>
-                        </div>
-                        <div className="course-progress-list">
-                            {MOCK_DASHBOARD_DATA.courses.map(course => (
-                                <div key={course.id} className="course-item-mini">
-                                    <div className="course-info-row">
-                                        <span className="c-name">{course.title}</span>
-                                        <span className="c-pct">{course.progress}%</span>
+                    {/* 5. Dynamic Course Card - Paid vs Free */}
+                    <motion.div
+                        className={`bento-tile course-card-dynamic ${enrollment.isPaid ? 'paid' : 'free'} clickable`}
+                        variants={tile}
+                        onClick={() => navigate('/courses')}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        {enrollment.isPaid ? (
+                            /* Paid User - Show Course Progress */
+                            <>
+                                <div className="course-card-header">
+                                    <div className="course-badge premium">
+                                        <Star size={12} fill="#fbbf24" />
+                                        <span>Premium</span>
                                     </div>
-                                    <div className="progress-bar-track">
-                                        <div className="progress-bar-fill" style={{ width: `${course.progress}%` }}></div>
-                                    </div>
+                                    <ArrowRight size={16} className="card-arrow" />
                                 </div>
-                            ))}
-                        </div>
+                                <div className="course-card-content">
+                                    {videoCourses.length > 0 ? (
+                                        <>
+                                            <h3 className="course-title-main">{videoCourses[0]?.title || 'My Course'}</h3>
+                                            <div className="course-meta">
+                                                <span className="meta-item">
+                                                    <BookOpen size={14} />
+                                                    {videoCourses[0]?.lectureCount || 0} Lectures
+                                                </span>
+                                                <span className="meta-item batch-tag">
+                                                    {videoCourses[0]?.batchName || 'Batch A'}
+                                                </span>
+                                            </div>
+                                            <div className="course-progress-mini">
+                                                <div className="progress-info">
+                                                    <span>Course Access</span>
+                                                    <span className="active-status">Active</span>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="course-empty">
+                                            <GraduationCap size={24} />
+                                            <p>Explore Courses</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            /* Free User - Show Unlock CTA */
+                            <>
+                                <div className="free-course-bg">
+                                    <div className="unlock-glow" />
+                                </div>
+                                <div className="free-course-content">
+                                    <div className="lock-icon-wrapper">
+                                        <Zap size={24} />
+                                    </div>
+                                    <div className="free-text">
+                                        <h3>Unlock Premium</h3>
+                                        <p>Get full access to video courses</p>
+                                    </div>
+                                    <motion.div
+                                        className="unlock-btn"
+                                        whileHover={{ scale: 1.05 }}
+                                    >
+                                        <span>View Courses</span>
+                                        <ArrowRight size={14} />
+                                    </motion.div>
+                                </div>
+                            </>
+                        )}
                     </motion.div>
 
                     {/* 6. Todo Sidebar - Interactive */}
@@ -506,26 +582,6 @@ export function StudentDashboard() {
                             )) : (
                                 <div className="text-center text-gray-400 text-xs py-4">No tasks assigned.</div>
                             )}
-                        </div>
-                    </motion.div>
-
-                    {/* 7. Performance Graph */}
-                    <motion.div className="bento-tile graph-tile clickable" variants={tile} onClick={() => navigate('/performance')}>
-                        <div className="tile-header">
-                            <h3><BarChart2 size={20} /> Performance Trend</h3>
-                        </div>
-                        <div className="graph-bars">
-                            {performanceData.map((score, i) => (
-                                <div key={i} className="bar-wrapper">
-                                    <motion.div
-                                        className="graph-bar"
-                                        initial={{ height: 0 }}
-                                        animate={{ height: `${score}%` }}
-                                        transition={{ delay: 0.5 + (i * 0.1) }}
-                                    />
-                                    <span className="bar-label">{['S', 'M', 'T', 'W', 'T', 'F', 'S'][i]}</span>
-                                </div>
-                            ))}
                         </div>
                     </motion.div>
 
