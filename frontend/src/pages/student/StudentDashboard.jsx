@@ -274,11 +274,9 @@ export function StudentDashboard() {
                                     {newQuizzes.length > 0 ? 'New Test Available!' : (examSettings?.title || 'Upcoming Exam')} | {examSettings?.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                                 <h2>{examSettings?.examName?.toUpperCase() || targetExam.toUpperCase()}</h2>
-                                {examSettings?.description && (
-                                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', margin: '8px 0 0', maxWidth: '300px' }}>
-                                        {examSettings.description}
-                                    </p>
-                                )}
+                                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', margin: '8px 0 0', maxWidth: '300px' }}>
+                                    Prepare for the upcoming {targetExam} examination
+                                </p>
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">
