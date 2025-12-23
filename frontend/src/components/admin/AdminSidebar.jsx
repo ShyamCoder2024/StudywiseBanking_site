@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, BookOpen, FileText, Users, LogOut, ListTodo, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, FileText, Users, LogOut, ListTodo, X, Video } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 // DRD Brand Colors
@@ -83,6 +83,7 @@ export function AdminSidebar({ isOpen, onClose, isDesktop }) {
         { path: '/admin', label: 'Overview', icon: LayoutDashboard },
         { path: '/admin/subjects', label: 'Subjects', icon: BookOpen },
         { path: '/admin/quizzes', label: 'Quizzes', icon: FileText },
+        { path: '/admin/courses', label: 'Courses', icon: Video },
         { path: '/admin/students', label: 'Students', icon: Users },
         { path: '/admin/tasks', label: 'Tasks', icon: ListTodo },
     ];

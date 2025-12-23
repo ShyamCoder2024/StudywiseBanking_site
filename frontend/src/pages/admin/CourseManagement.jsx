@@ -1,0 +1,445 @@
+import { useState, useEffect } from 'react';
+import { AdminLayout } from '../../components/admin/AdminLayout';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock } from 'lucide-react';
+import api from '../../services/api';
+
+// DRD Brand Colors
+const BRAND = {
+    primary: '#8A75BA',
+    primaryHover: '#7A66A8',
+    primaryLight: '#EDE9F6',
+    success: '#6EBCC3',
+    successLight: '#E6F5F7',
+    warning: '#ED6771',
+    warningLight: '#FCE6E8',
+    text: '#131313',
+    textSecondary: '#6B6B6B',
+    textMuted: '#9AA0A6',
+    bg: '#F8F9FA',
+    card: '#FFFFFF',
+    border: '#E5E7EB',
+    shadowCard: '0 4px 12px rgba(0, 0, 0, 0.04)',
+    shadowHover: '0 6px 16px rgba(0, 0, 0, 0.08)',
+    radius: '12px'
+};
+
+export function CourseManagement() {
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showCourseModal, setShowCourseModal] = useState(false);
+    const [showLectureModal, setShowLectureModal] = useState(false);
+    const [editingCourse, setEditingCourse] = useState(null);
+    const [editingLecture, setEditingLecture] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [expandedCourse, setExpandedCourse] = useState(null);
+    const [saving, setSaving] = useState(false);
+
+    const [courseForm, setCourseForm] = useState({
+        title: '',
+        thumbnail: '',
+        subject: '',
+        batchName: '',
+        description: ''
+    });
+
+    const [lectureForm, setLectureForm] = useState({
+        lectureNumber: 1,
+        title: '',
+        youtubeLink: '',
+        duration: ''
+    });
+
+    useEffect(() => { fetchCourses(); }, []);
+
+    const fetchCourses = async () => {
+        try {
+            const res = await api.get('/admin/manage-courses');
+            setCourses(res.data.data || []);
+        } catch { setCourses([]); }
+        finally { setLoading(false); }
+    };
+
+    // Course CRUD
+    const openCourseModal = (course = null) => {
+        if (course) {
+            setEditingCourse(course);
+            setCourseForm({
+                title: course.title,
+                thumbnail: course.thumbnail || '',
+                subject: course.subject,
+                batchName: course.batchName,
+                description: course.description || ''
+            });
+        } else {
+            setEditingCourse(null);
+            setCourseForm({ title: '', thumbnail: '', subject: '', batchName: '', description: '' });
+        }
+        setShowCourseModal(true);
+    };
+
+    const saveCourse = async () => {
+        if (!courseForm.title.trim() || !courseForm.subject.trim() || !courseForm.batchName.trim()) {
+            alert('Please fill in title, subject, and batch name');
+            return;
+        }
+        setSaving(true);
+        try {
+            if (editingCourse) {
+                await api.put(`/admin/manage-courses/${editingCourse._id}`, courseForm);
+            } else {
+                await api.post('/admin/manage-courses', courseForm);
+            }
+            fetchCourses();
+            setShowCourseModal(false);
+        } catch (err) {
+            alert('Failed to save course');
+        } finally { setSaving(false); }
+    };
+
+    const deleteCourse = async (id) => {
+        if (!confirm('Delete this course and all its lectures?')) return;
+        try {
+            await api.delete(`/admin/manage-courses/${id}`);
+            fetchCourses();
+        } catch { alert('Failed to delete'); }
+    };
+
+    const togglePublish = async (course) => {
+        try {
+            await api.put(`/admin/manage-courses/${course._id}/publish`);
+            fetchCourses();
+        } catch { alert('Failed to update'); }
+    };
+
+    // Lecture CRUD
+    const openLectureModal = (course, lecture = null) => {
+        setSelectedCourse(course);
+        if (lecture) {
+            setEditingLecture(lecture);
+            setLectureForm({
+                lectureNumber: lecture.lectureNumber,
+                title: lecture.title,
+                youtubeLink: lecture.youtubeLink,
+                duration: lecture.duration || ''
+            });
+        } else {
+            setEditingLecture(null);
+            const nextNum = (course.lectures?.length || 0) + 1;
+            setLectureForm({ lectureNumber: nextNum, title: '', youtubeLink: '', duration: '' });
+        }
+        setShowLectureModal(true);
+    };
+
+    const saveLecture = async () => {
+        if (!lectureForm.title.trim() || !lectureForm.youtubeLink.trim()) {
+            alert('Please fill in lecture title and YouTube link');
+            return;
+        }
+        setSaving(true);
+        try {
+            if (editingLecture) {
+                await api.put(`/admin/manage-courses/${selectedCourse._id}/lectures/${editingLecture._id}`, lectureForm);
+            } else {
+                await api.post(`/admin/manage-courses/${selectedCourse._id}/lectures`, lectureForm);
+            }
+            fetchCourses();
+            setShowLectureModal(false);
+        } catch (err) {
+            alert('Failed to save lecture');
+        } finally { setSaving(false); }
+    };
+
+    const deleteLecture = async (courseId, lectureId) => {
+        if (!confirm('Delete this lecture?')) return;
+        try {
+            await api.delete(`/admin/manage-courses/${courseId}/lectures/${lectureId}`);
+            fetchCourses();
+        } catch { alert('Failed to delete'); }
+    };
+
+    if (loading) {
+        return (
+            <AdminLayout>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ width: '48px', height: '48px', border: `4px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+                        <p style={{ color: BRAND.textSecondary }}>Loading courses...</p>
+                    </div>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+            </AdminLayout>
+        );
+    }
+
+    return (
+        <AdminLayout>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Header */}
+                <div style={{
+                    backgroundColor: BRAND.card,
+                    padding: '24px',
+                    borderRadius: BRAND.radius,
+                    border: `1px solid ${BRAND.border}`,
+                    boxShadow: BRAND.shadowCard,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '16px'
+                }}>
+                    <div>
+                        <h1 style={{ fontSize: '24px', fontWeight: '700', color: BRAND.text, margin: 0 }}>Course Management</h1>
+                        <p style={{ fontSize: '14px', color: BRAND.textSecondary, marginTop: '4px' }}>Create and manage video courses with private YouTube lectures</p>
+                    </div>
+                    <button
+                        onClick={() => openCourseModal()}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            backgroundColor: BRAND.primary, color: '#fff',
+                            padding: '12px 20px', borderRadius: '10px', border: 'none',
+                            cursor: 'pointer', fontSize: '14px', fontWeight: '600'
+                        }}
+                    >
+                        <Plus size={18} /> Add Course
+                    </button>
+                </div>
+
+                {/* Course List */}
+                {courses.length === 0 ? (
+                    <div style={{
+                        backgroundColor: BRAND.card,
+                        padding: '60px',
+                        borderRadius: BRAND.radius,
+                        textAlign: 'center',
+                        border: `1px solid ${BRAND.border}`
+                    }}>
+                        <Video size={48} color={BRAND.textMuted} style={{ marginBottom: '16px' }} />
+                        <h3 style={{ color: BRAND.text, margin: '0 0 8px' }}>No courses yet</h3>
+                        <p style={{ color: BRAND.textMuted, margin: 0 }}>Click "Add Course" to create your first course</p>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {courses.map(course => (
+                            <div key={course._id} style={{
+                                backgroundColor: BRAND.card,
+                                borderRadius: BRAND.radius,
+                                border: `1px solid ${BRAND.border}`,
+                                boxShadow: BRAND.shadowCard,
+                                overflow: 'hidden'
+                            }}>
+                                {/* Course Header */}
+                                <div style={{ display: 'flex', gap: '16px', padding: '20px', alignItems: 'flex-start' }}>
+                                    {/* Thumbnail */}
+                                    <div style={{
+                                        width: '140px', height: '80px', borderRadius: '8px',
+                                        backgroundColor: BRAND.bg, flexShrink: 0, overflow: 'hidden'
+                                    }}>
+                                        {course.thumbnail ? (
+                                            <img src={course.thumbnail} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Video size={32} color={BRAND.textMuted} />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Info */}
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                                            <h3 style={{ fontSize: '16px', fontWeight: '600', color: BRAND.text, margin: 0 }}>{course.title}</h3>
+                                            <span style={{
+                                                padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '600',
+                                                backgroundColor: course.isPublished ? BRAND.successLight : BRAND.warningLight,
+                                                color: course.isPublished ? '#0d6652' : '#991b1b'
+                                            }}>
+                                                {course.isPublished ? 'Published' : 'Draft'}
+                                            </span>
+                                        </div>
+                                        <p style={{ fontSize: '13px', color: BRAND.textSecondary, margin: '4px 0' }}>
+                                            {course.subject} • {course.batchName}
+                                        </p>
+                                        <p style={{ fontSize: '12px', color: BRAND.textMuted, margin: 0 }}>
+                                            {course.lectures?.length || 0} lectures
+                                        </p>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                                        <button onClick={() => togglePublish(course)} title={course.isPublished ? 'Unpublish' : 'Publish'}
+                                            style={{ padding: '8px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, cursor: 'pointer' }}>
+                                            {course.isPublished ? <EyeOff size={16} color={BRAND.warning} /> : <Eye size={16} color={BRAND.success} />}
+                                        </button>
+                                        <button onClick={() => openCourseModal(course)} title="Edit"
+                                            style={{ padding: '8px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, cursor: 'pointer' }}>
+                                            <Edit2 size={16} color={BRAND.primary} />
+                                        </button>
+                                        <button onClick={() => deleteCourse(course._id)} title="Delete"
+                                            style={{ padding: '8px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, cursor: 'pointer' }}>
+                                            <Trash2 size={16} color={BRAND.warning} />
+                                        </button>
+                                        <button onClick={() => setExpandedCourse(expandedCourse === course._id ? null : course._id)}
+                                            style={{ padding: '8px', borderRadius: '8px', border: `1px solid ${BRAND.primary}`, backgroundColor: BRAND.primaryLight, cursor: 'pointer' }}>
+                                            {expandedCourse === course._id ? <ChevronUp size={16} color={BRAND.primary} /> : <ChevronDown size={16} color={BRAND.primary} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Lectures Panel (Expandable) */}
+                                {expandedCourse === course._id && (
+                                    <div style={{ borderTop: `1px solid ${BRAND.border}`, padding: '16px 20px', backgroundColor: BRAND.bg }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                            <h4 style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, margin: 0 }}>
+                                                <BookOpen size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                Lectures ({course.lectures?.length || 0})
+                                            </h4>
+                                            <button onClick={() => openLectureModal(course)}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '6px', border: 'none', backgroundColor: BRAND.primary, color: '#fff', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+                                                <Plus size={14} /> Add Lecture
+                                            </button>
+                                        </div>
+
+                                        {course.lectures?.length > 0 ? (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                {course.lectures.map((lecture, idx) => (
+                                                    <div key={lecture._id} style={{
+                                                        display: 'flex', alignItems: 'center', gap: '12px',
+                                                        padding: '12px', backgroundColor: BRAND.card, borderRadius: '8px',
+                                                        border: `1px solid ${BRAND.border}`
+                                                    }}>
+                                                        <span style={{
+                                                            width: '32px', height: '32px', borderRadius: '8px',
+                                                            backgroundColor: BRAND.primaryLight, color: BRAND.primary,
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            fontSize: '13px', fontWeight: '700'
+                                                        }}>
+                                                            {lecture.lectureNumber}
+                                                        </span>
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            <p style={{ fontSize: '14px', fontWeight: '500', color: BRAND.text, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                                {lecture.title}
+                                                            </p>
+                                                            <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                                                                {lecture.duration && (
+                                                                    <span style={{ fontSize: '11px', color: BRAND.textMuted, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                        <Clock size={10} /> {lecture.duration}
+                                                                    </span>
+                                                                )}
+                                                                <span style={{ fontSize: '11px', color: BRAND.primary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                    <LinkIcon size={10} /> YouTube Link
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <button onClick={() => openLectureModal(course, lecture)}
+                                                            style={{ padding: '6px', borderRadius: '6px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, cursor: 'pointer' }}>
+                                                            <Edit2 size={14} color={BRAND.textSecondary} />
+                                                        </button>
+                                                        <button onClick={() => deleteLecture(course._id, lecture._id)}
+                                                            style={{ padding: '6px', borderRadius: '6px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, cursor: 'pointer' }}>
+                                                            <Trash2 size={14} color={BRAND.warning} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p style={{ textAlign: 'center', color: BRAND.textMuted, fontSize: '13px', padding: '20px 0' }}>
+                                                No lectures added yet. Click "Add Lecture" to get started.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Course Modal */}
+                {showCourseModal && (
+                    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px' }} onClick={() => setShowCourseModal(false)}>
+                        <div style={{ backgroundColor: BRAND.card, borderRadius: '16px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()}>
+                            <div style={{ padding: '20px', borderBottom: `1px solid ${BRAND.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0, color: BRAND.text }}>{editingCourse ? 'Edit Course' : 'Add New Course'}</h3>
+                                <button onClick={() => setShowCourseModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={BRAND.textMuted} /></button>
+                            </div>
+                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Thumbnail URL</label>
+                                    <input type="text" value={courseForm.thumbnail} onChange={e => setCourseForm({ ...courseForm, thumbnail: e.target.value })} placeholder="https://..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    {courseForm.thumbnail && (
+                                        <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '100px' }}>
+                                            <img src={courseForm.thumbnail} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Course Title *</label>
+                                    <input type="text" value={courseForm.title} onChange={e => setCourseForm({ ...courseForm, title: e.target.value })} placeholder="e.g., Complete Banking Course 2025" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Subject *</label>
+                                        <input type="text" value={courseForm.subject} onChange={e => setCourseForm({ ...courseForm, subject: e.target.value })} placeholder="e.g., Quantitative Aptitude" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Batch Name *</label>
+                                        <input type="text" value={courseForm.batchName} onChange={e => setCourseForm({ ...courseForm, batchName: e.target.value })} placeholder="e.g., January 2025 Batch" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Description</label>
+                                    <textarea value={courseForm.description} onChange={e => setCourseForm({ ...courseForm, description: e.target.value })} rows={3} placeholder="Brief description of this course..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', resize: 'vertical' }} />
+                                </div>
+                            </div>
+                            <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                                <button onClick={() => setShowCourseModal(false)} style={{ padding: '12px 20px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
+                                <button onClick={saveCourse} disabled={saving} style={{ padding: '12px 20px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.primary, color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', opacity: saving ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <Save size={16} /> {saving ? 'Saving...' : 'Save Course'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Lecture Modal */}
+                {showLectureModal && (
+                    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px' }} onClick={() => setShowLectureModal(false)}>
+                        <div style={{ backgroundColor: BRAND.card, borderRadius: '16px', width: '100%', maxWidth: '450px', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()}>
+                            <div style={{ padding: '20px', borderBottom: `1px solid ${BRAND.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0, color: BRAND.text }}>{editingLecture ? 'Edit Lecture' : 'Add Lecture'}</h3>
+                                <button onClick={() => setShowLectureModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={BRAND.textMuted} /></button>
+                            </div>
+                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '12px' }}>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Lecture #</label>
+                                        <input type="number" min="1" value={lectureForm.lectureNumber} onChange={e => setLectureForm({ ...lectureForm, lectureNumber: parseInt(e.target.value) || 1 })} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Duration (optional)</label>
+                                        <input type="text" value={lectureForm.duration} onChange={e => setLectureForm({ ...lectureForm, duration: e.target.value })} placeholder="e.g., 45 mins" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Lecture Title *</label>
+                                    <input type="text" value={lectureForm.title} onChange={e => setLectureForm({ ...lectureForm, title: e.target.value })} placeholder="e.g., Introduction to Number Series" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>YouTube Link *</label>
+                                    <input type="text" value={lectureForm.youtubeLink} onChange={e => setLectureForm({ ...lectureForm, youtubeLink: e.target.value })} placeholder="https://youtube.com/..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    <p style={{ fontSize: '11px', color: BRAND.textMuted, marginTop: '4px' }}>Paste the private YouTube video URL</p>
+                                </div>
+                            </div>
+                            <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                                <button onClick={() => setShowLectureModal(false)} style={{ padding: '12px 20px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
+                                <button onClick={saveLecture} disabled={saving} style={{ padding: '12px 20px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.primary, color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', opacity: saving ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <Save size={16} /> {saving ? 'Saving...' : 'Save Lecture'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </AdminLayout>
+    );
+}
+
+export default CourseManagement;

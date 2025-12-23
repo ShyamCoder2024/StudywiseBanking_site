@@ -40,6 +40,8 @@ import TaskManagementPage from './pages/admin/TaskManagementPage';
 import AllTasksPage from './pages/admin/AllTasksPage';
 import AllInactiveStudentsPage from './pages/admin/AllInactiveStudentsPage';
 import QuizAnalytics from './pages/admin/QuizAnalytics';
+import CourseManagement from './pages/admin/CourseManagement';
+import CourseDetailPage from './pages/student/CourseDetailPage';
 
 // SIMPLIFIED Protected Route - Direct localStorage check
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -156,6 +158,7 @@ function AppContent() {
           <Route path="/tests" element={<ProtectedRoute><PageTransition><TestCenterPage /></PageTransition></ProtectedRoute>} />
           <Route path="/test-review/:attemptId" element={<ProtectedRoute><PageTransition><TestReviewPage /></PageTransition></ProtectedRoute>} />
           <Route path="/courses" element={<ProtectedRoute><PageTransition><CoursesPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/courses/:courseId" element={<ProtectedRoute><PageTransition><CourseDetailPage /></PageTransition></ProtectedRoute>} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute adminOnly><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
@@ -165,6 +168,7 @@ function AppContent() {
           <Route path="/admin/quizzes/:quizId/questions" element={<ProtectedRoute adminOnly><PageTransition><QuestionManagement /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/quizzes/:id/stats" element={<ProtectedRoute adminOnly><PageTransition><QuizAnalytics /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/students" element={<ProtectedRoute adminOnly><PageTransition><StudentMonitoring /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/courses" element={<ProtectedRoute adminOnly><PageTransition><CourseManagement /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/tasks" element={<ProtectedRoute adminOnly><PageTransition><TaskManagementPage /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/tasks/all" element={<ProtectedRoute adminOnly><PageTransition><AllTasksPage /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/inactive-students" element={<ProtectedRoute adminOnly><PageTransition><AllInactiveStudentsPage /></PageTransition></ProtectedRoute>} />

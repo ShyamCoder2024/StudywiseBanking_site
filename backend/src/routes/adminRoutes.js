@@ -6,6 +6,7 @@ import Task from '../models/Task.js';
 import { NotFoundError } from '../middleware/errorMiddleware.js';
 import Notification from '../models/Notification.js';
 import GlobalTask from '../models/GlobalTask.js';
+import Course from '../models/Course.js';
 
 const router = express.Router();
 
@@ -617,4 +618,181 @@ router.get('/courses', async (req, res, next) => {
 // Videos are now automatically fetched from the tutor's YouTube channel
 // and personalized based on student performance
 
+// ============ Course Management ============
+
+// Get all courses
+router.get('/manage-courses', async (req, res, next) => {
+    try {
+        const courses = await Course.find()
+            .sort({ createdAt: -1 })
+            .populate('createdBy', 'firstName lastName');
+        res.json({ success: true, data: courses });
+    } catch (error) { next(error); }
+});
+
+// Get single course with all lectures
+router.get('/manage-courses/:id', async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id)
+            .populate('createdBy', 'firstName lastName');
+        if (!course) throw new NotFoundError('Course');
+        res.json({ success: true, data: course });
+    } catch (error) { next(error); }
+});
+
+// Create new course
+router.post('/manage-courses', async (req, res, next) => {
+    try {
+        const { title, thumbnail, subject, batchName, description } = req.body;
+
+        if (!title || !subject || !batchName) {
+            return res.status(400).json({
+                success: false,
+                message: 'Title, subject, and batch name are required'
+            });
+        }
+
+        const course = await Course.create({
+            title,
+            thumbnail: thumbnail || '',
+            subject,
+            batchName,
+            description: description || '',
+            createdBy: req.user._id,
+            isPublished: false,
+            lectures: []
+        });
+
+        res.status(201).json({ success: true, data: course });
+    } catch (error) { next(error); }
+});
+
+// Update course details
+router.put('/manage-courses/:id', async (req, res, next) => {
+    try {
+        const { title, thumbnail, subject, batchName, description } = req.body;
+
+        const course = await Course.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                thumbnail,
+                subject,
+                batchName,
+                description,
+                updatedAt: new Date()
+            },
+            { new: true }
+        );
+
+        if (!course) throw new NotFoundError('Course');
+        res.json({ success: true, data: course });
+    } catch (error) { next(error); }
+});
+
+// Delete course
+router.delete('/manage-courses/:id', async (req, res, next) => {
+    try {
+        const course = await Course.findByIdAndDelete(req.params.id);
+        if (!course) throw new NotFoundError('Course');
+        res.json({ success: true, message: 'Course deleted successfully' });
+    } catch (error) { next(error); }
+});
+
+// Publish/Unpublish course
+router.put('/manage-courses/:id/publish', async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course) throw new NotFoundError('Course');
+
+        course.isPublished = !course.isPublished;
+        await course.save();
+
+        res.json({
+            success: true,
+            data: course,
+            message: course.isPublished ? 'Course published!' : 'Course unpublished'
+        });
+    } catch (error) { next(error); }
+});
+
+// ============ Lecture Management ============
+
+// Add lecture to course
+router.post('/manage-courses/:id/lectures', async (req, res, next) => {
+    try {
+        const { lectureNumber, title, youtubeLink, duration } = req.body;
+
+        if (!lectureNumber || !title || !youtubeLink) {
+            return res.status(400).json({
+                success: false,
+                message: 'Lecture number, title, and YouTube link are required'
+            });
+        }
+
+        const course = await Course.findById(req.params.id);
+        if (!course) throw new NotFoundError('Course');
+
+        course.lectures.push({
+            lectureNumber,
+            title,
+            youtubeLink,
+            duration: duration || '',
+            isPublished: true
+        });
+
+        // Sort lectures by number
+        course.lectures.sort((a, b) => a.lectureNumber - b.lectureNumber);
+        await course.save();
+
+        res.status(201).json({ success: true, data: course });
+    } catch (error) { next(error); }
+});
+
+// Update lecture
+router.put('/manage-courses/:id/lectures/:lectureId', async (req, res, next) => {
+    try {
+        const { lectureNumber, title, youtubeLink, duration, isPublished } = req.body;
+
+        const course = await Course.findById(req.params.id);
+        if (!course) throw new NotFoundError('Course');
+
+        const lecture = course.lectures.id(req.params.lectureId);
+        if (!lecture) {
+            return res.status(404).json({ success: false, message: 'Lecture not found' });
+        }
+
+        if (lectureNumber !== undefined) lecture.lectureNumber = lectureNumber;
+        if (title !== undefined) lecture.title = title;
+        if (youtubeLink !== undefined) lecture.youtubeLink = youtubeLink;
+        if (duration !== undefined) lecture.duration = duration;
+        if (isPublished !== undefined) lecture.isPublished = isPublished;
+
+        // Re-sort lectures by number
+        course.lectures.sort((a, b) => a.lectureNumber - b.lectureNumber);
+        await course.save();
+
+        res.json({ success: true, data: course });
+    } catch (error) { next(error); }
+});
+
+// Delete lecture
+router.delete('/manage-courses/:id/lectures/:lectureId', async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course) throw new NotFoundError('Course');
+
+        const lecture = course.lectures.id(req.params.lectureId);
+        if (!lecture) {
+            return res.status(404).json({ success: false, message: 'Lecture not found' });
+        }
+
+        lecture.deleteOne();
+        await course.save();
+
+        res.json({ success: true, data: course, message: 'Lecture deleted' });
+    } catch (error) { next(error); }
+});
+
 export default router;
+

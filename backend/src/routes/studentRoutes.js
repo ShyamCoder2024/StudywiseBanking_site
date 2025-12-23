@@ -6,6 +6,7 @@ import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
 import GlobalTask from '../models/GlobalTask.js';
 import { generateStudentAnalysis } from '../services/aiAnalysisService.js';
+import Course from '../models/Course.js';
 
 const router = express.Router();
 
@@ -631,4 +632,104 @@ router.get('/courses', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
+// ============ Video Courses (Private YouTube) ============
+
+// Get all published video courses
+router.get('/video-courses', async (req, res, next) => {
+    try {
+        const courses = await Course.find({ isPublished: true })
+            .select('title thumbnail subject batchName description lectureCount lectures')
+            .sort({ createdAt: -1 });
+
+        // Return courses with lecture count but hide YouTube links
+        const coursesForStudent = courses.map(course => ({
+            _id: course._id,
+            title: course.title,
+            thumbnail: course.thumbnail,
+            subject: course.subject,
+            batchName: course.batchName,
+            description: course.description,
+            lectureCount: course.lectures?.length || 0
+        }));
+
+        res.json({ success: true, data: coursesForStudent });
+    } catch (error) { next(error); }
+});
+
+// Get single course with lectures (enrollment check)
+router.get('/video-courses/:id', async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course || !course.isPublished) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        // Check if user is paid
+        const user = await User.findById(req.user._id);
+        const isPaid = user?.enrollment?.isPaid || false;
+
+        // Return course with/without links based on enrollment
+        const courseData = {
+            _id: course._id,
+            title: course.title,
+            thumbnail: course.thumbnail,
+            subject: course.subject,
+            batchName: course.batchName,
+            description: course.description,
+            lectureCount: course.lectures?.length || 0,
+            isPaid: isPaid,
+            lectures: course.lectures.map(lecture => ({
+                _id: lecture._id,
+                lectureNumber: lecture.lectureNumber,
+                title: lecture.title,
+                duration: lecture.duration,
+                isPublished: lecture.isPublished,
+                // Only include YouTube link if user is paid
+                youtubeLink: isPaid ? lecture.youtubeLink : null,
+                isLocked: !isPaid
+            }))
+        };
+
+        res.json({ success: true, data: courseData });
+    } catch (error) { next(error); }
+});
+
+// Get lecture link (requires enrollment)
+router.get('/video-courses/:id/lectures/:lectureId', async (req, res, next) => {
+    try {
+        // Check if user is paid
+        const user = await User.findById(req.user._id);
+        const isPaid = user?.enrollment?.isPaid || false;
+
+        if (!isPaid) {
+            return res.status(403).json({
+                success: false,
+                message: 'Please enroll in a course to access this content',
+                requiresEnrollment: true
+            });
+        }
+
+        const course = await Course.findById(req.params.id);
+        if (!course || !course.isPublished) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        const lecture = course.lectures.id(req.params.lectureId);
+        if (!lecture) {
+            return res.status(404).json({ success: false, message: 'Lecture not found' });
+        }
+
+        res.json({
+            success: true,
+            data: {
+                lectureNumber: lecture.lectureNumber,
+                title: lecture.title,
+                youtubeLink: lecture.youtubeLink,
+                duration: lecture.duration
+            }
+        });
+    } catch (error) { next(error); }
+});
+
 export default router;
+

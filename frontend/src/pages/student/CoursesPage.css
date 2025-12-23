@@ -120,10 +120,14 @@
     background: var(--color-card);
     border-radius: 20px;
     border: 1px solid var(--color-border);
-    padding: 24px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.course-card.video-course {
+    padding: 0;
 }
 
 .course-card:hover {
@@ -135,6 +139,134 @@
 .course-card.enrolled {
     border-color: var(--color-success);
     background: linear-gradient(135deg, var(--color-card) 0%, rgba(110, 188, 195, 0.05) 100%);
+}
+
+/* Course Thumbnail */
+.course-thumbnail {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.course-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.course-card:hover .course-thumbnail img {
+    transform: scale(1.05);
+}
+
+.thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary), #6366f1);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.thumbnail-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.course-card:hover .thumbnail-overlay {
+    opacity: 1;
+}
+
+.play-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.2s;
+}
+
+.course-card:hover .play-button {
+    transform: scale(1);
+}
+
+.lecture-count {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.course-card.video-course .course-card-content {
+    padding: 16px 20px;
+}
+
+.course-subject {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--color-primary-light, #EDE9F6);
+    color: var(--color-primary);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.course-batch {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 4px 0 0;
+}
+
+.course-desc {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin: 8px 0 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.course-card.video-course .course-card-footer {
+    padding: 0 20px 20px;
+    margin-top: 0;
+}
+
+.course-btn.view {
+    background: var(--color-bg);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.course-btn.view:hover {
+    background: var(--color-primary);
+    color: #fff;
 }
 
 .course-card-header {
