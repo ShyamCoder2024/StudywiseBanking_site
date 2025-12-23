@@ -42,6 +42,7 @@ export function AdminDashboard() {
         title: 'Upcoming Exam',
         examName: 'IBPS PO 2024',
         date: 'March 2024',
+        examDateTime: '', // ISO datetime string for countdown
         description: 'Prepare for the upcoming IBPS PO examination',
         targetAudience: 'all'
     });
@@ -334,14 +335,28 @@ export function AdminDashboard() {
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Date</label>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Date Label</label>
                                     <input
                                         type="text"
                                         value={examSettings.date}
                                         onChange={e => setExamSettings({ ...examSettings, date: e.target.value })}
-                                        placeholder="e.g., March 2024"
+                                        placeholder="e.g., AUG TO DEC"
                                         style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
                                     />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>
+                                        Exam Date & Time (for Countdown)
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={examSettings.examDateTime || ''}
+                                        onChange={e => setExamSettings({ ...examSettings, examDateTime: e.target.value })}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                    />
+                                    <p style={{ fontSize: '11px', color: BRAND.textMuted, marginTop: '6px' }}>
+                                        This will show a live countdown on the student dashboard
+                                    </p>
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Description</label>

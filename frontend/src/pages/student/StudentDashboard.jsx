@@ -50,6 +50,8 @@ export function StudentDashboard() {
     const [newQuizzes, setNewQuizzes] = useState([]);
     const [examSettings, setExamSettings] = useState(null);
     const [loading, setLoading] = useState(true);
+    // Live countdown state
+    const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
         // Fetch all data in parallel for faster initial load
@@ -84,6 +86,45 @@ export function StudentDashboard() {
             clearInterval(todoInterval);
         };
     }, []);
+
+    // Live countdown timer - updates every second
+    useEffect(() => {
+        const updateCountdown = () => {
+            let targetDate = null;
+
+            // Priority 1: Use examDateTime from admin settings
+            if (examSettings?.examDateTime) {
+                targetDate = new Date(examSettings.examDateTime);
+            }
+            // Priority 2: Use quiz expiry date
+            else if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
+                targetDate = new Date(newQuizzes[0].expiresAt);
+            }
+            // Default: 14 days from now as placeholder
+            else {
+                targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + 14);
+            }
+
+            const now = new Date();
+            const diff = Math.max(0, targetDate - now);
+
+            setCountdown({
+                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+                seconds: Math.floor((diff % (1000 * 60)) / 1000)
+            });
+        };
+
+        // Initial update
+        updateCountdown();
+
+        // Update every second
+        const countdownInterval = setInterval(updateCountdown, 1000);
+
+        return () => clearInterval(countdownInterval);
+    }, [examSettings, newQuizzes]);
 
     // Fetch real dashboard data from backend
     const fetchDashboardData = async () => {
@@ -148,21 +189,11 @@ export function StudentDashboard() {
     // Get user's target exam (from their profile)
     const targetExam = user?.targetExam || 'SBI PO Prelims';
 
-    // Calculate days until a mock exam date (for countdown display)
-    const getExamCountdown = () => {
-        // If there are pending quizzes, show countdown until first one expires
-        if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
-            const expiresAt = new Date(newQuizzes[0].expiresAt);
-            const now = new Date();
-            const diff = expiresAt - now;
-            const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
-            const hours = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-            return { days, hours, hasQuiz: true };
-        }
-        return { days: 14, hours: 0, hasQuiz: false };
+    // Check if we have new quizzes for notification badge
+    const examCountdown = {
+        ...countdown,
+        hasQuiz: newQuizzes.length > 0
     };
-
-    const examCountdown = getExamCountdown();
 
 
     const toggleTodo = async (id) => {
@@ -248,16 +279,30 @@ export function StudentDashboard() {
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">
-                                            <span className="num">{examCountdown.days}</span>
+                                            <span className="num">{String(examCountdown.days).padStart(2, '0')}</span>
                                         </div>
-                                        <span className="unit">{newQuizzes.length > 0 ? 'Days Left' : 'Days'}</span>
+                                        <span className="unit">Days</span>
                                     </div>
                                     <div className="time-sep">:</div>
                                     <div className="time-unit">
                                         <div className="time-box">
-                                            <span className="num">{examCountdown.hours || '--'}</span>
+                                            <span className="num">{String(examCountdown.hours).padStart(2, '0')}</span>
                                         </div>
                                         <span className="unit">Hrs</span>
+                                    </div>
+                                    <div className="time-sep">:</div>
+                                    <div className="time-unit">
+                                        <div className="time-box">
+                                            <span className="num">{String(examCountdown.minutes).padStart(2, '0')}</span>
+                                        </div>
+                                        <span className="unit">Min</span>
+                                    </div>
+                                    <div className="time-sep">:</div>
+                                    <div className="time-unit">
+                                        <div className="time-box">
+                                            <span className="num">{String(examCountdown.seconds).padStart(2, '0')}</span>
+                                        </div>
+                                        <span className="unit">Sec</span>
                                     </div>
                                 </div>
                             </div>
