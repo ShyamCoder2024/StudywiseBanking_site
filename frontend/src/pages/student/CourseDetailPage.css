@@ -53,15 +53,21 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* THUMBNAIL - Full Width, Full Image, No Cropping */
+/* THUMBNAIL - Contained with max height, shows full image */
 .cdp-thumbnail {
     width: 100%;
-    background: var(--color-bg);
+    max-height: 350px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .cdp-thumbnail img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-height: 350px;
+    object-fit: contain;
     display: block;
 }
 
