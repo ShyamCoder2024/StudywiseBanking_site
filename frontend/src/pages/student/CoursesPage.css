@@ -145,19 +145,22 @@
 .course-thumbnail {
     position: relative;
     width: 100%;
-    height: 180px;
+    height: 160px;
     overflow: hidden;
+    background: var(--color-bg);
+    border-radius: 12px 12px 0 0;
 }
 
 .course-thumbnail img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: var(--color-bg);
     transition: transform 0.3s;
 }
 
 .course-card:hover .course-thumbnail img {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .thumbnail-placeholder {

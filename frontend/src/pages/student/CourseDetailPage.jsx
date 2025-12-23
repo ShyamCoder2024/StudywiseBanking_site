@@ -66,12 +66,12 @@ export function CourseDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
             >
                 <button className="back-btn" onClick={() => navigate('/courses')}>
-                    <ArrowLeft size={20} />
+                    <ArrowLeft size={18} />
                     <span>Back to Courses</span>
                 </button>
             </motion.div>
 
-            {/* Course Banner */}
+            {/* Course Thumbnail - Properly contained */}
             <motion.div
                 className="course-banner"
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -82,28 +82,33 @@ export function CourseDetailPage() {
                     <img src={course.thumbnail} alt={course.title} className="banner-image" />
                 ) : (
                     <div className="banner-placeholder">
-                        <BookOpen size={64} />
+                        <BookOpen size={48} />
                     </div>
                 )}
-                <div className="banner-overlay">
-                    <div className="banner-content">
-                        <span className="course-badge">{course.subject}</span>
-                        <h1 className="course-title">{course.title}</h1>
-                        <p className="course-meta">{course.batchName} • {course.lectureCount} Lectures</p>
-                        {course.description && (
-                            <p className="course-description">{course.description}</p>
-                        )}
-                        {!course.isPaid && (
-                            <div className="enrollment-badge">
-                                <Lock size={14} />
-                                <span>Enroll to unlock all lectures</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
             </motion.div>
 
-            {/* Lectures List */}
+            {/* Course Info - Below thumbnail, not overlayed */}
+            <motion.div
+                className="course-info-section"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+            >
+                <span className="course-badge">{course.subject}</span>
+                <h1 className="course-title">{course.title}</h1>
+                <p className="course-meta">{course.batchName} • {course.lectureCount} Lectures</p>
+                {course.description && (
+                    <p className="course-description">{course.description}</p>
+                )}
+                {!course.isPaid && (
+                    <div className="enrollment-badge">
+                        <Lock size={14} />
+                        <span>Enroll to unlock all lectures</span>
+                    </div>
+                )}
+            </motion.div>
+
+            {/* Lectures List - Compact */}
             <motion.div
                 className="lectures-section"
                 initial={{ opacity: 0, y: 20 }}
@@ -111,7 +116,7 @@ export function CourseDetailPage() {
                 transition={{ delay: 0.2 }}
             >
                 <h2 className="section-title">
-                    <BookOpen size={20} />
+                    <BookOpen size={18} />
                     Course Lectures
                 </h2>
 
@@ -121,16 +126,16 @@ export function CourseDetailPage() {
                             <motion.div
                                 key={lecture._id}
                                 className={`lecture-item ${lecture.isLocked ? 'locked' : 'unlocked'}`}
-                                initial={{ opacity: 0, x: -20 }}
+                                initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.1 + index * 0.05 }}
+                                transition={{ delay: 0.1 + index * 0.03 }}
                                 onClick={() => handleLectureClick(lecture)}
-                                whileHover={{ x: 4 }}
+                                whileHover={{ x: 2 }}
                                 whileTap={{ scale: 0.99 }}
                             >
                                 <div className="lecture-number">
                                     {lecture.isLocked ? (
-                                        <Lock size={16} />
+                                        <Lock size={14} />
                                     ) : (
                                         <span>{String(lecture.lectureNumber).padStart(2, '0')}</span>
                                     )}
@@ -139,7 +144,7 @@ export function CourseDetailPage() {
                                     <h3 className="lecture-title">{lecture.title}</h3>
                                     {lecture.duration && (
                                         <span className="lecture-duration">
-                                            <Clock size={12} />
+                                            <Clock size={10} />
                                             {lecture.duration}
                                         </span>
                                     )}
@@ -147,11 +152,11 @@ export function CourseDetailPage() {
                                 <div className="lecture-action">
                                     {lecture.isLocked ? (
                                         <div className="locked-icon">
-                                            <Lock size={18} />
+                                            <Lock size={14} />
                                         </div>
                                     ) : (
                                         <div className="play-icon">
-                                            <ExternalLink size={18} />
+                                            <ExternalLink size={14} />
                                         </div>
                                     )}
                                 </div>
@@ -159,7 +164,7 @@ export function CourseDetailPage() {
                         ))
                     ) : (
                         <div className="no-lectures">
-                            <BookOpen size={48} />
+                            <BookOpen size={40} />
                             <p>No lectures available yet</p>
                         </div>
                     )}
@@ -184,15 +189,15 @@ export function CourseDetailPage() {
                             onClick={e => e.stopPropagation()}
                         >
                             <button className="close-btn" onClick={() => setShowEnrollModal(false)}>
-                                <X size={20} />
+                                <X size={18} />
                             </button>
 
                             <div className="modal-icon">
-                                <Lock size={48} />
+                                <Lock size={32} />
                             </div>
 
                             <h2>Enroll to Access</h2>
-                            <p>This lecture is part of a premium course. Enroll now to unlock all video lectures and study materials.</p>
+                            <p>This lecture is part of a premium course. Enroll now to unlock all video lectures.</p>
 
                             <div className="modal-features">
                                 <div className="feature">
