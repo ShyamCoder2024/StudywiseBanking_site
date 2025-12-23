@@ -1,0 +1,160 @@
+/* ============================================
+   Bottom Navigation Bar - Mobile Only
+   Premium Glassmorphism Design
+   ============================================ */
+
+.bottom-navbar {
+    display: none;
+    /* Hidden by default on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--color-card);
+    border-top: 1px solid var(--color-border);
+    padding: 8px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    /* iOS safe area */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Dark mode adjustments */
+:root.dark .bottom-navbar {
+    background: rgba(26, 26, 26, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Nav Items Container - Grid for equal spacing */
+.bottom-navbar {
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+/* Individual Nav Item */
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    transition: all 0.2s ease;
+    position: relative;
+    min-width: 60px;
+    border-radius: 12px;
+}
+
+.bottom-nav-item:active {
+    transform: scale(0.95);
+}
+
+/* Icon Container */
+.bottom-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 32px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+/* Label */
+.bottom-nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: color 0.2s ease;
+}
+
+/* Active State */
+.bottom-nav-item.active {
+    color: var(--color-primary);
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Active Indicator Dot */
+.bottom-nav-indicator {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    animation: indicatorPulse 0.3s ease;
+}
+
+@keyframes indicatorPulse {
+    0% {
+        transform: translateX(-50%) scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hover effect for touch devices */
+@media (hover: hover) {
+    .bottom-nav-item:hover:not(.active) {
+        color: var(--color-text-secondary);
+    }
+
+    .bottom-nav-item:hover:not(.active) .bottom-nav-icon {
+        background: rgba(138, 117, 186, 0.1);
+    }
+}
+
+/* ============================================
+   MOBILE: Show bottom nav
+   ============================================ */
+@media (max-width: 768px) {
+    .bottom-navbar {
+        display: grid;
+    }
+
+    /* Add padding to body to account for bottom nav */
+    body {
+        padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* ============================================
+   SMALL MOBILE: Compact sizing
+   ============================================ */
+@media (max-width: 400px) {
+    .bottom-nav-item {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+
+    .bottom-nav-icon {
+        width: 36px;
+        height: 28px;
+    }
+
+    .bottom-nav-label {
+        font-size: 10px;
+    }
+}

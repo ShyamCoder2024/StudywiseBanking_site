@@ -66,6 +66,25 @@ const userSchema = new mongoose.Schema({
         id: String,
         url: String
     },
+    // Enrollment & Payment Status
+    enrollment: {
+        isPaid: {
+            type: Boolean,
+            default: false
+        },
+        courses: [{
+            courseId: String,
+            courseName: String,
+            batch: String,
+            enrolledAt: {
+                type: Date,
+                default: Date.now
+            }
+        }],
+        tags: [{
+            type: String
+        }]
+    },
     // Performance Tracking
     xpPoints: {
         type: Number,

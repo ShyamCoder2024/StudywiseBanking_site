@@ -153,6 +153,9 @@ router.post('/quizzes', async (req, res, next) => {
             isMockTest: req.body.isMockTest,
             isBigQuiz: req.body.isBigQuiz,
             timePerQuestion: req.body.timePerQuestion,
+            targetAudience: req.body.targetAudience || 'all',
+            requiredCourse: req.body.requiredCourse || null,
+            requiredBatch: req.body.requiredBatch || null,
         };
         const quiz = await Quiz.create(quizData);
         res.status(201).json({ success: true, data: quiz });
@@ -171,6 +174,9 @@ router.put('/quizzes/:id', async (req, res, next) => {
             isMockTest: req.body.isMockTest,
             isBigQuiz: req.body.isBigQuiz,
             timePerQuestion: req.body.timePerQuestion,
+            targetAudience: req.body.targetAudience || 'all',
+            requiredCourse: req.body.requiredCourse || null,
+            requiredBatch: req.body.requiredBatch || null,
         };
         const quiz = await Quiz.findByIdAndUpdate(req.params.id, quizData, { new: true });
         if (!quiz) throw new NotFoundError('Quiz');
@@ -462,10 +468,153 @@ router.delete('/global-tasks/:id', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
+// ============ Student Enrollment Management ============
+
+router.put('/students/:id/enrollment', async (req, res, next) => {
+    try {
+        const { isPaid, courses, tags, batch, courseName, courseId } = req.body;
+
+        const updateData = {};
+
+        if (typeof isPaid === 'boolean') {
+            updateData['enrollment.isPaid'] = isPaid;
+        }
+
+        if (courses && Array.isArray(courses)) {
+            updateData['enrollment.courses'] = courses;
+        }
+
+        if (tags && Array.isArray(tags)) {
+            updateData['enrollment.tags'] = tags;
+        }
+
+        // Add single course enrollment
+        if (courseId && courseName) {
+            const newCourse = {
+                courseId,
+                courseName,
+                batch: batch || 'Default',
+                enrolledAt: new Date()
+            };
+
+            const student = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: { 'enrollment.isPaid': true },
+                    $push: { 'enrollment.courses': newCourse }
+                },
+                { new: true }
+            );
+
+            return res.json({ success: true, data: student });
+        }
+
+        const student = await User.findByIdAndUpdate(
+            req.params.id,
+            { $set: updateData },
+            { new: true }
+        );
+
+        if (!student) throw new NotFoundError('Student');
+
+        res.json({ success: true, data: student });
+    } catch (error) { next(error); }
+});
+
+// Add tag to student
+router.post('/students/:id/tags', async (req, res, next) => {
+    try {
+        const { tag } = req.body;
+
+        const student = await User.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { 'enrollment.tags': tag } },
+            { new: true }
+        );
+
+        if (!student) throw new NotFoundError('Student');
+
+        res.json({ success: true, data: student });
+    } catch (error) { next(error); }
+});
+
+// Remove tag from student
+router.delete('/students/:id/tags/:tag', async (req, res, next) => {
+    try {
+        const student = await User.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { 'enrollment.tags': req.params.tag } },
+            { new: true }
+        );
+
+        if (!student) throw new NotFoundError('Student');
+
+        res.json({ success: true, data: student });
+    } catch (error) { next(error); }
+});
+
+// ============ Global Settings ============
+
+import GlobalSettings from '../models/GlobalSettings.js';
+
+router.get('/settings', async (req, res, next) => {
+    try {
+        const settings = await GlobalSettings.find();
+        const settingsObj = {};
+        settings.forEach(s => {
+            settingsObj[s.key] = s.value;
+        });
+        res.json({ success: true, data: settingsObj });
+    } catch (error) { next(error); }
+});
+
+router.get('/settings/:key', async (req, res, next) => {
+    try {
+        const setting = await GlobalSettings.findOne({ key: req.params.key });
+        res.json({ success: true, data: setting?.value || null });
+    } catch (error) { next(error); }
+});
+
+router.put('/settings/:key', async (req, res, next) => {
+    try {
+        const { value } = req.body;
+
+        const setting = await GlobalSettings.findOneAndUpdate(
+            { key: req.params.key },
+            {
+                value,
+                updatedBy: req.user._id
+            },
+            { new: true, upsert: true }
+        );
+
+        res.json({ success: true, data: setting });
+    } catch (error) { next(error); }
+});
+
+// ============ Available Courses for Admin ============
+
+router.get('/courses', async (req, res, next) => {
+    try {
+        // Get courses from settings or return defaults
+        const coursesSetting = await GlobalSettings.findOne({ key: 'available_courses' });
+
+        const defaultCourses = [
+            { id: 'banking-complete-2024', name: 'Complete Banking Course 2024', batches: ['Batch A', 'Batch B', 'Batch C'] },
+            { id: 'sbi-po-2024', name: 'SBI PO 2024', batches: ['January Batch', 'March Batch'] },
+            { id: 'ibps-clerk-2024', name: 'IBPS Clerk 2024', batches: ['Main Batch'] },
+            { id: 'rbi-grade-b', name: 'RBI Grade B', batches: ['Phase 1', 'Phase 2'] }
+        ];
+
+        res.json({
+            success: true,
+            data: coursesSetting?.value || defaultCourses
+        });
+    } catch (error) { next(error); }
+});
+
 // Note: Video management has been replaced with AI-powered YouTube integration
 // Videos are now automatically fetched from the tutor's YouTube channel
 // and personalized based on student performance
 
 export default router;
-
-

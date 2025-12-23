@@ -16,8 +16,14 @@ const globalTaskSchema = new mongoose.Schema({
         default: null
     },
     completedBy: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        completedAt: {
+            type: Date,
+            default: Date.now
+        }
     }],
     isActive: {
         type: Boolean,

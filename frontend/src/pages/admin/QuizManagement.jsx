@@ -42,7 +42,8 @@ export function QuizManagement() {
         difficulty: 'Medium',
         isMockTest: false,
         timePerQuestion: 60,
-        isBigQuiz: false
+        isBigQuiz: false,
+        targetAudience: 'all'
     });
     const [saving, setSaving] = useState(false);
 
@@ -78,14 +79,16 @@ export function QuizManagement() {
                 difficulty: quiz.difficulty,
                 isMockTest: quiz.isMockTest || false,
                 timePerQuestion: quiz.timePerQuestion || 60,
-                isBigQuiz: quiz.isBigQuiz || false
+                isBigQuiz: quiz.isBigQuiz || false,
+                targetAudience: quiz.targetAudience || 'all'
             });
             if (quiz.subjectId) fetchTopics(quiz.subjectId);
         } else {
             setEditingQuiz(null);
             setFormData({
                 title: '', subjectId: '', topicId: '', duration: 15,
-                difficulty: 'Medium', isMockTest: false, timePerQuestion: 60, isBigQuiz: false
+                difficulty: 'Medium', isMockTest: false, timePerQuestion: 60, isBigQuiz: false,
+                targetAudience: 'all'
             });
             setTopics([]);
         }
@@ -475,6 +478,52 @@ export function QuizManagement() {
                                         <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Include questions from ALL topics in this subject</span>
                                     </div>
                                 </label>
+                            </div>
+
+                            {/* Target Audience Selection */}
+                            <div>
+                                <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px', display: 'block' }}>
+                                    Target Audience
+                                </label>
+                                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                    {[
+                                        { value: 'all', label: 'All Users', color: BRAND.primary },
+                                        { value: 'paid', label: 'Paid Only', color: BRAND.success },
+                                        { value: 'unpaid', label: 'Unpaid Only', color: BRAND.warning }
+                                    ].map(option => (
+                                        <label
+                                            key={option.value}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                padding: '10px 16px',
+                                                borderRadius: '10px',
+                                                border: `2px solid ${formData.targetAudience === option.value ? option.color : BRAND.border}`,
+                                                backgroundColor: formData.targetAudience === option.value ? `${option.color}15` : 'transparent',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="targetAudience"
+                                                value={option.value}
+                                                checked={formData.targetAudience === option.value}
+                                                onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
+                                                style={{ accentColor: option.color }}
+                                            />
+                                            <span style={{ fontSize: '13px', fontWeight: '500', color: formData.targetAudience === option.value ? option.color : BRAND.text }}>
+                                                {option.label}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                                <p style={{ fontSize: '11px', color: BRAND.textMuted, marginTop: '6px' }}>
+                                    {formData.targetAudience === 'paid' ? 'Only premium members can access this quiz' :
+                                        formData.targetAudience === 'unpaid' ? 'Only free users can access this quiz' :
+                                            'All registered users can access this quiz'}
+                                </p>
                             </div>
                         </div>
 

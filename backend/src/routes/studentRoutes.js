@@ -363,15 +363,51 @@ router.patch('/notifications/:id/read', async (req, res, next) => {
 
 // ============ Global Tasks ============
 
+// Helper: Get today's 5AM reset time
+const getTodayResetTime = () => {
+    const now = new Date();
+    const reset = new Date(now);
+    reset.setHours(5, 0, 0, 0);
+
+    // If it's before 5 AM, use yesterday's 5 AM
+    if (now < reset) {
+        reset.setDate(reset.getDate() - 1);
+    }
+    return reset;
+};
+
 router.get('/global-tasks', async (req, res, next) => {
     try {
         const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 });
-        // Add a 'completed' flag for this user
-        const tasksWithStatus = tasks.map(t => ({
-            ...t.toObject(),
-            isCompleted: t.completedBy.includes(req.user._id)
-        }));
-        res.json({ success: true, data: tasksWithStatus });
+        const userId = req.user._id;
+        const resetTime = getTodayResetTime();
+
+        // Add a 'completed' flag for this user - only if completed after today's reset
+        const tasksWithStatus = tasks.map(t => {
+            const taskObj = t.toObject();
+            const userCompletion = taskObj.completedBy?.find(
+                c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+            );
+            return {
+                ...taskObj,
+                isCompleted: !!userCompletion
+            };
+        });
+
+        // Calculate progress
+        const completedCount = tasksWithStatus.filter(t => t.isCompleted).length;
+        const totalCount = tasksWithStatus.length;
+        const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+        res.json({
+            success: true,
+            data: tasksWithStatus,
+            progress: {
+                completed: completedCount,
+                total: totalCount,
+                percent: progressPercent
+            }
+        });
     } catch (error) { next(error); }
 });
 
@@ -381,12 +417,24 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         if (!task) return res.status(404).json({ success: false, message: 'Task not found' });
 
         const userId = req.user._id;
-        const isCompleted = task.completedBy.includes(userId);
+        const resetTime = getTodayResetTime();
+
+        // Check if user completed after today's reset
+        const existingCompletionIndex = task.completedBy.findIndex(
+            c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+        );
+
+        const isCompleted = existingCompletionIndex !== -1;
 
         if (isCompleted) {
-            task.completedBy = task.completedBy.filter(id => id.toString() !== userId.toString());
+            // Remove completion
+            task.completedBy.splice(existingCompletionIndex, 1);
         } else {
-            task.completedBy.push(userId);
+            // Add new completion
+            task.completedBy.push({
+                userId: userId,
+                completedAt: new Date()
+            });
         }
         await task.save();
 
@@ -525,7 +573,62 @@ router.post('/videos/refresh', async (req, res, next) => {
     }
 });
 
+// ============ Global Settings (Public Read) ============
+
+import GlobalSettings from '../models/GlobalSettings.js';
+
+// @route   GET /api/student/settings/:key
+// @desc    Get a public setting value (like upcoming exam info)
+// @access  Private
+router.get('/settings/:key', async (req, res, next) => {
+    try {
+        const setting = await GlobalSettings.findOne({ key: req.params.key });
+        res.json({ success: true, data: setting?.value || null });
+    } catch (error) { next(error); }
+});
+
+// @route   GET /api/student/enrollment
+// @desc    Get current user's enrollment status
+// @access  Private
+router.get('/enrollment', async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        res.json({
+            success: true,
+            data: {
+                isPaid: user?.enrollment?.isPaid || false,
+                courses: user?.enrollment?.courses || [],
+                tags: user?.enrollment?.tags || []
+            }
+        });
+    } catch (error) { next(error); }
+});
+
+// @route   GET /api/student/courses
+// @desc    Get available courses for enrollment display
+// @access  Private
+router.get('/courses', async (req, res, next) => {
+    try {
+        const coursesSetting = await GlobalSettings.findOne({ key: 'available_courses' });
+
+        const defaultCourses = [
+            { id: 'banking-complete-2024', name: 'Complete Banking Course 2024', price: '₹4,999', features: ['Full syllabus', '200+ quizzes', 'AI analysis'] },
+            { id: 'sbi-po-2024', name: 'SBI PO 2024', price: '₹2,999', features: ['SBI focused', '100+ quizzes', 'Mock tests'] },
+            { id: 'ibps-clerk-2024', name: 'IBPS Clerk 2024', price: '₹1,999', features: ['Clerk pattern', '80+ quizzes'] },
+            { id: 'rbi-grade-b', name: 'RBI Grade B', price: '₹5,999', features: ['Premium content', 'Phase 1 & 2'] }
+        ];
+
+        // Get user's enrolled courses
+        const user = await User.findById(req.user._id);
+        const enrolledCourseIds = user?.enrollment?.courses?.map(c => c.courseId) || [];
+
+        const courses = (coursesSetting?.value || defaultCourses).map(course => ({
+            ...course,
+            isEnrolled: enrolledCourseIds.includes(course.id)
+        }));
+
+        res.json({ success: true, data: courses });
+    } catch (error) { next(error); }
+});
+
 export default router;
-
-
-

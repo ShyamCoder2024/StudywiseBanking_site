@@ -23,6 +23,44 @@ router.get('/quizzes/:id/start', protect, async (req, res, next) => {
             });
         }
 
+        // Enrollment Check: Verify user has access based on targetAudience
+        const user = await User.findById(req.user._id);
+        const isPaidUser = user?.enrollment?.isPaid || false;
+
+        if (quiz.targetAudience === 'paid' && !isPaidUser && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                restricted: true,
+                restrictionType: 'paid_only',
+                message: 'This test is for paid users only. Please enroll in a course to access this content.'
+            });
+        }
+
+        if (quiz.targetAudience === 'unpaid' && isPaidUser && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                restricted: true,
+                restrictionType: 'unpaid_only',
+                message: 'This test is available only for free users.'
+            });
+        }
+
+        // Check required course enrollment
+        if (quiz.requiredCourse && isPaidUser) {
+            const hasRequiredCourse = user?.enrollment?.courses?.some(
+                c => c.courseId === quiz.requiredCourse
+            );
+            if (!hasRequiredCourse && req.user.role !== 'admin') {
+                return res.status(403).json({
+                    success: false,
+                    restricted: true,
+                    restrictionType: 'course_required',
+                    requiredCourse: quiz.requiredCourse,
+                    message: 'This test requires enrollment in a specific course.'
+                });
+            }
+        }
+
         // RE-ATTEMPT PREVENTION: Check if user has already completed this quiz
         const existingAttempt = await Attempt.findOne({
             user: req.user._id,
@@ -110,9 +148,17 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
             }
         }
 
-        const score = questions.length > 0 ? Math.round((correctAnswers / questions.length) * 100) : 0;
+        // NEW MARKING SYSTEM: +1 for correct, -0.25 for wrong, 0 for unanswered
+        const marksPerCorrect = 1;
+        const negativePerWrong = 0.25;
 
-        // Create attempt
+        let totalMarks = (correctAnswers * marksPerCorrect) - (wrongAnswers * negativePerWrong);
+        totalMarks = Math.max(0, totalMarks); // No negative total marks
+
+        const maxMarks = questions.length * marksPerCorrect;
+        const score = maxMarks > 0 ? Math.round((totalMarks / maxMarks) * 100) : 0;
+
+        // Create attempt with new marking details
         const attempt = await Attempt.create({
             user: req.user._id,
             quiz: quiz._id,
@@ -122,6 +168,9 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
             correctAnswers,
             wrongAnswers,
             unanswered,
+            totalMarks: parseFloat(totalMarks.toFixed(2)),
+            maxMarks,
+            negativeMarks: parseFloat((wrongAnswers * negativePerWrong).toFixed(2)),
             startedAt: new Date(Date.now() - quiz.duration * 60 * 1000),
             submittedAt: new Date(),
             aiAnalysis: { status: 'pending' },

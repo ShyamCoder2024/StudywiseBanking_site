@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Search, Mail, Phone, Calendar, Award, BookOpen, Clock, X, User, Eye } from 'lucide-react';
+import { Search, Mail, Phone, Calendar, Award, BookOpen, Clock, X, User, Eye, CreditCard, Tag, Plus, Check } from 'lucide-react';
 
 // DRD Brand Colors - Exact from index.css
 const BRAND = {
@@ -33,8 +33,28 @@ export function StudentMonitoring() {
     const [loading, setLoading] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [studentAttempts, setStudentAttempts] = useState([]);
+    const [availableCourses, setAvailableCourses] = useState([]);
+    const [newTag, setNewTag] = useState('');
+    const [savingEnrollment, setSavingEnrollment] = useState(false);
 
-    useEffect(() => { fetchStudents(); }, []);
+    useEffect(() => {
+        fetchStudents();
+        fetchCourses();
+    }, []);
+
+    const fetchCourses = async () => {
+        try {
+            const res = await api.get('/admin/courses');
+            setAvailableCourses(res.data.data || []);
+        } catch {
+            setAvailableCourses([
+                { id: 'banking-complete-2024', name: 'Complete Banking Course 2024', batches: ['Batch A', 'Batch B', 'Batch C'] },
+                { id: 'sbi-po-2024', name: 'SBI PO 2024', batches: ['January Batch', 'March Batch'] },
+                { id: 'ibps-clerk-2024', name: 'IBPS Clerk 2024', batches: ['Main Batch'] },
+                { id: 'rbi-grade-b', name: 'RBI Grade B', batches: ['Phase 1', 'Phase 2'] }
+            ]);
+        }
+    };
 
     const fetchStudents = async () => {
         try {
@@ -47,11 +67,100 @@ export function StudentMonitoring() {
 
     const viewStudentDetails = async (student) => {
         setSelectedStudent(student);
+        setNewTag('');
         try {
             const res = await api.get(`/admin/students/${student._id}/attempts`);
             setStudentAttempts(res.data.data || []);
         } catch {
             setStudentAttempts([]);
+        }
+    };
+
+    const togglePaidStatus = async () => {
+        if (!selectedStudent) return;
+        setSavingEnrollment(true);
+        try {
+            const newStatus = !selectedStudent.enrollment?.isPaid;
+            await api.put(`/admin/students/${selectedStudent._id}/enrollment`, { isPaid: newStatus });
+
+            setSelectedStudent(prev => ({
+                ...prev,
+                enrollment: { ...prev.enrollment, isPaid: newStatus }
+            }));
+
+            setStudents(prev => prev.map(s =>
+                s._id === selectedStudent._id
+                    ? { ...s, enrollment: { ...s.enrollment, isPaid: newStatus } }
+                    : s
+            ));
+        } catch (err) {
+            alert('Failed to update payment status');
+        } finally {
+            setSavingEnrollment(false);
+        }
+    };
+
+    const addTag = async () => {
+        if (!selectedStudent || !newTag.trim()) return;
+        setSavingEnrollment(true);
+        try {
+            await api.post(`/admin/students/${selectedStudent._id}/tags`, { tag: newTag.trim() });
+
+            const updatedTags = [...(selectedStudent.enrollment?.tags || []), newTag.trim()];
+            setSelectedStudent(prev => ({
+                ...prev,
+                enrollment: { ...prev.enrollment, tags: updatedTags }
+            }));
+            setNewTag('');
+        } catch (err) {
+            alert('Failed to add tag');
+        } finally {
+            setSavingEnrollment(false);
+        }
+    };
+
+    const removeTag = async (tag) => {
+        if (!selectedStudent) return;
+        setSavingEnrollment(true);
+        try {
+            await api.delete(`/admin/students/${selectedStudent._id}/tags/${encodeURIComponent(tag)}`);
+
+            const updatedTags = (selectedStudent.enrollment?.tags || []).filter(t => t !== tag);
+            setSelectedStudent(prev => ({
+                ...prev,
+                enrollment: { ...prev.enrollment, tags: updatedTags }
+            }));
+        } catch (err) {
+            alert('Failed to remove tag');
+        } finally {
+            setSavingEnrollment(false);
+        }
+    };
+
+    const enrollInCourse = async (courseId, courseName, batch) => {
+        if (!selectedStudent) return;
+        setSavingEnrollment(true);
+        try {
+            await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
+                courseId,
+                courseName,
+                batch,
+                isPaid: true
+            });
+
+            const newCourse = { courseId, courseName, batch, enrolledAt: new Date() };
+            setSelectedStudent(prev => ({
+                ...prev,
+                enrollment: {
+                    ...prev.enrollment,
+                    isPaid: true,
+                    courses: [...(prev.enrollment?.courses || []), newCourse]
+                }
+            }));
+        } catch (err) {
+            alert('Failed to enroll in course');
+        } finally {
+            setSavingEnrollment(false);
         }
     };
 
@@ -404,6 +513,163 @@ export function StudentMonitoring() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Enrollment Management Section */}
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '20px', marginBottom: '20px' }}>
+                                <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <CreditCard size={14} />
+                                    Enrollment Management
+                                </h4>
+
+                                {/* Paid Status Toggle */}
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '16px',
+                                    backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.successLight : BRAND.warningLight,
+                                    borderRadius: '10px',
+                                    marginBottom: '12px',
+                                    border: `1px solid ${selectedStudent.enrollment?.isPaid ? BRAND.success : BRAND.warning}30`
+                                }}>
+                                    <div>
+                                        <div style={{ fontWeight: '600', color: BRAND.text, fontSize: '14px' }}>Payment Status</div>
+                                        <div style={{ fontSize: '12px', color: BRAND.textSecondary, marginTop: '2px' }}>
+                                            {selectedStudent.enrollment?.isPaid ? 'Premium Member' : 'Free User'}
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={togglePaidStatus}
+                                        disabled={savingEnrollment}
+                                        style={{
+                                            padding: '10px 20px',
+                                            borderRadius: '8px',
+                                            border: 'none',
+                                            backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.warning : BRAND.success,
+                                            color: '#fff',
+                                            fontSize: '13px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            opacity: savingEnrollment ? 0.6 : 1
+                                        }}
+                                    >
+                                        {selectedStudent.enrollment?.isPaid ? 'Mark Unpaid' : 'Mark Paid'}
+                                    </button>
+                                </div>
+
+                                {/* Tags Section */}
+                                <div style={{ marginTop: '16px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                                        <Tag size={14} color={BRAND.primary} />
+                                        <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>Student Tags</span>
+                                    </div>
+
+                                    {/* Existing Tags */}
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                                        {(selectedStudent.enrollment?.tags || []).map((tag, i) => (
+                                            <span key={i} style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                padding: '6px 12px',
+                                                backgroundColor: BRAND.primaryLight,
+                                                color: BRAND.primary,
+                                                borderRadius: '20px',
+                                                fontSize: '12px',
+                                                fontWeight: '500'
+                                            }}>
+                                                {tag}
+                                                <button
+                                                    onClick={() => removeTag(tag)}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        color: BRAND.primary,
+                                                        cursor: 'pointer',
+                                                        padding: '2px',
+                                                        display: 'flex'
+                                                    }}
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </span>
+                                        ))}
+                                        {(selectedStudent.enrollment?.tags || []).length === 0 && (
+                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>No tags added</span>
+                                        )}
+                                    </div>
+
+                                    {/* Add Tag Input */}
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input
+                                            type="text"
+                                            value={newTag}
+                                            onChange={(e) => setNewTag(e.target.value)}
+                                            placeholder="Add tag..."
+                                            style={{
+                                                flex: 1,
+                                                padding: '10px 14px',
+                                                borderRadius: '8px',
+                                                border: `1px solid ${BRAND.border}`,
+                                                fontSize: '13px',
+                                                outline: 'none'
+                                            }}
+                                            onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                                        />
+                                        <button
+                                            onClick={addTag}
+                                            disabled={!newTag.trim() || savingEnrollment}
+                                            style={{
+                                                padding: '10px 16px',
+                                                borderRadius: '8px',
+                                                border: 'none',
+                                                backgroundColor: BRAND.primary,
+                                                color: '#fff',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                fontSize: '13px',
+                                                opacity: !newTag.trim() ? 0.5 : 1
+                                            }}
+                                        >
+                                            <Plus size={14} /> Add
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Enrolled Courses */}
+                                {selectedStudent.enrollment?.isPaid && (
+                                    <div style={{ marginTop: '16px' }}>
+                                        <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text, marginBottom: '8px', display: 'block' }}>
+                                            Enrolled Courses
+                                        </span>
+                                        {(selectedStudent.enrollment?.courses || []).length > 0 ? (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                {selectedStudent.enrollment.courses.map((course, i) => (
+                                                    <div key={i} style={{
+                                                        padding: '12px',
+                                                        backgroundColor: BRAND.card,
+                                                        borderRadius: '8px',
+                                                        border: `1px solid ${BRAND.success}40`,
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <div>
+                                                            <div style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text }}>{course.courseName}</div>
+                                                            <div style={{ fontSize: '11px', color: BRAND.textMuted }}>{course.batch}</div>
+                                                        </div>
+                                                        <Check size={16} color={BRAND.success} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p style={{ fontSize: '12px', color: BRAND.textMuted, margin: '8px 0' }}>No courses enrolled</p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Recent Quiz Attempts */}

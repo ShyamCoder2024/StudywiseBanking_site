@@ -109,6 +109,20 @@ const quizSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    // Target Audience for Quiz Access Control
+    targetAudience: {
+        type: String,
+        enum: ['all', 'paid', 'unpaid'],
+        default: 'all'
+    },
+    requiredCourse: {
+        type: String,
+        default: null
+    },
+    requiredBatch: {
+        type: String,
+        default: null
+    },
     // NEW: Track which students have viewed/seen the quiz notification
     viewedBy: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -199,6 +213,19 @@ const attemptSchema = new mongoose.Schema({
     correctAnswers: Number,
     wrongAnswers: Number,
     unanswered: Number,
+    // New Marking System Fields
+    totalMarks: {
+        type: Number,
+        default: 0
+    },
+    maxMarks: {
+        type: Number,
+        default: 0
+    },
+    negativeMarks: {
+        type: Number,
+        default: 0
+    },
     timeTaken: String, // "MM:SS" format
     startedAt: Date,
     submittedAt: Date,

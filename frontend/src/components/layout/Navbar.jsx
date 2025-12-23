@@ -96,33 +96,9 @@ export function Navbar() {
                         </NavLink>
                     )}
 
-                    {/* Hamburger */}
-                    {isAuthenticated && (
-                        <button
-                            className="drd-hamburger"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Menu"
-                        >
-                            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
-                        </button>
-                    )}
+                    {/* Note: Hamburger menu removed - using BottomNavbar for mobile navigation */}
                 </div>
             </div>
-
-            {/* Mobile Menu */}
-            {isAuthenticated && mobileMenuOpen && (
-                <nav className="drd-mobile-menu">
-                    <NavLink to="/dashboard" className={({ isActive }) => `drd-mobile-link ${isActive ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                        Dashboard
-                    </NavLink>
-                    <NavLink to="/subjects" className={({ isActive }) => `drd-mobile-link ${isActive ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                        Subjects
-                    </NavLink>
-                    <NavLink to="/about-tutor" className={({ isActive }) => `drd-mobile-link ${isActive ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                        About
-                    </NavLink>
-                </nav>
-            )}
         </header>
     );
 }

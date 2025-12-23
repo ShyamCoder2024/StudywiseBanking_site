@@ -46,7 +46,9 @@ export function StudentDashboard() {
     // Dashboard data state (real + mock fallback)
     const [dashboardData, setDashboardData] = useState(null);
     const [todos, setTodos] = useState([]);
+    const [taskProgress, setTaskProgress] = useState({ completed: 0, total: 0, percent: 0 });
     const [newQuizzes, setNewQuizzes] = useState([]);
+    const [examSettings, setExamSettings] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -56,7 +58,8 @@ export function StudentDashboard() {
                 await Promise.all([
                     fetchDashboardData(),
                     fetchTodos(),
-                    fetchNewQuizzes()
+                    fetchNewQuizzes(),
+                    fetchExamSettings()
                 ]);
             } finally {
                 setLoading(false);
@@ -97,8 +100,22 @@ export function StudentDashboard() {
         try {
             const res = await api.get('/student/global-tasks');
             setTodos(res.data.data || []);
+            if (res.data.progress) {
+                setTaskProgress(res.data.progress);
+            }
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    const fetchExamSettings = async () => {
+        try {
+            const res = await api.get('/student/settings/upcoming_exam');
+            if (res.data.data) {
+                setExamSettings(res.data.data);
+            }
+        } catch (error) {
+            // Use default mock data
         }
     };
 
@@ -220,9 +237,14 @@ export function StudentDashboard() {
                         <div className="hero-content-bento">
                             <div className="exam-countdown">
                                 <span className="label">
-                                    {newQuizzes.length > 0 ? 'New Test Available!' : 'Upcoming Exam'} | {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    {newQuizzes.length > 0 ? 'New Test Available!' : (examSettings?.title || 'Upcoming Exam')} | {examSettings?.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
-                                <h2>{targetExam.toUpperCase()}</h2>
+                                <h2>{examSettings?.examName?.toUpperCase() || targetExam.toUpperCase()}</h2>
+                                {examSettings?.description && (
+                                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', margin: '8px 0 0', maxWidth: '300px' }}>
+                                        {examSettings.description}
+                                    </p>
+                                )}
                                 <div className="countdown-timer">
                                     <div className="time-unit">
                                         <div className="time-box">

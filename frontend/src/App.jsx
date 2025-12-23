@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
+import { BottomNavbar } from './components/layout/BottomNavbar';
 import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import './styles/index.css';
@@ -26,6 +27,7 @@ import LeaderboardPage from './pages/student/LeaderboardPage';
 import AIAnalysisPage from './pages/student/AIAnalysisPage';
 import TestCenterPage from './pages/student/TestCenterPage';
 import TestReviewPage from './pages/student/TestReviewPage';
+import CoursesPage from './pages/student/CoursesPage';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -120,6 +122,9 @@ function AppContent() {
     }
   }
 
+  // Check if user is authenticated and is a student (for bottom nav)
+  const isAuthenticatedStudent = storedUser && showNavbar && localStorage.getItem('token');
+
   return (
     <>
       {showNavbar && <Navbar />}
@@ -150,6 +155,7 @@ function AppContent() {
           <Route path="/analysis" element={<ProtectedRoute><PageTransition><AIAnalysisPage /></PageTransition></ProtectedRoute>} />
           <Route path="/tests" element={<ProtectedRoute><PageTransition><TestCenterPage /></PageTransition></ProtectedRoute>} />
           <Route path="/test-review/:attemptId" element={<ProtectedRoute><PageTransition><TestReviewPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/courses" element={<ProtectedRoute><PageTransition><CoursesPage /></PageTransition></ProtectedRoute>} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute adminOnly><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
@@ -167,6 +173,9 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </AnimatePresence>
+
+      {/* Bottom Navigation for Mobile Students */}
+      {isAuthenticatedStudent && <BottomNavbar />}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, MoreVertical, CheckCircle2, Clock, FileText, Users, BookOpen, ListTodo, TrendingUp, ExternalLink, Eye } from 'lucide-react';
+import { Plus, MoreVertical, CheckCircle2, Clock, FileText, Users, BookOpen, ListTodo, TrendingUp, ExternalLink, Eye, Settings, Calendar, Save, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -37,6 +37,17 @@ export function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Exam Card Settings
+    const [examSettings, setExamSettings] = useState({
+        title: 'Upcoming Exam',
+        examName: 'IBPS PO 2024',
+        date: 'March 2024',
+        description: 'Prepare for the upcoming IBPS PO examination',
+        targetAudience: 'all'
+    });
+    const [showExamModal, setShowExamModal] = useState(false);
+    const [savingSettings, setSavingSettings] = useState(false);
+
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -63,6 +74,16 @@ export function AdminDashboard() {
                     .slice(0, 5);
                 setQuizzes(sortedQuizzes);
                 setTasks(fetchedTasks.filter(t => t.status !== 'completed').slice(0, 5));
+
+                // Fetch exam settings
+                try {
+                    const settingsRes = await api.get('/admin/settings/upcoming_exam');
+                    if (settingsRes.data?.data) {
+                        setExamSettings(settingsRes.data.data);
+                    }
+                } catch {
+                    // Use defaults
+                }
             } catch (err) {
                 console.error("Dashboard Fetch Error", err);
                 setError("Unable to load data. Please check if the server is running.");
@@ -73,6 +94,19 @@ export function AdminDashboard() {
 
         fetchDashboardData();
     }, []);
+
+    const saveExamSettings = async () => {
+        setSavingSettings(true);
+        try {
+            await api.put('/admin/settings/upcoming_exam', { value: examSettings });
+            setShowExamModal(false);
+            alert('Exam card settings saved successfully!');
+        } catch (err) {
+            alert('Failed to save settings');
+        } finally {
+            setSavingSettings(false);
+        }
+    };
 
     // Loading state
     if (loading) {
@@ -192,6 +226,177 @@ export function AdminDashboard() {
                         onClick={() => navigate('/admin/students')}
                     />
                 </div>
+
+                {/* Exam Card Settings - Quick Edit */}
+                <div style={{
+                    backgroundColor: BRAND.card,
+                    borderRadius: BRAND.radius,
+                    border: `1px solid ${BRAND.border}`,
+                    boxShadow: BRAND.shadowCard,
+                    padding: '20px'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ padding: '10px', borderRadius: '10px', backgroundColor: BRAND.primaryLight }}>
+                                <Calendar size={20} color={BRAND.primary} />
+                            </div>
+                            <div>
+                                <h3 style={{ fontSize: '16px', fontWeight: '700', color: BRAND.text, margin: 0 }}>Upcoming Exam Card</h3>
+                                <p style={{ fontSize: '12px', color: BRAND.textMuted, margin: '2px 0 0' }}>Edit what students see on their dashboard</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setShowExamModal(true)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                                border: `1px solid ${BRAND.primary}`,
+                                backgroundColor: 'transparent',
+                                color: BRAND.primary,
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <Settings size={16} />
+                            Edit Settings
+                        </button>
+                    </div>
+
+                    {/* Preview */}
+                    <div style={{
+                        padding: '16px',
+                        backgroundColor: BRAND.bg,
+                        borderRadius: '10px',
+                        border: `1px solid ${BRAND.border}`
+                    }}>
+                        <div style={{ fontSize: '11px', color: BRAND.textMuted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Preview</div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: BRAND.text }}>{examSettings.examName || 'Exam Name'}</div>
+                        <div style={{ fontSize: '13px', color: BRAND.primary, fontWeight: '500', marginTop: '4px' }}>{examSettings.date || 'Date'}</div>
+                        <div style={{ fontSize: '13px', color: BRAND.textSecondary, marginTop: '6px' }}>{examSettings.description || 'Description'}</div>
+                        <div style={{ marginTop: '8px' }}>
+                            <span style={{
+                                fontSize: '11px',
+                                padding: '3px 8px',
+                                borderRadius: '4px',
+                                backgroundColor: examSettings.targetAudience === 'paid' ? BRAND.successLight :
+                                    examSettings.targetAudience === 'unpaid' ? BRAND.warningLight : BRAND.primaryLight,
+                                color: examSettings.targetAudience === 'paid' ? BRAND.success :
+                                    examSettings.targetAudience === 'unpaid' ? BRAND.warning : BRAND.primary,
+                                fontWeight: '600'
+                            }}>
+                                {examSettings.targetAudience === 'paid' ? 'Paid Only' :
+                                    examSettings.targetAudience === 'unpaid' ? 'Unpaid Only' : 'All Users'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Exam Settings Modal */}
+                {showExamModal && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999,
+                        padding: '16px'
+                    }} onClick={() => setShowExamModal(false)}>
+                        <div style={{
+                            backgroundColor: BRAND.card,
+                            borderRadius: '16px',
+                            width: '100%',
+                            maxWidth: '480px',
+                            boxShadow: '0 25px 50px rgba(0,0,0,0.25)'
+                        }} onClick={e => e.stopPropagation()}>
+                            <div style={{ padding: '20px', borderBottom: `1px solid ${BRAND.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0, color: BRAND.text }}>Edit Upcoming Exam Card</h3>
+                                <button onClick={() => setShowExamModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: BRAND.textMuted }}>
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Exam Name</label>
+                                    <input
+                                        type="text"
+                                        value={examSettings.examName}
+                                        onChange={e => setExamSettings({ ...examSettings, examName: e.target.value })}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Date</label>
+                                    <input
+                                        type="text"
+                                        value={examSettings.date}
+                                        onChange={e => setExamSettings({ ...examSettings, date: e.target.value })}
+                                        placeholder="e.g., March 2024"
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Description</label>
+                                    <textarea
+                                        value={examSettings.description}
+                                        onChange={e => setExamSettings({ ...examSettings, description: e.target.value })}
+                                        rows={3}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', resize: 'vertical' }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Show To</label>
+                                    <select
+                                        value={examSettings.targetAudience}
+                                        onChange={e => setExamSettings({ ...examSettings, targetAudience: e.target.value })}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                    >
+                                        <option value="all">All Users</option>
+                                        <option value="paid">Paid Users Only</option>
+                                        <option value="unpaid">Unpaid Users Only</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                                <button
+                                    onClick={() => setShowExamModal(false)}
+                                    style={{ padding: '12px 20px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '14px', cursor: 'pointer' }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={saveExamSettings}
+                                    disabled={savingSettings}
+                                    style={{
+                                        padding: '12px 20px',
+                                        borderRadius: '8px',
+                                        border: 'none',
+                                        backgroundColor: BRAND.primary,
+                                        color: '#fff',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        opacity: savingSettings ? 0.6 : 1
+                                    }}
+                                >
+                                    <Save size={16} />
+                                    {savingSettings ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Recent Quizzes Card - Top 5 Only */}
                 <div style={{

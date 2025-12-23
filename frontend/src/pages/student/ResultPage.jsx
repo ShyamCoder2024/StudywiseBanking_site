@@ -212,6 +212,82 @@ export function ResultPage() {
                                 <span className="stat-label">Time</span>
                             </motion.div>
                         </motion.div>
+
+                        {/* Marks Breakdown - New Scoring System */}
+                        {(result.totalMarks !== undefined || result.negativeMarks !== undefined) && (
+                            <motion.div
+                                className="marks-breakdown"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                style={{
+                                    marginTop: '24px',
+                                    padding: '20px',
+                                    background: 'var(--color-bg)',
+                                    borderRadius: '16px',
+                                    border: '1px solid var(--color-border)'
+                                }}
+                            >
+                                <h4 style={{
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    color: 'var(--color-text-secondary)',
+                                    marginBottom: '16px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    📊 Marks Breakdown
+                                </h4>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(3, 1fr)',
+                                    gap: '12px'
+                                }}>
+                                    <div style={{
+                                        textAlign: 'center',
+                                        padding: '16px',
+                                        background: 'var(--color-card)',
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--color-success)'
+                                    }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: 'var(--color-success)' }}>
+                                            +{result.correctAnswers || 0}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                                            Correct (+1 each)
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        textAlign: 'center',
+                                        padding: '16px',
+                                        background: 'var(--color-card)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #ef4444'
+                                    }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#ef4444' }}>
+                                            -{result.negativeMarks || (result.wrongAnswers * 0.25).toFixed(2)}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                                            Negative (-0.25 each)
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        textAlign: 'center',
+                                        padding: '16px',
+                                        background: 'linear-gradient(135deg, var(--color-primary-light), rgba(138, 117, 186, 0.2))',
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--color-primary)'
+                                    }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: 'var(--color-primary)' }}>
+                                            {result.totalMarks || ((result.correctAnswers || 0) - (result.wrongAnswers || 0) * 0.25).toFixed(2)}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                                            Total / {result.maxMarks || result.totalQuestions}
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
                     </Card>
                 </motion.div>
 

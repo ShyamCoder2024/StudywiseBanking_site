@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Circle, Clock, Tag } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Circle, Clock, Tag, TrendingUp } from 'lucide-react';
 import api from '../../services/api';
 
 export default function TasksPage() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [progress, setProgress] = useState({ completed: 0, total: 0, percent: 0 });
 
     useEffect(() => {
         fetchTasks();
@@ -18,6 +19,18 @@ export default function TasksPage() {
             // Try global-tasks first, fallback to tasks
             const res = await api.get('/student/global-tasks');
             setTasks(res.data.data || []);
+            if (res.data.progress) {
+                setProgress(res.data.progress);
+            } else {
+                // Calculate locally if not provided
+                const completed = (res.data.data || []).filter(t => t.isCompleted).length;
+                const total = (res.data.data || []).length;
+                setProgress({
+                    completed,
+                    total,
+                    percent: total > 0 ? Math.round((completed / total) * 100) : 0
+                });
+            }
         } catch (error) {
             console.error('Failed to fetch tasks', error);
         } finally {
@@ -31,6 +44,14 @@ export default function TasksPage() {
             t._id === task._id ? { ...t, isCompleted: !t.isCompleted } : t
         );
         setTasks(updatedTasks);
+
+        // Update progress
+        const completed = updatedTasks.filter(t => t.isCompleted).length;
+        setProgress({
+            completed,
+            total: updatedTasks.length,
+            percent: updatedTasks.length > 0 ? Math.round((completed / updatedTasks.length) * 100) : 0
+        });
 
         try {
             await api.patch(`/student/global-tasks/${task._id}/toggle`);
@@ -50,7 +71,7 @@ export default function TasksPage() {
             style={{ padding: '20px', paddingBottom: '100px', maxWidth: '800px', margin: '0 auto' }}
         >
             {/* Header */}
-            <div style={{ marginBottom: '30px', display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                     <ArrowLeft size={24} style={{ color: 'var(--color-text)' }} />
                 </button>
@@ -61,6 +82,91 @@ export default function TasksPage() {
                     </p>
                 </div>
             </div>
+
+            {/* Progress Bar */}
+            {!loading && tasks.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{
+                        background: 'var(--color-card)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '24px',
+                        border: '1px solid var(--color-border)',
+                        boxShadow: 'var(--shadow-card)'
+                    }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                                width: '36px',
+                                height: '36px',
+                                background: 'linear-gradient(135deg, #8A75BA, #6d5a9e)',
+                                borderRadius: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <TrendingUp size={18} color="#fff" />
+                            </div>
+                            <div>
+                                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text)' }}>
+                                    Daily Progress
+                                </span>
+                                <p style={{ margin: 0, fontSize: '11px', color: 'var(--color-text-muted)' }}>
+                                    Resets at 5:00 AM
+                                </p>
+                            </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <span style={{ fontSize: '24px', fontWeight: '700', color: progress.percent === 100 ? '#10b981' : 'var(--color-primary)' }}>
+                                {progress.percent}%
+                            </span>
+                            <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-text-secondary)' }}>
+                                {progress.completed} / {progress.total} done
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Progress Track */}
+                    <div style={{
+                        height: '10px',
+                        background: 'var(--color-bg)',
+                        borderRadius: '10px',
+                        overflow: 'hidden'
+                    }}>
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress.percent}%` }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                            style={{
+                                height: '100%',
+                                background: progress.percent === 100
+                                    ? 'linear-gradient(90deg, #10b981, #059669)'
+                                    : 'linear-gradient(90deg, #8A75BA, #a78bfa)',
+                                borderRadius: '10px'
+                            }}
+                        />
+                    </div>
+
+                    {progress.percent === 100 && (
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            style={{
+                                margin: '12px 0 0',
+                                fontSize: '13px',
+                                color: '#10b981',
+                                fontWeight: '600',
+                                textAlign: 'center'
+                            }}
+                        >
+                            🎉 All tasks completed today!
+                        </motion.p>
+                    )}
+                </motion.div>
+            )}
 
             {/* Task List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
