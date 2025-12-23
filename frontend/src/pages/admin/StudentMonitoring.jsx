@@ -36,6 +36,10 @@ export function StudentMonitoring() {
     const [availableCourses, setAvailableCourses] = useState([]);
     const [newTag, setNewTag] = useState('');
     const [savingEnrollment, setSavingEnrollment] = useState(false);
+    // Batch selection modal state
+    const [showBatchModal, setShowBatchModal] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [selectedBatch, setSelectedBatch] = useState('');
 
     useEffect(() => {
         fetchStudents();
@@ -78,23 +82,82 @@ export function StudentMonitoring() {
 
     const togglePaidStatus = async () => {
         if (!selectedStudent) return;
+
+        // If student is currently paid, just mark as unpaid
+        if (selectedStudent.enrollment?.isPaid) {
+            setSavingEnrollment(true);
+            try {
+                await api.put(`/admin/students/${selectedStudent._id}/enrollment`, { isPaid: false });
+                setSelectedStudent(prev => ({
+                    ...prev,
+                    enrollment: { ...prev.enrollment, isPaid: false }
+                }));
+                setStudents(prev => prev.map(s =>
+                    s._id === selectedStudent._id
+                        ? { ...s, enrollment: { ...s.enrollment, isPaid: false } }
+                        : s
+                ));
+            } catch (err) {
+                alert('Failed to update payment status');
+            } finally {
+                setSavingEnrollment(false);
+            }
+        } else {
+            // If marking as paid, show batch selection modal
+            setSelectedCourseId('');
+            setSelectedBatch('');
+            setShowBatchModal(true);
+        }
+    };
+
+    // Confirm enrollment with selected batch
+    const confirmEnrollmentWithBatch = async () => {
+        if (!selectedStudent) return;
+        if (!selectedCourseId || !selectedBatch) {
+            alert('Please select both a course and a batch');
+            return;
+        }
+
+        const course = availableCourses.find(c => c.id === selectedCourseId || c._id === selectedCourseId);
+        if (!course) {
+            alert('Selected course not found');
+            return;
+        }
+
         setSavingEnrollment(true);
         try {
-            const newStatus = !selectedStudent.enrollment?.isPaid;
-            await api.put(`/admin/students/${selectedStudent._id}/enrollment`, { isPaid: newStatus });
+            await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
+                isPaid: true,
+                courseId: course.id || course._id,
+                courseName: course.name,
+                batch: selectedBatch
+            });
+
+            const newCourse = {
+                courseId: course.id || course._id,
+                courseName: course.name,
+                batch: selectedBatch,
+                enrolledAt: new Date()
+            };
 
             setSelectedStudent(prev => ({
                 ...prev,
-                enrollment: { ...prev.enrollment, isPaid: newStatus }
+                enrollment: {
+                    ...prev.enrollment,
+                    isPaid: true,
+                    courses: [...(prev.enrollment?.courses || []), newCourse]
+                }
             }));
 
             setStudents(prev => prev.map(s =>
                 s._id === selectedStudent._id
-                    ? { ...s, enrollment: { ...s.enrollment, isPaid: newStatus } }
+                    ? { ...s, enrollment: { ...s.enrollment, isPaid: true } }
                     : s
             ));
+
+            setShowBatchModal(false);
         } catch (err) {
-            alert('Failed to update payment status');
+            alert('Failed to enroll student');
         } finally {
             setSavingEnrollment(false);
         }
@@ -740,6 +803,246 @@ export function StudentMonitoring() {
                                 }}
                             >
                                 Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Batch Selection Modal */}
+            {showBatchModal && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '16px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        backdropFilter: 'blur(8px)',
+                        boxSizing: 'border-box'
+                    }}
+                    onClick={() => setShowBatchModal(false)}
+                >
+                    <div
+                        style={{
+                            backgroundColor: BRAND.card,
+                            borderRadius: '16px',
+                            width: '100%',
+                            maxWidth: '440px',
+                            overflow: 'hidden',
+                            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
+                            animation: 'modalFadeIn 0.2s ease-out'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div style={{
+                            backgroundColor: BRAND.success,
+                            padding: '24px',
+                            position: 'relative'
+                        }}>
+                            <button
+                                onClick={() => setShowBatchModal(false)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '12px',
+                                    right: '12px',
+                                    padding: '6px',
+                                    borderRadius: '50%',
+                                    border: 'none',
+                                    backgroundColor: 'rgba(255,255,255,0.2)',
+                                    cursor: 'pointer',
+                                    color: '#fff',
+                                    display: 'flex'
+                                }}
+                            >
+                                <X size={16} />
+                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: '50%',
+                                    backgroundColor: 'rgba(255,255,255,0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <CreditCard size={24} color="#fff" />
+                                </div>
+                                <div>
+                                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', margin: 0 }}>
+                                        Enroll Student
+                                    </h3>
+                                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: '4px 0 0 0' }}>
+                                        Select course and batch for {selectedStudent?.firstName}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div style={{ padding: '24px' }}>
+                            {/* Course Selection */}
+                            <div style={{ marginBottom: '20px' }}>
+                                <label style={{
+                                    display: 'block',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    color: BRAND.textSecondary,
+                                    marginBottom: '8px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    Select Course *
+                                </label>
+                                <select
+                                    value={selectedCourseId}
+                                    onChange={(e) => {
+                                        setSelectedCourseId(e.target.value);
+                                        setSelectedBatch(''); // Reset batch when course changes
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px 16px',
+                                        borderRadius: '10px',
+                                        border: `2px solid ${selectedCourseId ? BRAND.success : BRAND.border}`,
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        backgroundColor: BRAND.card,
+                                        cursor: 'pointer',
+                                        outline: 'none',
+                                        transition: 'border-color 0.2s'
+                                    }}
+                                >
+                                    <option value="">-- Choose a course --</option>
+                                    {availableCourses.map(course => (
+                                        <option key={course.id || course._id} value={course.id || course._id}>
+                                            {course.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Batch Selection */}
+                            <div style={{ marginBottom: '24px' }}>
+                                <label style={{
+                                    display: 'block',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    color: BRAND.textSecondary,
+                                    marginBottom: '8px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    Select Batch *
+                                </label>
+                                <select
+                                    value={selectedBatch}
+                                    onChange={(e) => setSelectedBatch(e.target.value)}
+                                    disabled={!selectedCourseId}
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px 16px',
+                                        borderRadius: '10px',
+                                        border: `2px solid ${selectedBatch ? BRAND.success : BRAND.border}`,
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        backgroundColor: !selectedCourseId ? BRAND.bg : BRAND.card,
+                                        cursor: selectedCourseId ? 'pointer' : 'not-allowed',
+                                        outline: 'none',
+                                        opacity: selectedCourseId ? 1 : 0.6,
+                                        transition: 'border-color 0.2s'
+                                    }}
+                                >
+                                    <option value="">
+                                        {selectedCourseId ? '-- Choose a batch --' : '-- Select course first --'}
+                                    </option>
+                                    {selectedCourseId &&
+                                        (availableCourses.find(c => (c.id || c._id) === selectedCourseId)?.batches || []).map(batch => (
+                                            <option key={batch} value={batch}>{batch}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+
+                            {/* Summary */}
+                            {selectedCourseId && selectedBatch && (
+                                <div style={{
+                                    backgroundColor: BRAND.successLight,
+                                    borderRadius: '10px',
+                                    padding: '16px',
+                                    marginBottom: '20px',
+                                    border: `1px solid ${BRAND.success}30`
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                        <Check size={16} color={BRAND.success} />
+                                        <span style={{ fontSize: '13px', fontWeight: '600', color: BRAND.success }}>Ready to Enroll</span>
+                                    </div>
+                                    <p style={{ fontSize: '13px', color: BRAND.text, margin: 0 }}>
+                                        <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong> will be enrolled in{' '}
+                                        <strong>{availableCourses.find(c => (c.id || c._id) === selectedCourseId)?.name}</strong> ({selectedBatch})
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '16px 24px',
+                            borderTop: `1px solid ${BRAND.border}`,
+                            backgroundColor: BRAND.bg,
+                            display: 'flex',
+                            gap: '12px',
+                            justifyContent: 'flex-end'
+                        }}>
+                            <button
+                                onClick={() => setShowBatchModal(false)}
+                                style={{
+                                    padding: '12px 24px',
+                                    borderRadius: '10px',
+                                    border: `1px solid ${BRAND.border}`,
+                                    backgroundColor: BRAND.card,
+                                    color: BRAND.textSecondary,
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmEnrollmentWithBatch}
+                                disabled={!selectedCourseId || !selectedBatch || savingEnrollment}
+                                style={{
+                                    padding: '12px 24px',
+                                    borderRadius: '10px',
+                                    border: 'none',
+                                    backgroundColor: (!selectedCourseId || !selectedBatch) ? BRAND.border : BRAND.success,
+                                    color: '#ffffff',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    cursor: (!selectedCourseId || !selectedBatch) ? 'not-allowed' : 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    opacity: savingEnrollment ? 0.6 : 1
+                                }}
+                            >
+                                {savingEnrollment ? 'Enrolling...' : (
+                                    <>
+                                        <Check size={16} />
+                                        Confirm Enrollment
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

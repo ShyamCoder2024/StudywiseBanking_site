@@ -16,6 +16,7 @@ export function QuizPage() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
+    const [accessError, setAccessError] = useState(null); // For restricted access
 
     useEffect(() => {
         fetchQuiz();
@@ -69,10 +70,24 @@ export function QuizPage() {
                 return;
             }
 
-            // Other errors - show message
+            // Check if quiz is restricted (paid only, course required, etc.)
+            if (error.response?.data?.restricted) {
+                setAccessError({
+                    type: error.response.data.restrictionType || 'restricted',
+                    message: error.response.data.message || 'You do not have access to this test.',
+                    requiredCourse: error.response.data.requiredCourse
+                });
+                setLoading(false);
+                return;
+            }
+
+            // Other API errors - show message inline
             if (error.response?.data?.message) {
-                alert(error.response.data.message);
-                navigate(-1);
+                setAccessError({
+                    type: 'error',
+                    message: error.response.data.message
+                });
+                setLoading(false);
                 return;
             }
 
@@ -177,7 +192,61 @@ export function QuizPage() {
         );
     }
 
+    // Access Error Screen - Show enrollment prompt instead of crashing
+    if (accessError) {
+        return (
+            <div className="quiz-page">
+                <div className="quiz-access-error">
+                    <div className="access-error-card">
+                        <div className="access-error-icon">
+                            {accessError.type === 'paid_only' ? '🔒' : accessError.type === 'course_required' ? '📚' : '⚠️'}
+                        </div>
+                        <h2 className="access-error-title">
+                            {accessError.type === 'paid_only' ? 'Premium Content' :
+                                accessError.type === 'course_required' ? 'Course Enrollment Required' :
+                                    'Access Restricted'}
+                        </h2>
+                        <p className="access-error-message">{accessError.message}</p>
+                        {accessError.type === 'paid_only' && (
+                            <p className="access-error-hint">
+                                Please enroll in a course to access premium tests and unlock exclusive content.
+                            </p>
+                        )}
+                        <div className="access-error-actions">
+                            <Button variant="secondary" onClick={() => navigate(-1)}>
+                                ← Go Back
+                            </Button>
+                            <Button variant="primary" onClick={() => navigate('/courses')}>
+                                View Courses
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const currentQuestion = questions[currentIndex];
+
+    // Guard against empty questions array
+    if (!currentQuestion) {
+        return (
+            <div className="quiz-page">
+                <div className="quiz-access-error">
+                    <div className="access-error-card">
+                        <div className="access-error-icon">❌</div>
+                        <h2 className="access-error-title">Quiz Not Available</h2>
+                        <p className="access-error-message">This quiz could not be loaded. Please try again later.</p>
+                        <div className="access-error-actions">
+                            <Button variant="primary" onClick={() => navigate('/tests')}>
+                                Back to Test Center
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="quiz-page">

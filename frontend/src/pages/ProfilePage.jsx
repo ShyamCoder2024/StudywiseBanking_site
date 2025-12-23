@@ -7,7 +7,7 @@ import { Input } from '../components/ui/Input';
 import { AvatarDisplay } from '../components/ui/AvatarDisplay';
 import {
     CheckCircle2, Target, Pencil, Lock, Bell, LogOut,
-    ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin
+    ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin, CreditCard, BookOpenCheck
 } from 'lucide-react';
 import { CARTOON_AVATARS } from '../utils/avatars';
 import api from '../services/api';
@@ -39,6 +39,10 @@ export function ProfilePage() {
         averageScore: 0,
         streak: 0,
     });
+    const [enrollment, setEnrollment] = useState({
+        isPaid: false,
+        courses: []
+    });
 
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
@@ -51,6 +55,7 @@ export function ProfilePage() {
 
     useEffect(() => {
         fetchUserStats();
+        fetchEnrollmentData();
     }, []);
 
     const fetchUserStats = async () => {
@@ -66,6 +71,27 @@ export function ProfilePage() {
             }
         } catch (error) {
             console.error('Failed to fetch stats:', error);
+        }
+    };
+
+    const fetchEnrollmentData = async () => {
+        try {
+            const res = await api.get('/student/enrollment');
+            if (res.data.success && res.data.data) {
+                setEnrollment({
+                    isPaid: res.data.data.isPaid || false,
+                    courses: res.data.data.courses || []
+                });
+            }
+        } catch (error) {
+            console.error('Failed to fetch enrollment:', error);
+            // Use user object as fallback if enrollment endpoint doesn't exist
+            if (user?.enrollment) {
+                setEnrollment({
+                    isPaid: user.enrollment.isPaid || false,
+                    courses: user.enrollment.courses || []
+                });
+            }
         }
     };
 
@@ -192,6 +218,40 @@ export function ProfilePage() {
                                 <span className="stat-num">{stats.streak}</span>
                                 <span className="stat-text">Day Streak</span>
                             </motion.div>
+                        </div>
+                    </motion.div>
+
+                    {/* Enrollment Status */}
+                    <motion.div
+                        className="profile-section"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.15 }}
+                    >
+                        <h3 className="section-label">Enrollment Status</h3>
+                        <div className="enrollment-status-card">
+                            <div className={`enrollment-badge ${enrollment.isPaid ? 'paid' : 'unpaid'}`}>
+                                <CreditCard size={18} />
+                                <span>{enrollment.isPaid ? 'Premium Member' : 'Free User'}</span>
+                            </div>
+                            {enrollment.isPaid && enrollment.courses.length > 0 ? (
+                                <div className="enrolled-courses">
+                                    <h4 className="enrolled-label">
+                                        <BookOpenCheck size={14} />
+                                        Enrolled Courses
+                                    </h4>
+                                    {enrollment.courses.map((course, idx) => (
+                                        <div key={idx} className="enrolled-course-item">
+                                            <span className="course-name">{course.courseName || course.name}</span>
+                                            <span className="course-batch">{course.batch}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : enrollment.isPaid ? (
+                                <p className="enrollment-hint">You have premium access. Explore courses to enroll.</p>
+                            ) : (
+                                <p className="enrollment-hint">Upgrade to premium to access exclusive content and courses.</p>
+                            )}
                         </div>
                     </motion.div>
 

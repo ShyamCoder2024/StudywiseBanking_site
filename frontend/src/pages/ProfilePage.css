@@ -660,6 +660,91 @@
     }
 }
 
+/* ============================================
+   ENROLLMENT STATUS SECTION
+   ============================================ */
+.enrollment-status-card {
+    background: var(--color-bg);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+}
+
+.enrollment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+}
+
+.enrollment-badge.paid {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.enrollment-badge.unpaid {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.enrolled-courses {
+    margin-top: 12px;
+}
+
+.enrolled-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+}
+
+.enrolled-course-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.enrolled-course-item:last-child {
+    margin-bottom: 0;
+}
+
+.course-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.course-batch {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--primary);
+    border-radius: 16px;
+    font-weight: 500;
+}
+
+.enrollment-hint {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    margin: 8px 0 0 0;
+    line-height: 1.5;
+}
+
 /* Dark Mode */
 :root.dark .profile-banner {
     background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
