@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock, Upload, Image } from 'lucide-react';
 import api from '../../services/api';
 
 // DRD Brand Colors
@@ -51,12 +51,38 @@ export function CourseManagement() {
 
     useEffect(() => { fetchCourses(); }, []);
 
+    const fileInputRef = useRef(null);
+
     const fetchCourses = async () => {
         try {
             const res = await api.get('/admin/manage-courses');
             setCourses(res.data.data || []);
         } catch { setCourses([]); }
         finally { setLoading(false); }
+    };
+
+    // Handle image file upload - convert to Base64
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Image size should be less than 2MB');
+            return;
+        }
+
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCourseForm({ ...courseForm, thumbnail: reader.result });
+        };
+        reader.readAsDataURL(file);
     };
 
     // Course CRUD
@@ -362,11 +388,54 @@ export function CourseManagement() {
                             </div>
                             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                 <div>
-                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Thumbnail URL</label>
-                                    <input type="text" value={courseForm.thumbnail} onChange={e => setCourseForm({ ...courseForm, thumbnail: e.target.value })} placeholder="https://..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
-                                    {courseForm.thumbnail && (
-                                        <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '100px' }}>
-                                            <img src={courseForm.thumbnail} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px', display: 'block' }}>Course Thumbnail</label>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        style={{ display: 'none' }}
+                                    />
+                                    {courseForm.thumbnail ? (
+                                        <div style={{ position: 'relative' }}>
+                                            <div style={{ borderRadius: '12px', overflow: 'hidden', height: '140px', border: `2px solid ${BRAND.primary}` }}>
+                                                <img src={courseForm.thumbnail} alt="Thumbnail Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    style={{ flex: 1, padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                                                >
+                                                    <Upload size={14} /> Change Image
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCourseForm({ ...courseForm, thumbnail: '' })}
+                                                    style={{ padding: '10px 16px', borderRadius: '8px', border: `1px solid ${BRAND.warning}`, backgroundColor: BRAND.warningLight, color: BRAND.warning, fontSize: '13px', cursor: 'pointer' }}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            onClick={() => fileInputRef.current?.click()}
+                                            style={{
+                                                border: `2px dashed ${BRAND.border}`,
+                                                borderRadius: '12px',
+                                                padding: '32px 20px',
+                                                textAlign: 'center',
+                                                cursor: 'pointer',
+                                                backgroundColor: BRAND.bg,
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseOver={(e) => { e.currentTarget.style.borderColor = BRAND.primary; e.currentTarget.style.backgroundColor = BRAND.primaryLight; }}
+                                            onMouseOut={(e) => { e.currentTarget.style.borderColor = BRAND.border; e.currentTarget.style.backgroundColor = BRAND.bg; }}
+                                        >
+                                            <Image size={40} color={BRAND.textMuted} style={{ marginBottom: '12px' }} />
+                                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: BRAND.text }}>Click to upload thumbnail</p>
+                                            <p style={{ margin: '4px 0 0', fontSize: '12px', color: BRAND.textMuted }}>PNG, JPG up to 2MB</p>
                                         </div>
                                     )}
                                 </div>
