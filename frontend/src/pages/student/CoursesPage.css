@@ -241,50 +241,171 @@
     display: none;
 }
 
-/* CTA Section */
-.courses-cta {
-    margin-top: 20px;
-    padding: 20px;
-    background: linear-gradient(135deg, var(--color-primary-light, #EDE9F6), rgba(138, 117, 186, 0.15));
-    border-radius: 14px;
+/* ========================================
+   Premium Enrollment CTA Card
+   ======================================== */
+.enroll-cta-card {
+    position: relative;
+    margin-top: 28px;
+    padding: 28px 24px;
+    background: linear-gradient(135deg, #8A75BA 0%, #6366f1 50%, #7C3AED 100%);
+    border-radius: 20px;
+    overflow: hidden;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
+    text-align: center;
+    gap: 20px;
+    box-shadow: 0 10px 40px rgba(138, 117, 186, 0.35);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Animated Background Circles */
+.enroll-bg-elements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.floating-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: floatCircle 6s ease-in-out infinite;
+}
+
+.floating-circle.c1 {
+    width: 120px;
+    height: 120px;
+    top: -30px;
+    right: -30px;
+    animation-delay: 0s;
+}
+
+.floating-circle.c2 {
+    width: 80px;
+    height: 80px;
+    bottom: -20px;
+    left: -20px;
+    animation-delay: 2s;
+}
+
+.floating-circle.c3 {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    left: 60%;
+    animation-delay: 4s;
+}
+
+@keyframes floatCircle {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translateY(-15px) scale(1.1);
+        opacity: 0.2;
+    }
+}
+
+/* Content Layout */
+.enroll-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 12px;
 }
 
-.courses-cta h3 {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--color-text);
-    margin: 0;
-}
-
-.courses-cta p {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-    margin: 4px 0 0;
-}
-
-.cta-btn {
+/* Animated Icon */
+.enroll-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    background: var(--color-primary);
+    justify-content: center;
     color: #fff;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    border: none;
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.cta-btn:hover {
-    background: var(--color-primary-hover, #7A66A8);
+/* Text */
+.enroll-text h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.enroll-text p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 6px 0 0;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+/* CTA Button */
+.enroll-btn {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: #fff;
+    color: var(--color-primary);
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.enroll-btn:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.enroll-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.enroll-btn:hover svg {
+    transform: translateX(4px);
+}
+
+/* Trust Badges */
+.enroll-badges {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.enroll-badges span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.enroll-badges svg {
+    color: #fbbf24;
 }
 
 /* Empty State */
@@ -403,17 +524,58 @@
         padding: 3px 6px;
     }
 
-    .courses-cta {
-        padding: 16px;
-        border-radius: 12px;
+    /* Enrollment Card Mobile */
+    .enroll-cta-card {
+        padding: 24px 18px;
+        border-radius: 16px;
+        gap: 16px;
+        margin-top: 20px;
     }
 
-    .courses-cta h3 {
+    .enroll-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .enroll-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .enroll-text h3 {
+        font-size: 17px;
+    }
+
+    .enroll-text p {
+        font-size: 12px;
+        max-width: 260px;
+    }
+
+    .enroll-btn {
+        padding: 12px 22px;
         font-size: 14px;
     }
 
-    .cta-btn {
-        padding: 9px 14px;
-        font-size: 12px;
+    .enroll-badges {
+        gap: 12px;
+    }
+
+    .enroll-badges span {
+        font-size: 10px;
+    }
+
+    .floating-circle.c1 {
+        width: 80px;
+        height: 80px;
+    }
+
+    .floating-circle.c2 {
+        width: 60px;
+        height: 60px;
+    }
+
+    .floating-circle.c3 {
+        width: 40px;
+        height: 40px;
     }
 }

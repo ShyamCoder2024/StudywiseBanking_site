@@ -163,23 +163,52 @@ export default function CoursesPage() {
                     </div>
                 )}
 
-                {/* CTA Section */}
+                {/* Premium Enrollment CTA Card */}
                 <motion.div
-                    className="courses-cta"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                    className="enroll-cta-card"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: 0.5, type: 'spring', stiffness: 100 }}
+                    whileHover={{ scale: 1.02, y: -4 }}
                 >
-                    <div className="cta-content">
-                        <h3>Want to Enroll?</h3>
-                        <p>Contact our tutor for enrollment and course access</p>
+                    {/* Animated Background Elements */}
+                    <div className="enroll-bg-elements">
+                        <div className="floating-circle c1" />
+                        <div className="floating-circle c2" />
+                        <div className="floating-circle c3" />
                     </div>
-                    <button
-                        className="cta-btn"
-                        onClick={() => navigate('/about')}
+
+                    {/* Content */}
+                    <div className="enroll-content">
+                        <motion.div
+                            className="enroll-icon"
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                        >
+                            <GraduationCap size={32} />
+                        </motion.div>
+                        <div className="enroll-text">
+                            <h3>Ready to Start Learning?</h3>
+                            <p>Get full access to all premium video courses with expert guidance</p>
+                        </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <motion.button
+                        className="enroll-btn"
+                        onClick={() => navigate('/about-tutor')}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
-                        Contact Tutor
-                    </button>
+                        <span>Enroll Now</span>
+                        <ArrowRight size={18} />
+                    </motion.button>
+
+                    {/* Trust Badges */}
+                    <div className="enroll-badges">
+                        <span><Star size={12} /> 500+ Students</span>
+                        <span><Award size={12} /> Expert Tutor</span>
+                    </div>
                 </motion.div>
             </div>
         </div>
