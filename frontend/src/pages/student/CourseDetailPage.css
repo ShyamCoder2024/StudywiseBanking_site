@@ -427,16 +427,22 @@
     box-shadow: 0 4px 15px rgba(138, 117, 186, 0.35);
 }
 
-/* ============ TABLET ============ */
+/* ============ TABLET & MOBILE - Single Column ============ */
 @media (max-width: 900px) {
     .cdp-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .cdp-left {
+        width: 100%;
     }
 
     .cdp-right {
         position: static;
+        width: 100%;
     }
 
     .cdp-lectures-list {
