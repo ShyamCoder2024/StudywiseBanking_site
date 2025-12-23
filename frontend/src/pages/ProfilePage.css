@@ -146,8 +146,25 @@
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     align-items: stretch;
-    /* Make both columns same height */
 }
+
+/* Section ordering for layout */
+.profile-section:nth-child(1) {
+    order: 1;
+}
+
+/* Performance Stats */
+.profile-section:nth-child(2) {
+    order: 2;
+}
+
+/* Enrollment Status */
+.profile-section:nth-child(3) {
+    order: 3;
+    grid-column: 1 / -1;
+}
+
+/* Account Settings - full width */
 
 .profile-section {
     background: var(--color-card);
@@ -666,34 +683,43 @@
 .enrollment-status-card {
     background: var(--color-bg);
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
     border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 140px;
 }
 
 .enrollment-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 12px 24px;
     border-radius: 30px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     margin-bottom: 16px;
 }
 
 .enrollment-badge.paid {
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .enrollment-badge.unpaid {
-    background: rgba(239, 68, 68, 0.1);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .enrolled-courses {
     margin-top: 12px;
+    width: 100%;
+    text-align: left;
 }
 
 .enrolled-label {
@@ -740,9 +766,10 @@
 
 .enrollment-hint {
     color: var(--color-text-secondary);
-    font-size: 0.85rem;
-    margin: 8px 0 0 0;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.6;
+    max-width: 280px;
 }
 
 /* Dark Mode */
