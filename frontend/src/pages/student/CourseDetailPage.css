@@ -1,4 +1,4 @@
-/* Course Detail Page - Premium DRD Design - Redesigned */
+/* Course Detail Page - Premium DRD Two-Column Layout */
 
 .course-detail-page {
     min-height: 100vh;
@@ -19,9 +19,9 @@
 }
 
 .spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid var(--color-border);
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
     border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -41,24 +41,21 @@
 
 /* Header */
 .course-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     background: var(--color-card);
     border-bottom: 1px solid var(--color-border);
-    position: sticky;
-    top: 0;
-    z-index: 10;
 }
 
 .back-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
+    gap: 6px;
+    padding: 8px 12px;
     border-radius: 8px;
     border: 1px solid var(--color-border);
     background: var(--color-card);
     color: var(--color-text);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -69,46 +66,56 @@
     color: var(--color-primary);
 }
 
-/* Course Banner - FIXED to contain image properly */
-.course-banner {
-    position: relative;
-    width: 100%;
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 0 16px;
+/* Main Content Wrapper - Two Column Layout */
+.course-content-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
 }
 
-.banner-image {
+/* Left Column - Thumbnail & Info */
+.course-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Thumbnail - Full width, proper aspect ratio */
+.course-thumbnail-container {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.course-thumbnail-container img {
     width: 100%;
     height: auto;
-    max-height: 350px;
-    object-fit: contain;
-    border-radius: 16px;
     display: block;
-    background: var(--color-bg);
 }
 
-.banner-placeholder {
+.thumbnail-placeholder {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 16 / 9;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--color-primary), #6366f1);
-    color: rgba(255, 255, 255, 0.3);
-    border-radius: 16px;
+    color: rgba(255, 255, 255, 0.4);
 }
 
-/* Remove overlay - put info below image instead */
-.banner-overlay {
-    display: none;
-}
-
-/* Course Info Section - Below the image */
-.course-info-section {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px 20px 0;
+/* Course Info Card */
+.course-info-card {
+    background: var(--color-card);
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    padding: 20px;
 }
 
 .course-badge {
@@ -116,67 +123,78 @@
     padding: 5px 12px;
     background: var(--color-primary);
     color: #fff;
-    border-radius: 16px;
+    border-radius: 14px;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     margin-bottom: 10px;
 }
 
 .course-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     line-height: 1.3;
     color: var(--color-text);
 }
 
 .course-meta {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-text-secondary);
     margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .course-description {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-text-secondary);
-    margin: 0 0 16px;
+    margin: 0;
     line-height: 1.6;
-    max-height: 80px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
 }
 
 .enrollment-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
+    gap: 6px;
+    padding: 10px 14px;
     background: var(--color-primary-light, #EDE9F6);
     color: var(--color-primary);
     border-radius: 10px;
     font-size: 13px;
     font-weight: 600;
+    margin-top: 14px;
 }
 
-/* Lectures Section - Compact Design */
-.lectures-section {
-    padding: 24px 20px;
-    max-width: 900px;
-    margin: 0 auto;
+/* Right Column - Lectures List */
+.course-right-column {
+    position: sticky;
+    top: 80px;
+}
+
+.lectures-card {
+    background: var(--color-card);
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.lectures-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
 }
 
 .section-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 16px;
+    margin: 0;
 }
 
 .section-title svg {
@@ -184,46 +202,41 @@
 }
 
 .lectures-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    max-height: 450px;
+    overflow-y: auto;
 }
 
-/* Lecture Item - Compact */
+/* Compact Lecture Item */
 .lecture-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 12px 14px;
-    background: var(--color-card);
-    border-radius: 10px;
-    border: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.15s;
 }
 
-.lecture-item.unlocked:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 2px 8px rgba(138, 117, 186, 0.12);
+.lecture-item:last-child {
+    border-bottom: none;
+}
+
+.lecture-item:hover {
+    background: var(--color-bg);
 }
 
 .lecture-item.locked {
-    opacity: 0.65;
-}
-
-.lecture-item.locked:hover {
-    border-color: var(--color-border);
-    opacity: 0.75;
+    opacity: 0.6;
 }
 
 .lecture-number {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
+    border-radius: 6px;
+    font-size: 11px;
     font-weight: 700;
     flex-shrink: 0;
 }
@@ -244,7 +257,7 @@
 }
 
 .lecture-title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--color-text);
     margin: 0;
@@ -256,8 +269,8 @@
 .lecture-duration {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 11px;
+    gap: 3px;
+    font-size: 10px;
     color: var(--color-text-muted);
     margin-top: 2px;
 }
@@ -266,51 +279,40 @@
     flex-shrink: 0;
 }
 
-.play-icon {
-    width: 32px;
-    height: 32px;
+.play-icon,
+.locked-icon {
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+}
+
+.play-icon {
     background: var(--color-primary);
     color: #fff;
-    transition: transform 0.2s;
-}
-
-.play-icon svg {
-    width: 14px;
-    height: 14px;
-}
-
-.lecture-item:hover .play-icon {
-    transform: scale(1.05);
 }
 
 .locked-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
     background: var(--color-bg);
     color: var(--color-text-muted);
 }
 
+.play-icon svg,
 .locked-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
 }
 
 .no-lectures {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
+    padding: 30px 16px;
     color: var(--color-text-muted);
-    gap: 10px;
+    gap: 8px;
+    font-size: 13px;
 }
 
 /* Modal */
@@ -318,7 +320,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -329,12 +331,12 @@
 .enroll-modal {
     position: relative;
     width: 100%;
-    max-width: 360px;
+    max-width: 340px;
     background: var(--color-card);
     border-radius: 16px;
-    padding: 28px 20px;
+    padding: 24px 20px;
     text-align: center;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .close-btn {
@@ -351,45 +353,39 @@
     background: var(--color-bg);
     color: var(--color-text-muted);
     cursor: pointer;
-    transition: all 0.2s;
-}
-
-.close-btn:hover {
-    background: var(--color-border);
-    color: var(--color-text);
 }
 
 .modal-icon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 16px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary-light, #EDE9F6), rgba(138, 117, 186, 0.2));
+    background: var(--color-primary-light, #EDE9F6);
     color: var(--color-primary);
 }
 
 .enroll-modal h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--color-text);
-    margin: 0 0 10px;
+    margin: 0 0 8px;
 }
 
 .enroll-modal p {
     font-size: 13px;
     color: var(--color-text-secondary);
     line-height: 1.5;
-    margin: 0 0 20px;
+    margin: 0 0 16px;
 }
 
 .modal-features {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 16px;
     text-align: left;
 }
 
@@ -397,20 +393,20 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--color-text);
 }
 
 .feature svg {
     color: var(--color-success, #6EBCC3);
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
-    width: 16px;
-    height: 16px;
 }
 
 .enroll-btn {
     width: 100%;
-    padding: 12px 20px;
+    padding: 12px 16px;
     border-radius: 10px;
     border: none;
     background: linear-gradient(135deg, var(--color-primary), #7C3AED);
@@ -418,65 +414,30 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.35);
-}
-
-.enroll-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(138, 117, 186, 0.45);
+    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.3);
 }
 
 /* Responsive - Tablet */
-@media (max-width: 768px) {
-    .course-banner {
-        padding: 0 12px;
-        margin: 16px auto;
+@media (max-width: 900px) {
+    .course-content-wrapper {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 16px;
     }
 
-    .banner-image {
-        max-height: 280px;
-        border-radius: 12px;
+    .course-right-column {
+        position: static;
     }
 
-    .course-info-section {
-        padding: 16px 16px 0;
-    }
-
-    .course-title {
-        font-size: 20px;
-    }
-
-    .lectures-section {
-        padding: 20px 16px;
-    }
-
-    .lecture-item {
-        padding: 10px 12px;
-        gap: 10px;
-    }
-
-    .lecture-number {
-        width: 32px;
-        height: 32px;
-        font-size: 12px;
-    }
-
-    .lecture-title {
-        font-size: 13px;
-    }
-
-    .play-icon,
-    .locked-icon {
-        width: 28px;
-        height: 28px;
+    .lectures-list {
+        max-height: none;
     }
 }
 
 /* Responsive - Mobile */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .course-header {
-        padding: 12px 16px;
+        padding: 10px 12px;
     }
 
     .back-btn span {
@@ -487,23 +448,22 @@
         padding: 8px;
     }
 
-    .course-banner {
-        padding: 0 12px;
-        margin: 12px auto;
+    .course-content-wrapper {
+        padding: 12px;
+        gap: 12px;
     }
 
-    .banner-image {
-        max-height: 200px;
-        border-radius: 10px;
+    .course-thumbnail-container {
+        border-radius: 12px;
     }
 
-    .banner-placeholder {
-        height: 150px;
-        border-radius: 10px;
+    .course-info-card {
+        padding: 14px;
+        border-radius: 12px;
     }
 
-    .course-info-section {
-        padding: 12px 12px 0;
+    .course-title {
+        font-size: 18px;
     }
 
     .course-badge {
@@ -511,82 +471,36 @@
         padding: 4px 10px;
     }
 
-    .course-title {
-        font-size: 18px;
+    .lectures-card {
+        border-radius: 12px;
     }
 
-    .course-meta {
-        font-size: 12px;
-    }
-
-    .course-description {
-        font-size: 13px;
-        -webkit-line-clamp: 2;
-        max-height: 52px;
-    }
-
-    .enrollment-badge {
-        font-size: 12px;
-        padding: 8px 12px;
-    }
-
-    .lectures-section {
-        padding: 16px 12px;
+    .lectures-header {
+        padding: 12px 14px;
     }
 
     .section-title {
-        font-size: 15px;
-        margin-bottom: 12px;
-    }
-
-    .lectures-list {
-        gap: 6px;
+        font-size: 13px;
     }
 
     .lecture-item {
-        padding: 10px;
+        padding: 10px 12px;
         gap: 8px;
-        border-radius: 8px;
     }
 
     .lecture-number {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
-        border-radius: 6px;
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
     }
 
     .lecture-title {
-        font-size: 12px;
-    }
-
-    .lecture-duration {
-        font-size: 10px;
+        font-size: 11px;
     }
 
     .play-icon,
     .locked-icon {
-        width: 26px;
-        height: 26px;
-    }
-
-    .play-icon svg,
-    .locked-icon svg {
-        width: 12px;
-        height: 12px;
-    }
-
-    .enroll-modal {
-        padding: 24px 16px;
-        border-radius: 14px;
-    }
-
-    .modal-icon {
-        width: 56px;
-        height: 56px;
-    }
-
-    .enroll-modal h2 {
-        font-size: 18px;
+        width: 22px;
+        height: 22px;
     }
 }
