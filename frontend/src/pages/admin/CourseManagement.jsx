@@ -118,7 +118,9 @@ export function CourseManagement() {
             fetchCourses();
             setShowCourseModal(false);
         } catch (err) {
-            alert('Failed to save course');
+            console.error('Save course error:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Failed to save course';
+            alert(`Error: ${errorMsg}`);
         } finally { setSaving(false); }
     };
 
