@@ -499,7 +499,27 @@ export function CourseManagement() {
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Description</label>
-                                    <textarea value={courseForm.description} onChange={e => setCourseForm({ ...courseForm, description: e.target.value })} rows={3} placeholder="Brief description of this course..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', resize: 'vertical' }} />
+                                    <textarea
+                                        value={courseForm.description}
+                                        onChange={e => setCourseForm({ ...courseForm, description: e.target.value })}
+                                        rows={8}
+                                        placeholder={`Add a detailed description of this course...\n\n• Point 1: What students will learn\n• Point 2: Topics covered\n• Point 3: Prerequisites\n• Point 4: Course benefits`}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            borderRadius: '8px',
+                                            border: `1px solid ${BRAND.border}`,
+                                            fontSize: '14px',
+                                            resize: 'vertical',
+                                            minHeight: '150px',
+                                            lineHeight: '1.6',
+                                            fontFamily: 'inherit',
+                                            whiteSpace: 'pre-wrap'
+                                        }}
+                                    />
+                                    <p style={{ fontSize: '11px', color: BRAND.textMuted, marginTop: '4px' }}>
+                                        Tip: Use bullet points (•) or dashes (-) for formatted lists
+                                    </p>
                                 </div>
 
                                 {/* Pricing Section */}
