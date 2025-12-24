@@ -357,8 +357,40 @@ export function StudentMonitoring() {
                                                     }}>
                                                         {student.firstName?.[0]}{student.lastName?.[0]}
                                                     </div>
-                                                    <div>
-                                                        <div style={{ fontWeight: '600', color: BRAND.text }}>{student.firstName} {student.lastName}</div>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <div style={{ fontWeight: '600', color: BRAND.text }}>{student.firstName} {student.lastName}</div>
+                                                            {/* PAID/UNPAID BADGE */}
+                                                            {student.enrollment?.isPaid ? (
+                                                                <span style={{
+                                                                    padding: '2px 8px',
+                                                                    borderRadius: '6px',
+                                                                    fontSize: '10px',
+                                                                    fontWeight: '700',
+                                                                    backgroundColor: '#D1FAE5',
+                                                                    color: '#065F46',
+                                                                    border: '1px solid #6EE7B7',
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: '0.5px'
+                                                                }}>
+                                                                    💰 PAID
+                                                                </span>
+                                                            ) : (
+                                                                <span style={{
+                                                                    padding: '2px 8px',
+                                                                    borderRadius: '6px',
+                                                                    fontSize: '10px',
+                                                                    fontWeight: '700',
+                                                                    backgroundColor: '#FEE2E2',
+                                                                    color: '#991B1B',
+                                                                    border: '1px solid #FCA5A5',
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: '0.5px'
+                                                                }}>
+                                                                    🔒 UNPAID
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <div style={{ fontSize: '12px', color: BRAND.textMuted }}>Rank #{student.rank || index + 1}</div>
                                                     </div>
                                                 </div>

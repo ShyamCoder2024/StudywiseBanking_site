@@ -5,6 +5,7 @@ import { Navbar } from './components/layout/Navbar';
 import { BottomNavbar } from './components/layout/BottomNavbar';
 import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 import './styles/index.css';
 import './App.css';
 
@@ -34,7 +35,7 @@ const TestReviewPage = lazy(() => import('./pages/student/TestReviewPage'));
 const CoursesPage = lazy(() => import('./pages/student/CoursesPage'));
 const CourseDetailPage = lazy(() => import('./pages/student/CourseDetailPage'));
 
-// Admin Pages - Lazy loaded
+// Admin Pages - Lazy loaded with retry for deployment stability
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'));
 const SubjectManagement = lazy(() => import('./pages/admin/SubjectManagement'));
@@ -42,9 +43,9 @@ const TopicManagement = lazy(() => import('./pages/admin/TopicManagement'));
 const QuizManagement = lazy(() => import('./pages/admin/QuizManagement'));
 const QuestionManagement = lazy(() => import('./pages/admin/QuestionManagement'));
 const StudentMonitoring = lazy(() => import('./pages/admin/StudentMonitoring'));
-const TaskManagementPage = lazy(() => import('./pages/admin/TaskManagementPage'));
-const AllTasksPage = lazy(() => import('./pages/admin/AllTasksPage'));
-const AllInactiveStudentsPage = lazy(() => import('./pages/admin/AllInactiveStudentsPage'));
+const TaskManagementPage = lazy(() => lazyWithRetry(() => import('./pages/admin/TaskManagementPage')));
+const AllTasksPage = lazy(() => lazyWithRetry(() => import('./pages/admin/AllTasksPage')));
+const AllInactiveStudentsPage = lazy(() => lazyWithRetry(() => import('./pages/admin/AllInactiveStudentsPage')));
 const QuizAnalytics = lazy(() => import('./pages/admin/QuizAnalytics'));
 const CourseManagement = lazy(() => import('./pages/admin/CourseManagement'));
 
