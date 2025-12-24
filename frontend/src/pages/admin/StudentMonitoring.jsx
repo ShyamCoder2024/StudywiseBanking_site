@@ -576,44 +576,44 @@ export function StudentMonitoring() {
                         </div>
 
                         {/* Modal Body - Scrollable */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
 
                             {/* Performance Stats - Top */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0' }}>Performance Stats</h4>
-                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                                    <div style={{ textAlign: 'center', padding: '8px 4px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '20px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Avg Score</div>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
+                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Performance Stats</h4>
+                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                                    <div style={{ textAlign: 'center', padding: '4px 2px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '16px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
+                                        <div style={{ fontSize: '8px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Avg Score</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '8px 4px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '20px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Quizzes</div>
+                                    <div style={{ textAlign: 'center', padding: '4px 2px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '16px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
+                                        <div style={{ fontSize: '8px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Quizzes</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '8px 4px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Rank</div>
+                                    <div style={{ textAlign: 'center', padding: '4px 2px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '16px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
+                                        <div style={{ fontSize: '8px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Rank</div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Personal Information */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0' }}>Personal Information</h4>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
+                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Personal Information</h4>
 
                                 {/* Preparing For */}
                                 <div style={{
                                     backgroundColor: BRAND.primaryLight,
-                                    borderRadius: '6px',
-                                    padding: '8px 10px',
-                                    marginBottom: '8px',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    marginBottom: '4px',
                                     border: `1px solid ${BRAND.primary}30`,
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}>
-                                    <span style={{ fontSize: '11px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
-                                    <span style={{ fontSize: '12px', fontWeight: '700', color: BRAND.primary }}>
+                                    <span style={{ fontSize: '10px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
+                                    <span style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary }}>
                                         {selectedStudent.status === 'preparing_fulltime' ? 'Full-Time' :
                                             selectedStudent.status === 'working_professional' ? 'Working Professional' :
                                                 selectedStudent.status === 'student' ? 'Student' :
@@ -622,49 +622,49 @@ export function StudentMonitoring() {
                                 </div>
 
                                 {/* Info Grid */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                                     {/* Row 1: Gender & Age */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Gender</span>
-                                            <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Gender</span>
+                                            <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Age</span>
-                                            <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} yrs</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Age</span>
+                                            <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} yrs</span>
                                         </div>
                                     </div>
 
                                     {/* Row 2: Email */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                        <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Email</span>
-                                        <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Email</span>
+                                        <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
                                     </div>
 
                                     {/* Row 3: Mobile */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                        <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Mobile</span>
-                                        <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'N/A'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Mobile</span>
+                                        <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'N/A'}</span>
                                     </div>
 
                                     {/* Row 4: Joined & Account */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Joined</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Joined</span>
+                                            <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: BRAND.card, borderRadius: '6px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Account</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.success }}>Active</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Account</span>
+                                            <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.success }}>Active</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Enrollment Management Section */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <CreditCard size={12} />
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
+                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <CreditCard size={10} />
                                     Enrollment Management
                                 </h4>
 
@@ -673,15 +673,15 @@ export function StudentMonitoring() {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    padding: '10px',
+                                    padding: '6px 8px',
                                     backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.successLight : BRAND.warningLight,
-                                    borderRadius: '6px',
-                                    marginBottom: '8px',
+                                    borderRadius: '4px',
+                                    marginBottom: '4px',
                                     border: `1px solid ${selectedStudent.enrollment?.isPaid ? BRAND.success : BRAND.warning}30`
                                 }}>
                                     <div>
-                                        <div style={{ fontWeight: '600', color: BRAND.text, fontSize: '12px' }}>Payment Status</div>
-                                        <div style={{ fontSize: '10px', color: BRAND.textSecondary }}>
+                                        <div style={{ fontWeight: '600', color: BRAND.text, fontSize: '11px' }}>Payment Status</div>
+                                        <div style={{ fontSize: '9px', color: BRAND.textSecondary }}>
                                             {selectedStudent.enrollment?.isPaid ? 'Premium Member' : 'Free User'}
                                         </div>
                                     </div>
@@ -689,12 +689,12 @@ export function StudentMonitoring() {
                                         onClick={togglePaidStatus}
                                         disabled={savingEnrollment}
                                         style={{
-                                            padding: '6px 14px',
-                                            borderRadius: '6px',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
                                             border: 'none',
                                             backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.warning : BRAND.success,
                                             color: '#fff',
-                                            fontSize: '11px',
+                                            fontSize: '10px',
                                             fontWeight: '600',
                                             cursor: 'pointer',
                                             opacity: savingEnrollment ? 0.6 : 1
@@ -705,24 +705,24 @@ export function StudentMonitoring() {
                                 </div>
 
                                 {/* Tags Section */}
-                                <div style={{ marginTop: '8px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                                        <Tag size={12} color={BRAND.primary} />
-                                        <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>Student Tags</span>
+                                <div style={{ marginTop: '4px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                                        <Tag size={10} color={BRAND.primary} />
+                                        <span style={{ fontSize: '9px', fontWeight: '600', color: BRAND.text }}>Student Tags</span>
                                     </div>
 
                                     {/* Existing Tags */}
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginBottom: '4px' }}>
                                         {(selectedStudent.enrollment?.tags || []).map((tag, i) => (
                                             <span key={i} style={{
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
-                                                gap: '4px',
-                                                padding: '4px 8px',
+                                                gap: '2px',
+                                                padding: '2px 6px',
                                                 backgroundColor: BRAND.primaryLight,
                                                 color: BRAND.primary,
-                                                borderRadius: '12px',
-                                                fontSize: '10px',
+                                                borderRadius: '8px',
+                                                fontSize: '9px',
                                                 fontWeight: '500'
                                             }}>
                                                 {tag}
@@ -733,21 +733,21 @@ export function StudentMonitoring() {
                                                         border: 'none',
                                                         color: BRAND.primary,
                                                         cursor: 'pointer',
-                                                        padding: '1px',
+                                                        padding: '0',
                                                         display: 'flex'
                                                     }}
                                                 >
-                                                    <X size={10} />
+                                                    <X size={8} />
                                                 </button>
                                             </span>
                                         ))}
                                         {(selectedStudent.enrollment?.tags || []).length === 0 && (
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>No tags added</span>
+                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>No tags added</span>
                                         )}
                                     </div>
 
                                     {/* Add Tag Input */}
-                                    <div style={{ display: 'flex', gap: '6px' }}>
+                                    <div style={{ display: 'flex', gap: '4px' }}>
                                         <input
                                             type="text"
                                             value={newTag}
@@ -755,10 +755,10 @@ export function StudentMonitoring() {
                                             placeholder="Add tag..."
                                             style={{
                                                 flex: 1,
-                                                padding: '6px 10px',
-                                                borderRadius: '6px',
+                                                padding: '4px 8px',
+                                                borderRadius: '4px',
                                                 border: `1px solid ${BRAND.border}`,
-                                                fontSize: '11px',
+                                                fontSize: '10px',
                                                 outline: 'none',
                                                 color: BRAND.text,
                                                 backgroundColor: BRAND.card
@@ -769,64 +769,64 @@ export function StudentMonitoring() {
                                             onClick={addTag}
                                             disabled={!newTag.trim() || savingEnrollment}
                                             style={{
-                                                padding: '6px 10px',
-                                                borderRadius: '6px',
+                                                padding: '4px 8px',
+                                                borderRadius: '4px',
                                                 border: 'none',
                                                 backgroundColor: BRAND.primary,
                                                 color: '#fff',
                                                 cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '4px',
-                                                fontSize: '11px',
+                                                gap: '2px',
+                                                fontSize: '10px',
                                                 opacity: !newTag.trim() ? 0.5 : 1
                                             }}
                                         >
-                                            <Plus size={12} /> Add
+                                            <Plus size={10} /> Add
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Enrolled Courses */}
                                 {selectedStudent.enrollment?.isPaid && (
-                                    <div style={{ marginTop: '10px' }}>
-                                        <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text, marginBottom: '8px', display: 'block' }}>
+                                    <div style={{ marginTop: '4px' }}>
+                                        <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text, marginBottom: '4px', display: 'block' }}>
                                             Enrolled Courses
                                         </span>
                                         {(selectedStudent.enrollment?.courses || []).length > 0 ? (
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                 {selectedStudent.enrollment.courses.map((course, i) => (
                                                     <div key={i} style={{
-                                                        padding: '12px',
+                                                        padding: '6px 8px',
                                                         backgroundColor: BRAND.card,
-                                                        borderRadius: '8px',
+                                                        borderRadius: '4px',
                                                         border: `1px solid ${BRAND.success}40`,
                                                         display: 'flex',
                                                         justifyContent: 'space-between',
                                                         alignItems: 'center'
                                                     }}>
                                                         <div>
-                                                            <div style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text }}>{course.courseName}</div>
-                                                            <div style={{ fontSize: '11px', color: BRAND.textMuted }}>{course.batch}</div>
+                                                            <div style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{course.courseName}</div>
+                                                            <div style={{ fontSize: '9px', color: BRAND.textMuted }}>{course.batch}</div>
                                                             {course.expiryDate && (
                                                                 <div style={{
-                                                                    fontSize: '11px',
+                                                                    fontSize: '9px',
                                                                     color: new Date(course.expiryDate) < new Date() ? BRAND.warning : BRAND.success,
                                                                     fontWeight: '600',
-                                                                    marginTop: '4px'
+                                                                    marginTop: '2px'
                                                                 }}>
                                                                     {new Date(course.expiryDate) < new Date() ?
-                                                                        `❌ Expired on ${new Date(course.expiryDate).toLocaleDateString('en-IN')}` :
-                                                                        `✅ Valid until ${new Date(course.expiryDate).toLocaleDateString('en-IN')}`}
+                                                                        `❌ Expired ${new Date(course.expiryDate).toLocaleDateString('en-IN')}` :
+                                                                        `✅ Valid ${new Date(course.expiryDate).toLocaleDateString('en-IN')}`}
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <Check size={16} color={BRAND.success} />
+                                                        <Check size={12} color={BRAND.success} />
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p style={{ fontSize: '12px', color: BRAND.textMuted, margin: '8px 0' }}>No courses enrolled</p>
+                                            <p style={{ fontSize: '10px', color: BRAND.textMuted, margin: '4px 0' }}>No courses enrolled</p>
                                         )}
                                     </div>
                                 )}
@@ -834,12 +834,12 @@ export function StudentMonitoring() {
 
                             {/* Recent Quiz Attempts */}
                             <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                    <Clock size={12} color={BRAND.primary} />
-                                    <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Recent Quiz Attempts</h4>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                                    <Clock size={10} color={BRAND.primary} />
+                                    <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Recent Quiz Attempts</h4>
                                 </div>
 
-                                <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', overflow: 'hidden' }}>
+                                <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', overflow: 'hidden' }}>
                                     {studentAttempts.length > 0 ? (
                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                                             {studentAttempts.slice(0, 3).map((attempt, index) => (
@@ -847,17 +847,17 @@ export function StudentMonitoring() {
                                                     display: 'flex',
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
-                                                    padding: '8px 10px',
+                                                    padding: '4px 6px',
                                                     borderBottom: index < Math.min(studentAttempts.length, 3) - 1 ? `1px solid ${BRAND.border}` : 'none'
                                                 }}>
                                                     <div>
-                                                        <div style={{ fontWeight: '500', color: BRAND.text, fontSize: '11px' }}>{attempt.quizTitle}</div>
-                                                        <div style={{ fontSize: '10px', color: BRAND.textMuted }}>{formatDate(attempt.date)}</div>
+                                                        <div style={{ fontWeight: '500', color: BRAND.text, fontSize: '10px' }}>{attempt.quizTitle}</div>
+                                                        <div style={{ fontSize: '9px', color: BRAND.textMuted }}>{formatDate(attempt.date)}</div>
                                                     </div>
                                                     <span style={{
-                                                        padding: '3px 8px',
-                                                        borderRadius: '6px',
-                                                        fontSize: '11px',
+                                                        padding: '2px 6px',
+                                                        borderRadius: '4px',
+                                                        fontSize: '10px',
                                                         fontWeight: '600',
                                                         backgroundColor: (attempt.score || 0) >= 70 ? BRAND.successLight : BRAND.warningLight,
                                                         color: (attempt.score || 0) >= 70 ? '#0d6652' : '#991b1b'
@@ -868,9 +868,9 @@ export function StudentMonitoring() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div style={{ padding: '16px', textAlign: 'center', color: BRAND.textMuted }}>
-                                            <BookOpen size={20} style={{ margin: '0 auto 4px', opacity: 0.4, color: BRAND.primary }} />
-                                            <p style={{ margin: 0, fontSize: '11px' }}>No quiz attempts yet</p>
+                                        <div style={{ padding: '8px', textAlign: 'center', color: BRAND.textMuted }}>
+                                            <BookOpen size={16} style={{ margin: '0 auto 2px', opacity: 0.4, color: BRAND.primary }} />
+                                            <p style={{ margin: 0, fontSize: '10px' }}>No quiz attempts yet</p>
                                         </div>
                                     )}
                                 </div>
@@ -879,7 +879,7 @@ export function StudentMonitoring() {
 
                         {/* Modal Footer - Only Close Button */}
                         <div style={{
-                            padding: '16px 24px',
+                            padding: '8px 16px',
                             borderTop: `1px solid ${BRAND.border}`,
                             backgroundColor: BRAND.bg,
                             display: 'flex',
@@ -888,12 +888,12 @@ export function StudentMonitoring() {
                             <button
                                 onClick={() => setSelectedStudent(null)}
                                 style={{
-                                    padding: '12px 32px',
-                                    borderRadius: '10px',
+                                    padding: '8px 24px',
+                                    borderRadius: '8px',
                                     border: 'none',
                                     backgroundColor: BRAND.primary,
                                     color: '#ffffff',
-                                    fontSize: '14px',
+                                    fontSize: '12px',
                                     fontWeight: '600',
                                     cursor: 'pointer',
                                     boxShadow: '0 2px 8px rgba(138, 117, 186, 0.3)'
@@ -1039,13 +1039,13 @@ export function StudentMonitoring() {
                                 <div style={{
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    gap: '6px',
-                                    maxHeight: '180px',
+                                    gap: '4px',
+                                    maxHeight: '250px',
                                     overflowY: 'auto',
-                                    padding: '8px',
+                                    padding: '6px',
                                     backgroundColor: BRAND.bg,
                                     borderRadius: '8px',
-                                    border: `2px solid ${selectedCourseIds.length > 0 ? BRAND.success : BRAND.border}`
+                                    border: `1px solid ${selectedCourseIds.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
                                     {availableCourses.length === 0 ? (
                                         <p style={{ fontSize: '12px', color: BRAND.textMuted, padding: '10px', textAlign: 'center' }}>
@@ -1068,12 +1068,13 @@ export function StudentMonitoring() {
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             gap: '8px',
-                                                            padding: '10px',
+                                                            padding: '8px 10px',
                                                             backgroundColor: allSelected ? BRAND.primaryLight : BRAND.card,
                                                             borderRadius: '6px',
-                                                            border: `2px solid ${allSelected ? BRAND.primary : BRAND.border}`,
+                                                            border: `1px solid ${allSelected ? BRAND.primary : BRAND.border}`,
                                                             cursor: 'pointer',
-                                                            fontWeight: '600'
+                                                            fontWeight: '600',
+                                                            marginBottom: '4px'
                                                         }}
                                                     >
                                                         <input
@@ -1086,58 +1087,67 @@ export function StudentMonitoring() {
                                                                     setSelectedCourseIds(nonEnrolledCourses.map(c => c._id || c.id));
                                                                 }
                                                             }}
-                                                            style={{ width: '16px', height: '16px', accentColor: BRAND.primary }}
+                                                            style={{ width: '14px', height: '14px', accentColor: BRAND.primary }}
                                                         />
-                                                        <span style={{ fontSize: '12px', color: BRAND.primary }}>📚 Select All ({nonEnrolledCourses.length} courses)</span>
+                                                        <span style={{ fontSize: '11px', color: BRAND.primary }}>📚 Select All ({nonEnrolledCourses.length} available)</span>
                                                     </label>
                                                 ) : null;
                                             })()}
 
-                                            {/* Individual Courses - Only show courses student is NOT enrolled in */}
-                                            {availableCourses
-                                                .filter(course => {
-                                                    const courseId = course._id || course.id;
-                                                    const isEnrolled = selectedStudent?.enrollment?.courses?.some(
-                                                        c => c.courseId === courseId
-                                                    );
-                                                    return !isEnrolled; // Only show courses NOT already enrolled
-                                                })
-                                                .map(course => {
-                                                    const courseId = course._id || course.id;
-                                                    const isSelected = selectedCourseIds.includes(courseId);
+                                            {/* Show ALL courses - enrolled ones are disabled */}
+                                            {availableCourses.map(course => {
+                                                const courseId = course._id || course.id;
+                                                const isEnrolled = selectedStudent?.enrollment?.courses?.some(
+                                                    c => c.courseId === courseId
+                                                );
+                                                const isSelected = selectedCourseIds.includes(courseId);
 
-                                                    return (
-                                                        <label
-                                                            key={courseId}
+                                                return (
+                                                    <label
+                                                        key={courseId}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px',
+                                                            padding: '8px 10px',
+                                                            backgroundColor: isEnrolled ? '#f3f4f6' : (isSelected ? BRAND.successLight : BRAND.card),
+                                                            borderRadius: '6px',
+                                                            border: `1px solid ${isEnrolled ? '#d1d5db' : (isSelected ? BRAND.success : BRAND.border)}`,
+                                                            cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                            transition: 'all 0.2s',
+                                                            opacity: isEnrolled ? 0.7 : 1
+                                                        }}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isEnrolled || isSelected}
+                                                            disabled={isEnrolled}
+                                                            onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
                                                             style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '8px',
-                                                                padding: '10px',
-                                                                backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
-                                                                borderRadius: '6px',
-                                                                border: `2px solid ${isSelected ? BRAND.success : BRAND.border}`,
-                                                                cursor: 'pointer',
-                                                                transition: 'all 0.2s'
+                                                                width: '14px',
+                                                                height: '14px',
+                                                                cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                                accentColor: isEnrolled ? '#9ca3af' : BRAND.success
                                                             }}
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={isSelected}
-                                                                onChange={() => toggleCourseSelection(courseId)}
-                                                                style={{
-                                                                    width: '16px',
-                                                                    height: '16px',
-                                                                    cursor: 'pointer',
-                                                                    accentColor: BRAND.success
-                                                                }}
-                                                            />
-                                                            <div style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>
+                                                        />
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{
+                                                                fontSize: '12px',
+                                                                fontWeight: '600',
+                                                                color: isEnrolled ? '#9ca3af' : BRAND.text,
+                                                                textDecoration: isEnrolled ? 'none' : 'none'
+                                                            }}>
                                                                 {course.name}
                                                             </div>
-                                                        </label>
-                                                    );
-                                                })}
+                                                            {isEnrolled && (
+                                                                <div style={{ fontSize: '10px', color: '#22c55e', fontWeight: '500' }}>
+                                                                    ✓ Already enrolled
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </label>
+                                                );
+                                            })}
                                         </>
                                     )}
                                 </div>
