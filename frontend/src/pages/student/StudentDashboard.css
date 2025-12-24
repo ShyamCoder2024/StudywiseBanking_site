@@ -1225,32 +1225,53 @@
     font-weight: 600;
 }
 
-/* Responsive */
+/* Tablet Layout - Exact from User's Sketch */
 @media (max-width: 1024px) {
     .bento-grid {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 16px;
     }
 
-    .hero-tile,
-    .rank-tile {
-        grid-column: span 2;
+    /* Row 1: Purple card - full width */
+    .hero-tile {
+        grid-column: 1 / 3;
+        grid-row: 1;
     }
 
-    .ai-tile,
-    .course-card-dynamic {
-        grid-column: span 1;
-        grid-row: auto;
+    /* Row 2: AI Coach | Stats (57%) */
+    .ai-coach-card {
+        grid-column: 1;
+        grid-row: 2;
     }
 
-    .stats-tile-1,
-    .todo-tile {
-        grid-column: span 1;
-        grid-row: auto;
+    .stats-tile-1 {
+        grid-column: 2;
+        grid-row: 2;
     }
 
+    /* Row 3: Stats2 (3-4h) | Course */
     .stats-tile-2 {
         display: flex;
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .course-card-dynamic {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    /* Row 4: To-do-list - full width */
+    .todo-tile {
+        grid-column: 1 / 3;
+        grid-row: 4;
+    }
+
+    /* Row 5: Leaderboard - full width */
+    .rank-tile {
+        grid-column: 1 / 3;
+        grid-row: 5;
     }
 }
 
