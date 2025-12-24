@@ -209,11 +209,15 @@ export function CourseDetailPage() {
                             </div>
                             <motion.button
                                 className="cdp-modal-btn"
-                                onClick={() => navigate('/about')}
+                                onClick={() => {
+                                    const message = encodeURIComponent(`Hi! I'm interested in enrolling in the course: ${course.title}. Please provide details about enrollment.`);
+                                    const whatsappUrl = `https://wa.me/919325616800?text=${message}`;
+                                    window.open(whatsappUrl, '_blank');
+                                }}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                Contact Tutor to Enroll
+                                📱 Contact on WhatsApp to Enroll
                             </motion.button>
                         </motion.div>
                     </motion.div>

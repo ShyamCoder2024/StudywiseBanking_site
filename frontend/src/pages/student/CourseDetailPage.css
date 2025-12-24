@@ -290,9 +290,9 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--color-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .cdp-lec-dur {
@@ -529,6 +529,7 @@
 
     .cdp-lec-title {
         font-size: 12px;
+        line-height: 1.4;
     }
 
     .cdp-lec-dur {
@@ -589,5 +590,6 @@
 
     .cdp-lec-title {
         font-size: 11px;
+        line-height: 1.4;
     }
 }

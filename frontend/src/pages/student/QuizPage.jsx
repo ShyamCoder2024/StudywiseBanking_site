@@ -216,8 +216,15 @@ export function QuizPage() {
                             <Button variant="secondary" onClick={() => navigate(-1)}>
                                 ← Go Back
                             </Button>
-                            <Button variant="primary" onClick={() => navigate('/courses')}>
-                                View Courses
+                            <Button
+                                variant="primary"
+                                onClick={() => {
+                                    const message = encodeURIComponent(`Hi! I need to enroll in a course to access premium tests. Please help me with enrollment.`);
+                                    const whatsappUrl = `https://wa.me/919325616800?text=${message}`;
+                                    window.open(whatsappUrl, '_blank');
+                                }}
+                            >
+                                📱 Contact on WhatsApp to Enroll
                             </Button>
                         </div>
                     </div>
