@@ -1983,15 +1983,10 @@ a:focus-visible {
     }
 }
 
-/* Video Tile - Mobile */
+/* Video Tile - Hidden on Mobile */
 @media (max-width: 600px) {
     .video-tile {
-        padding: 16px;
-    }
-
-    .video-tile iframe,
-    .video-tile .video-placeholder {
-        height: 120px;
+        display: none !important;
     }
 }
 
