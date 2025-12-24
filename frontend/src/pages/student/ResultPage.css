@@ -5,7 +5,11 @@
 /* Mobile: Add extra padding to prevent bottom nav overlap */
 @media (max-width: 768px) {
     .result-page {
-        padding-bottom: 120px;
+        padding-bottom: 150px;
+    }
+
+    .result-actions {
+        margin-bottom: 60px;
     }
 }
 

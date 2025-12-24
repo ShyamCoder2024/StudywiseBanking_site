@@ -449,6 +449,14 @@
     display: flex;
     gap: 12px;
     justify-content: flex-end;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile: Ensure modal buttons are above bottom navbar */
+@media (max-width: 768px) {
+    .modal-bottom {
+        padding-bottom: 80px;
+    }
 }
 
 .modal-bottom .w-full {
