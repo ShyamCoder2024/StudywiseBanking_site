@@ -956,9 +956,12 @@ export function StudentMonitoring() {
                             borderRadius: '16px',
                             width: '100%',
                             maxWidth: '440px',
+                            maxHeight: '90vh',
                             overflow: 'hidden',
                             boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-                            animation: 'modalFadeIn 0.2s ease-out'
+                            animation: 'modalFadeIn 0.2s ease-out',
+                            display: 'flex',
+                            flexDirection: 'column'
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -966,7 +969,8 @@ export function StudentMonitoring() {
                         <div style={{
                             backgroundColor: BRAND.success,
                             padding: '24px',
-                            position: 'relative'
+                            position: 'relative',
+                            flexShrink: 0
                         }}>
                             <button
                                 onClick={() => setShowBatchModal(false)}
@@ -1009,7 +1013,7 @@ export function StudentMonitoring() {
                         </div>
 
                         {/* Modal Body */}
-                        <div style={{ padding: '16px' }}>
+                        <div style={{ padding: '16px', overflowY: 'auto', flex: 1 }}>
                             {/* Multi-Course Selection with Checkboxes */}
                             <div style={{ marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -1429,7 +1433,8 @@ export function StudentMonitoring() {
                             backgroundColor: BRAND.bg,
                             display: 'flex',
                             gap: '12px',
-                            justifyContent: 'flex-end'
+                            justifyContent: 'flex-end',
+                            flexShrink: 0
                         }}>
                             <button
                                 onClick={() => setShowBatchModal(false)}
