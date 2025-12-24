@@ -108,7 +108,9 @@ export function AllInactiveStudentsPage() {
                                 border: `1px solid ${BRAND.border}`,
                                 fontSize: '14px',
                                 outline: 'none',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                color: BRAND.text,
+                                backgroundColor: BRAND.card
                             }}
                         />
                     </div>

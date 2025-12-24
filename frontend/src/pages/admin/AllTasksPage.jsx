@@ -141,7 +141,18 @@ export function AllTasksPage() {
                             value={newTask.content}
                             onChange={(e) => setNewTask({ ...newTask, content: e.target.value })}
                             onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
-                            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: `2px solid ${BRAND.primary}`, fontSize: '14px', outline: 'none', boxSizing: 'border-box', marginBottom: '12px' }}
+                            style={{
+                                width: '100%',
+                                padding: '14px 16px',
+                                borderRadius: '10px',
+                                border: `2px solid ${BRAND.primary}`,
+                                fontSize: '14px',
+                                outline: 'none',
+                                boxSizing: 'border-box',
+                                marginBottom: '12px',
+                                color: BRAND.text,
+                                backgroundColor: BRAND.card
+                            }}
                             autoFocus
                         />
                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>

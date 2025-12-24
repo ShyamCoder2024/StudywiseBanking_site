@@ -79,6 +79,20 @@ const userSchema = new mongoose.Schema({
             enrolledAt: {
                 type: Date,
                 default: Date.now
+            },
+            // Course access duration fields
+            duration: {
+                type: Number,
+                default: null
+            },
+            durationType: {
+                type: String,
+                enum: ['days', 'months'],
+                default: null
+            },
+            expiryDate: {
+                type: Date,
+                default: null
             }
         }],
         tags: [{
