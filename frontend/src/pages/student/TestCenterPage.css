@@ -488,7 +488,7 @@
 }
 
 [data-theme="dark"] .subject-tag {
-    color: #9ca3af;
+    color: #d1d5db;
 }
 
 [data-theme="dark"] .quiz-title {
@@ -496,15 +496,60 @@
 }
 
 [data-theme="dark"] .quiz-topic {
-    color: #6b7280;
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .card-body {
+    background: #1a1a1a;
 }
 
 [data-theme="dark"] .meta-item {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .meta-item svg {
     color: #9ca3af;
 }
 
 [data-theme="dark"] .card-footer {
     border-color: #333;
+    background: #1a1a1a;
+}
+
+[data-theme="dark"] .score-display .score {
+    color: #6EBCC3;
+}
+
+[data-theme="dark"] .score-display svg {
+    color: #6EBCC3;
+}
+
+[data-theme="dark"] .view-btn {
+    background: rgba(110, 188, 195, 0.15);
+    color: #6EBCC3;
+}
+
+[data-theme="dark"] .view-btn:hover {
+    background: #6EBCC3;
+    color: #fff;
+}
+
+[data-theme="dark"] .tag.mock {
+    background: rgba(254, 243, 199, 0.15);
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .tag.big {
+    background: rgba(138, 117, 186, 0.15);
+    color: #a78bfa;
+}
+
+[data-theme="dark"] .difficulty-badge {
+    filter: brightness(0.9);
+}
+
+[data-theme="dark"] .start-btn {
+    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.2);
 }
 
 [data-theme="dark"] .empty-state {
@@ -514,6 +559,7 @@
 
 [data-theme="dark"] .empty-icon {
     background: #252525;
+    color: #9ca3af;
 }
 
 [data-theme="dark"] .empty-state h3 {
@@ -522,6 +568,15 @@
 
 [data-theme="dark"] .empty-state p {
     color: #9ca3af;
+}
+
+[data-theme="dark"] .test-center-loading p {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .test-center-loading .spinner {
+    border-color: #333;
+    border-top-color: var(--tc-primary);
 }
 
 /* Responsive */
