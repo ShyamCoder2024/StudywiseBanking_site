@@ -108,6 +108,7 @@
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
 }
 
 .course-card:hover {
@@ -235,6 +236,101 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
+}
+
+/* ========================================
+   Badge Styles
+   ======================================== */
+
+/* Status Badge - Top Left of Card */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+}
+
+.status-complete {
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+}
+
+.status-ongoing {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+}
+
+.status-upcoming {
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+}
+
+/* Price Drop Badge - Top Right of Card */
+.price-drop-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: white;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    z-index: 10;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Discount Badge on Thumbnail */
+.discount-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    background: #10b981;
+    color: white;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 5;
+}
+
+/* Pricing Display */
+.course-pricing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+}
+
+.original-price {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+}
+
+.current-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary);
 }
 
 /* Course Card Footer */

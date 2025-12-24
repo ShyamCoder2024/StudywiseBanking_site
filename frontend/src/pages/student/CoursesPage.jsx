@@ -110,6 +110,22 @@ export default function CoursesPage() {
                             whileHover={{ y: -8, scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
+                            {/* Status Badge */}
+                            {course.status && (
+                                <div className={`status-badge status-${course.status}`}>
+                                    {course.status === 'complete' && '✓ Complete'}
+                                    {course.status === 'ongoing' && '🔴 Ongoing'}
+                                    {course.status === 'upcoming' && '🔜 Upcoming'}
+                                </div>
+                            )}
+
+                            {/* Price Drop Badge */}
+                            {course.pricing?.showPriceDrop && course.pricing?.discountPercent > 0 && (
+                                <div className="price-drop-badge">
+                                    {course.pricing.priceDropLabel || '🔥 Price Drop'}
+                                </div>
+                            )}
+
                             {/* Thumbnail */}
                             <div className="course-thumbnail">
                                 {course.thumbnail ? (
@@ -128,6 +144,12 @@ export default function CoursesPage() {
                                     <BookOpen size={14} />
                                     {course.lectureCount} Lectures
                                 </div>
+                                {/* Discount Badge on Thumbnail */}
+                                {course.pricing?.discountPercent > 0 && (
+                                    <div className="discount-badge">
+                                        {course.pricing.discountPercent}% OFF
+                                    </div>
+                                )}
                             </div>
 
                             {/* Card Content */}
@@ -137,6 +159,16 @@ export default function CoursesPage() {
                                 <p className="course-batch">{course.batchName}</p>
                                 {course.description && (
                                     <p className="course-desc">{course.description}</p>
+                                )}
+
+                                {/* Pricing Display */}
+                                {(course.pricing?.originalPrice > 0 || course.pricing?.currentPrice > 0) && (
+                                    <div className="course-pricing">
+                                        {course.pricing.originalPrice > course.pricing.currentPrice && (
+                                            <span className="original-price">₹{course.pricing.originalPrice}</span>
+                                        )}
+                                        <span className="current-price">₹{course.pricing.currentPrice}</span>
+                                    </div>
                                 )}
                             </div>
 

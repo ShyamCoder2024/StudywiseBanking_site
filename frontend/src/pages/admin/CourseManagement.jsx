@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock, Upload, Image } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock, Upload, Image, DollarSign, ArrowUpDown, Tag } from 'lucide-react';
 import api from '../../services/api';
 
 // DRD Brand Colors
@@ -39,7 +39,15 @@ export function CourseManagement() {
         thumbnail: '',
         subject: '',
         batchName: '',
-        description: ''
+        description: '',
+        pricing: {
+            originalPrice: 0,
+            currentPrice: 0,
+            showPriceDrop: false,
+            priceDropLabel: '🔥 Price Drop'
+        },
+        status: 'ongoing',
+        displayOrder: 0
     });
 
     const [lectureForm, setLectureForm] = useState({
@@ -94,11 +102,33 @@ export function CourseManagement() {
                 thumbnail: course.thumbnail || '',
                 subject: course.subject,
                 batchName: course.batchName,
-                description: course.description || ''
+                description: course.description || '',
+                pricing: course.pricing || {
+                    originalPrice: 0,
+                    currentPrice: 0,
+                    showPriceDrop: false,
+                    priceDropLabel: '🔥 Price Drop'
+                },
+                status: course.status || 'ongoing',
+                displayOrder: course.displayOrder || 0
             });
         } else {
             setEditingCourse(null);
-            setCourseForm({ title: '', thumbnail: '', subject: '', batchName: '', description: '' });
+            setCourseForm({
+                title: '',
+                thumbnail: '',
+                subject: '',
+                batchName: '',
+                description: '',
+                pricing: {
+                    originalPrice: 0,
+                    currentPrice: 0,
+                    showPriceDrop: false,
+                    priceDropLabel: '🔥 Price Drop'
+                },
+                status: 'ongoing',
+                displayOrder: 0
+            });
         }
         setShowCourseModal(true);
     };
@@ -458,6 +488,107 @@ export function CourseManagement() {
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Description</label>
                                     <textarea value={courseForm.description} onChange={e => setCourseForm({ ...courseForm, description: e.target.value })} rows={3} placeholder="Brief description of this course..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', resize: 'vertical' }} />
+                                </div>
+
+                                {/* Pricing Section */}
+                                <div style={{ padding: '16px', backgroundColor: BRAND.bg, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                        <DollarSign size={16} color={BRAND.primary} />
+                                        <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text }}>Pricing</span>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                        <div>
+                                            <label style={{ fontSize: '12px', fontWeight: '500', color: BRAND.textSecondary, marginBottom: '4px', display: 'block' }}>Original Price (₹)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={courseForm.pricing?.originalPrice || 0}
+                                                onChange={e => setCourseForm({
+                                                    ...courseForm,
+                                                    pricing: { ...courseForm.pricing, originalPrice: parseInt(e.target.value) || 0 }
+                                                })}
+                                                placeholder="e.g., 4999"
+                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '12px', fontWeight: '500', color: BRAND.textSecondary, marginBottom: '4px', display: 'block' }}>Current Price (₹)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={courseForm.pricing?.currentPrice || 0}
+                                                onChange={e => setCourseForm({
+                                                    ...courseForm,
+                                                    pricing: { ...courseForm.pricing, currentPrice: parseInt(e.target.value) || 0 }
+                                                })}
+                                                placeholder="e.g., 2999"
+                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={courseForm.pricing?.showPriceDrop || false}
+                                                onChange={e => setCourseForm({
+                                                    ...courseForm,
+                                                    pricing: { ...courseForm.pricing, showPriceDrop: e.target.checked }
+                                                })}
+                                                style={{ width: '16px', height: '16px', accentColor: BRAND.primary }}
+                                            />
+                                            <span style={{ fontSize: '13px', color: BRAND.text }}>Show Price Drop Badge</span>
+                                        </label>
+                                    </div>
+                                    {courseForm.pricing?.showPriceDrop && (
+                                        <div style={{ marginTop: '12px' }}>
+                                            <label style={{ fontSize: '12px', fontWeight: '500', color: BRAND.textSecondary, marginBottom: '4px', display: 'block' }}>Price Drop Label</label>
+                                            <input
+                                                type="text"
+                                                value={courseForm.pricing?.priceDropLabel || '🔥 Price Drop'}
+                                                onChange={e => setCourseForm({
+                                                    ...courseForm,
+                                                    pricing: { ...courseForm.pricing, priceDropLabel: e.target.value }
+                                                })}
+                                                placeholder="e.g., 🔥 Price Drop"
+                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Status & Order Section */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>
+                                            <Tag size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                            Course Status
+                                        </label>
+                                        <select
+                                            value={courseForm.status || 'ongoing'}
+                                            onChange={e => setCourseForm({ ...courseForm, status: e.target.value })}
+                                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', backgroundColor: '#fff' }}
+                                        >
+                                            <option value="ongoing">🔴 Ongoing</option>
+                                            <option value="complete">✓ Complete</option>
+                                            <option value="upcoming">🔜 Upcoming</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>
+                                            <ArrowUpDown size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                            Display Order
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={courseForm.displayOrder || 0}
+                                            onChange={e => setCourseForm({ ...courseForm, displayOrder: parseInt(e.target.value) || 0 })}
+                                            placeholder="0 = top"
+                                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                        />
+                                        <p style={{ fontSize: '11px', color: BRAND.textMuted, margin: '4px 0 0' }}>Lower = Higher priority</p>
+                                    </div>
                                 </div>
                             </div>
                             <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

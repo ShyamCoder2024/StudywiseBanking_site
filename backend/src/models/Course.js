@@ -48,6 +48,36 @@ const CourseSchema = new mongoose.Schema({
         trim: true,
         default: ''
     },
+    // Pricing System
+    pricing: {
+        originalPrice: {
+            type: Number,
+            default: 0
+        },
+        currentPrice: {
+            type: Number,
+            default: 0
+        },
+        showPriceDrop: {
+            type: Boolean,
+            default: false
+        },
+        priceDropLabel: {
+            type: String,
+            default: '🔥 Price Drop'
+        }
+    },
+    // Course Status
+    status: {
+        type: String,
+        enum: ['complete', 'ongoing', 'upcoming'],
+        default: 'ongoing'
+    },
+    // Display Order (lower = higher priority)
+    displayOrder: {
+        type: Number,
+        default: 0
+    },
     isPublished: {
         type: Boolean,
         default: false

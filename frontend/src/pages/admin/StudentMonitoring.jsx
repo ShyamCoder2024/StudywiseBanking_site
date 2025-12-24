@@ -163,40 +163,36 @@ export function StudentMonitoring() {
 
         setSavingEnrollment(true);
         try {
-            // Enroll in all selected courses
-            const enrolledCourses = [];
+            // NEW: Use single API call with courseIds array for efficiency
+            const response = await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
+                isPaid: true,
+                courseIds: coursesToEnroll,  // Array of course IDs
+                batch: selectedBatch,
+                duration: parseInt(courseDuration),
+                durationType: durationType,
+                expiryDate: expiryDate.toISOString()
+            });
 
-            for (const courseId of coursesToEnroll) {
+            // Get enrolled courses info from selected courses
+            const enrolledCourses = coursesToEnroll.map(courseId => {
                 const course = availableCourses.find(c => c.id === courseId || c._id === courseId);
-                if (!course) continue;
-
-                await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
-                    isPaid: true,
-                    courseId: course.id || course._id,
-                    courseName: course.name,
-                    batch: selectedBatch,
-                    duration: parseInt(courseDuration),
-                    durationType: durationType,
-                    expiryDate: expiryDate.toISOString()
-                });
-
-                enrolledCourses.push({
-                    courseId: course.id || course._id,
-                    courseName: course.name,
+                return {
+                    courseId: course?.id || course?._id || courseId,
+                    courseName: course?.name || 'Course',
                     batch: selectedBatch,
                     enrolledAt: new Date(),
                     duration: parseInt(courseDuration),
                     durationType: durationType,
                     expiryDate: expiryDate.toISOString()
-                });
-            }
+                };
+            });
 
             setSelectedStudent(prev => ({
                 ...prev,
                 enrollment: {
                     ...prev.enrollment,
                     isPaid: true,
-                    courses: [...(prev.enrollment?.courses || []), ...enrolledCourses]
+                    courses: response.data.data?.enrollment?.courses || enrolledCourses
                 }
             }));
 
@@ -210,7 +206,7 @@ export function StudentMonitoring() {
             setCourseDuration('');
             setDurationType('months');
             setSelectedCourseIds([]); // Clear multi-select
-            alert(`✅ Successfully enrolled in ${enrolledCourses.length} course(s)!`);
+            alert(`✅ Successfully enrolled in ${coursesToEnroll.length} course(s)!`);
         } catch (err) {
             alert('Failed to enroll student');
         } finally {

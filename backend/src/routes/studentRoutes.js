@@ -696,20 +696,39 @@ router.get('/courses', async (req, res, next) => {
 router.get('/video-courses', async (req, res, next) => {
     try {
         const courses = await Course.find({ isPublished: true })
-            .select('title thumbnail subject batchName description lectures createdAt')
-            .sort({ createdAt: -1 })
+            .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
+            .sort({ displayOrder: 1, createdAt: -1 })  // Sort by displayOrder first
             .lean();
 
-        // Return courses with lecture count and thumbnail
-        const coursesForStudent = courses.map(course => ({
-            _id: course._id,
-            title: course.title,
-            thumbnail: course.thumbnail || '',
-            subject: course.subject,
-            batchName: course.batchName,
-            description: course.description?.substring(0, 100) || '',
-            lectureCount: course.lectures?.length || 0
-        }));
+        // Return courses with all display info
+        const coursesForStudent = courses.map(course => {
+            // Calculate discount percentage
+            let discountPercent = 0;
+            if (course.pricing?.originalPrice && course.pricing?.currentPrice && course.pricing.originalPrice > course.pricing.currentPrice) {
+                discountPercent = Math.round(((course.pricing.originalPrice - course.pricing.currentPrice) / course.pricing.originalPrice) * 100);
+            }
+
+            return {
+                _id: course._id,
+                title: course.title,
+                thumbnail: course.thumbnail || '',
+                subject: course.subject,
+                batchName: course.batchName,
+                description: course.description?.substring(0, 100) || '',
+                lectureCount: course.lectures?.length || 0,
+                // Pricing info
+                pricing: {
+                    originalPrice: course.pricing?.originalPrice || 0,
+                    currentPrice: course.pricing?.currentPrice || 0,
+                    showPriceDrop: course.pricing?.showPriceDrop || false,
+                    priceDropLabel: course.pricing?.priceDropLabel || '🔥 Price Drop',
+                    discountPercent
+                },
+                // Status info
+                status: course.status || 'ongoing',
+                displayOrder: course.displayOrder || 0
+            };
+        });
 
         res.json({ success: true, data: coursesForStudent });
     } catch (error) { next(error); }

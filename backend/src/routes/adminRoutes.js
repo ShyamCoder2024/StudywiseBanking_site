@@ -473,7 +473,7 @@ router.delete('/global-tasks/:id', async (req, res, next) => {
 
 router.put('/students/:id/enrollment', async (req, res, next) => {
     try {
-        const { isPaid, courses, tags, batch, courseName, courseId } = req.body;
+        const { isPaid, courses, tags, batch, courseName, courseId, courseIds, enrollAll } = req.body;
 
         const updateData = {};
 
@@ -489,7 +489,67 @@ router.put('/students/:id/enrollment', async (req, res, next) => {
             updateData['enrollment.tags'] = tags;
         }
 
-        // Add single course enrollment
+        // NEW: Enroll in ALL published courses
+        if (enrollAll === true) {
+            const allCourses = await Course.find({ isPublished: true }).select('_id title batchName');
+            const newCourses = allCourses.map(c => ({
+                courseId: c._id.toString(),
+                courseName: c.title,
+                batch: c.batchName || 'Default',
+                enrolledAt: new Date()
+            }));
+
+            const student = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        'enrollment.isPaid': true,
+                        'enrollment.courses': newCourses
+                    }
+                },
+                { new: true }
+            );
+
+            return res.json({
+                success: true,
+                data: student,
+                message: `Enrolled in ${newCourses.length} courses`
+            });
+        }
+
+        // NEW: Enroll in MULTIPLE specific courses
+        if (courseIds && Array.isArray(courseIds) && courseIds.length > 0) {
+            // Fetch course details for the selected IDs
+            const selectedCourses = await Course.find({
+                _id: { $in: courseIds }
+            }).select('_id title batchName');
+
+            const newCourses = selectedCourses.map(c => ({
+                courseId: c._id.toString(),
+                courseName: c.title,
+                batch: c.batchName || 'Default',
+                enrolledAt: new Date()
+            }));
+
+            const student = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        'enrollment.isPaid': true,
+                        'enrollment.courses': newCourses
+                    }
+                },
+                { new: true }
+            );
+
+            return res.json({
+                success: true,
+                data: student,
+                message: `Enrolled in ${newCourses.length} courses`
+            });
+        }
+
+        // Legacy: Add single course enrollment
         if (courseId && courseName) {
             const newCourse = {
                 courseId,
@@ -630,11 +690,11 @@ router.get('/courses', async (req, res, next) => {
 
 // ============ Course Management ============
 
-// Get all courses
+// Get all courses (sorted by displayOrder)
 router.get('/manage-courses', async (req, res, next) => {
     try {
         const courses = await Course.find()
-            .sort({ createdAt: -1 })
+            .sort({ displayOrder: 1, createdAt: -1 })
             .populate('createdBy', 'firstName lastName');
         res.json({ success: true, data: courses });
     } catch (error) { next(error); }
@@ -653,7 +713,7 @@ router.get('/manage-courses/:id', async (req, res, next) => {
 // Create new course
 router.post('/manage-courses', async (req, res, next) => {
     try {
-        const { title, thumbnail, subject, batchName, description } = req.body;
+        const { title, thumbnail, subject, batchName, description, pricing, status, displayOrder } = req.body;
 
         if (!title || !subject || !batchName) {
             return res.status(400).json({
@@ -662,12 +722,24 @@ router.post('/manage-courses', async (req, res, next) => {
             });
         }
 
+        // Get the highest display order and add 1 for new course
+        const highestOrder = await Course.findOne().sort({ displayOrder: -1 }).select('displayOrder');
+        const newOrder = displayOrder ?? ((highestOrder?.displayOrder || 0) + 1);
+
         const course = await Course.create({
             title,
             thumbnail: thumbnail || '',
             subject,
             batchName,
             description: description || '',
+            pricing: pricing || {
+                originalPrice: 0,
+                currentPrice: 0,
+                showPriceDrop: false,
+                priceDropLabel: '🔥 Price Drop'
+            },
+            status: status || 'ongoing',
+            displayOrder: newOrder,
             createdBy: req.user._id,
             isPublished: false,
             lectures: []
@@ -680,18 +752,35 @@ router.post('/manage-courses', async (req, res, next) => {
 // Update course details
 router.put('/manage-courses/:id', async (req, res, next) => {
     try {
-        const { title, thumbnail, subject, batchName, description } = req.body;
+        const { title, thumbnail, subject, batchName, description, pricing, status, displayOrder } = req.body;
+
+        const updateData = {
+            title,
+            thumbnail,
+            subject,
+            batchName,
+            description,
+            updatedAt: new Date()
+        };
+
+        // Handle pricing update
+        if (pricing) {
+            updateData.pricing = pricing;
+        }
+
+        // Handle status update
+        if (status) {
+            updateData.status = status;
+        }
+
+        // Handle displayOrder update
+        if (typeof displayOrder === 'number') {
+            updateData.displayOrder = displayOrder;
+        }
 
         const course = await Course.findByIdAndUpdate(
             req.params.id,
-            {
-                title,
-                thumbnail,
-                subject,
-                batchName,
-                description,
-                updatedAt: new Date()
-            },
+            updateData,
             { new: true }
         );
 
@@ -723,6 +812,38 @@ router.put('/manage-courses/:id/publish', async (req, res, next) => {
             data: course,
             message: course.isPublished ? 'Course published!' : 'Course unpublished'
         });
+    } catch (error) { next(error); }
+});
+
+// Reorder courses (bulk update display order)
+router.put('/manage-courses/reorder', async (req, res, next) => {
+    try {
+        const { courseOrders } = req.body;
+
+        if (!Array.isArray(courseOrders)) {
+            return res.status(400).json({
+                success: false,
+                message: 'courseOrders must be an array'
+            });
+        }
+
+        // Update each course's display order
+        const updatePromises = courseOrders.map(item =>
+            Course.findByIdAndUpdate(
+                item.id,
+                { displayOrder: item.order },
+                { new: true }
+            )
+        );
+
+        await Promise.all(updatePromises);
+
+        // Return updated courses in new order
+        const courses = await Course.find()
+            .sort({ displayOrder: 1, createdAt: -1 })
+            .populate('createdBy', 'firstName lastName');
+
+        res.json({ success: true, data: courses, message: 'Course order updated' });
     } catch (error) { next(error); }
 });
 
