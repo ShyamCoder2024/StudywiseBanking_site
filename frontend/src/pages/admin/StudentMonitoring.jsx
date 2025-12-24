@@ -987,12 +987,12 @@ export function StudentMonitoring() {
                         </div>
 
                         {/* Modal Body */}
-                        <div style={{ padding: '24px' }}>
+                        <div style={{ padding: '16px' }}>
                             {/* Multi-Course Selection with Checkboxes */}
-                            <div style={{ marginBottom: '24px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <div style={{ marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                     <label style={{
-                                        fontSize: '12px',
+                                        fontSize: '11px',
                                         fontWeight: '600',
                                         color: BRAND.textSecondary,
                                         textTransform: 'uppercase',
@@ -1000,7 +1000,7 @@ export function StudentMonitoring() {
                                     }}>
                                         Select Course(s) *
                                     </label>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                    <div style={{ display: 'flex', gap: '6px' }}>
                                         <button
                                             type="button"
                                             onClick={() => setSelectedCourseIds(availableCourses.map(c => c._id || c.id))}
@@ -1037,14 +1037,14 @@ export function StudentMonitoring() {
                                 </div>
 
                                 <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                                    gap: '10px',
-                                    maxHeight: '300px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    maxHeight: '200px',
                                     overflowY: 'auto',
-                                    padding: '12px',
+                                    padding: '10px',
                                     backgroundColor: BRAND.bg,
-                                    borderRadius: '10px',
+                                    borderRadius: '8px',
                                     border: `2px solid ${selectedCourseIds.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
                                     {availableCourses.length === 0 ? (
@@ -1125,27 +1125,27 @@ export function StudentMonitoring() {
                             </div>
 
                             {/* Batch Selection */}
-                            <div style={{ marginBottom: '24px' }}>
+                            <div style={{ marginBottom: '16px' }}>
                                 <label style={{
                                     display: 'block',
-                                    fontSize: '12px',
+                                    fontSize: '11px',
                                     fontWeight: '600',
                                     color: BRAND.textSecondary,
-                                    marginBottom: '8px',
+                                    marginBottom: '6px',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.5px'
                                 }}>
-                                    Select Batch * (applies to all selected courses)
+                                    Select Batch *
                                 </label>
                                 <select
                                     value={selectedBatch}
                                     onChange={(e) => setSelectedBatch(e.target.value)}
                                     style={{
                                         width: '100%',
-                                        padding: '14px 16px',
-                                        borderRadius: '10px',
+                                        padding: '12px 14px',
+                                        borderRadius: '8px',
                                         border: `2px solid ${selectedBatch ? BRAND.success : BRAND.border}`,
-                                        fontSize: '14px',
+                                        fontSize: '13px',
                                         fontWeight: '500',
                                         color: BRAND.text,
                                         backgroundColor: BRAND.card,
@@ -1155,27 +1155,28 @@ export function StudentMonitoring() {
                                     }}
                                 >
                                     <option value="">-- Choose a batch --</option>
+                                    <option value="All Batches">📚 All Batches</option>
                                     {/* Get unique batches from all courses */}
-                                    {Array.from(new Set(availableCourses.flatMap(c => c.batches || ['Main Batch']))).map(batch => (
+                                    {Array.from(new Set(availableCourses.flatMap(c => c.batches || [c.batchName || 'Main Batch']))).filter(b => b).map(batch => (
                                         <option key={batch} value={batch}>{batch}</option>
                                     ))}
                                 </select>
                             </div>
 
-                            {/* Duration Selection - NEW */}
-                            <div style={{ marginBottom: '24px' }}>
+                            {/* Duration Selection */}
+                            <div style={{ marginBottom: '16px' }}>
                                 <label style={{
                                     display: 'block',
-                                    fontSize: '12px',
+                                    fontSize: '11px',
                                     fontWeight: '600',
                                     color: BRAND.textSecondary,
-                                    marginBottom: '8px',
+                                    marginBottom: '6px',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.5px'
                                 }}>
                                     Course Access Duration *
                                 </label>
-                                <div style={{ display: 'flex', gap: '12px' }}>
+                                <div style={{ display: 'flex', gap: '10px' }}>
                                     <input
                                         type="number"
                                         value={courseDuration}
