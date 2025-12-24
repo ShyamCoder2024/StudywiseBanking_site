@@ -2,16 +2,21 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import compression from 'compression';
 import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
 import { initQuizCleanupJob } from './services/quizCleanupService.js';
+import cacheMiddleware from './middleware/cacheMiddleware.js';
 
 dotenv.config();
 
 const app = express();
+
+// Compression middleware - gzip/brotli for all responses
+app.use(compression());
 
 // Middleware
 app.use(cors({
@@ -20,6 +25,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Cache middleware for GET requests (2 minute TTL)
+app.use(cacheMiddleware());
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -36,11 +44,16 @@ app.use('/api', quizRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Database connection
+// Database connection with optimized settings
 const connectDB = async () => {
     try {
         const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/studywisebanking';
-        await mongoose.connect(mongoUri);
+        await mongoose.connect(mongoUri, {
+            maxPoolSize: 10, // Maximum number of connections in pool
+            minPoolSize: 2,  // Minimum number of connections
+            serverSelectionTimeoutMS: 5000, // Timeout for server selection
+            socketTimeoutMS: 45000, // Socket timeout
+        });
         console.log('✅ MongoDB connected successfully');
     } catch (error) {
         console.error('❌ MongoDB connection error:', error.message);

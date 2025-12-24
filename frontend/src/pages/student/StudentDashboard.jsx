@@ -77,60 +77,40 @@ export function StudentDashboard() {
 
         fetchAllData();
 
-        // Auto-refresh quizzes every 60 seconds for real-time updates (reduced frequency)
-        const quizInterval = setInterval(() => {
-            fetchNewQuizzes();
-        }, 60000); // 60 seconds
-
-        // Auto-refresh todos every 120 seconds (reduced frequency)
-        const todoInterval = setInterval(() => {
-            fetchTodos();
-        }, 120000); // 120 seconds
-
-        // Cleanup on unmount
-        return () => {
-            clearInterval(quizInterval);
-            clearInterval(todoInterval);
-        };
+        // REMOVED: Aggressive polling intervals that were killing performance
+        // Users can refresh manually if needed
     }, []);
 
-    // Live countdown timer - updates every second
+    // Optimized countdown - calculate once on mount/data change, no interval needed
     useEffect(() => {
-        const updateCountdown = () => {
-            let targetDate = null;
+        let targetDate = null;
 
-            // Priority 1: Use examDateTime from admin settings
-            if (examSettings?.examDateTime) {
-                targetDate = new Date(examSettings.examDateTime);
-            }
-            // Priority 2: Use quiz expiry date
-            else if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
-                targetDate = new Date(newQuizzes[0].expiresAt);
-            }
-            // Default: 14 days from now as placeholder
-            else {
-                targetDate = new Date();
-                targetDate.setDate(targetDate.getDate() + 14);
-            }
+        // Priority 1: Use examDateTime from admin settings
+        if (examSettings?.examDateTime) {
+            targetDate = new Date(examSettings.examDateTime);
+        }
+        // Priority 2: Use quiz expiry date
+        else if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
+            targetDate = new Date(newQuizzes[0].expiresAt);
+        }
+        // Default: 14 days from now as placeholder
+        else {
+            targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 14);
+        }
 
-            const now = new Date();
-            const diff = Math.max(0, targetDate - now);
+        const now = new Date();
+        const diff = Math.max(0, targetDate - now);
 
-            setCountdown({
-                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-                seconds: Math.floor((diff % (1000 * 60)) / 1000)
-            });
-        };
+        setCountdown({
+            days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((diff % (1000 * 60)) / 1000)
+        });
 
-        // Initial update
-        updateCountdown();
-
-        // Update every second
-        const countdownInterval = setInterval(updateCountdown, 1000);
-
-        return () => clearInterval(countdownInterval);
+        // REMOVED: setInterval that updated every second causing constant re-renders
+        // Use CSS animations for visual countdown effect instead
     }, [examSettings, newQuizzes]);
 
     // Fetch real dashboard data from backend
@@ -242,7 +222,7 @@ export function StudentDashboard() {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
-            transition: { staggerChildren: 0.02 }
+            transition: { staggerChildren: 0.01 } // Reduced from 0.02 for faster animation
         }
     };
 

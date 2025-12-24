@@ -2,21 +2,42 @@ import axios from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
+// Simple in-memory cache for GET requests
+const apiCache = new Map();
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
 const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 60000, // 60 seconds - Render free tier can take 50+ seconds on cold start
+    timeout: 15000, // 15 seconds - faster error feedback
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and implement caching
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Check cache for GET requests
+        if (config.method === 'get') {
+            const cacheKey = `${config.baseURL}${config.url}`;
+            const cached = apiCache.get(cacheKey);
+            if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+                // Return cached response
+                config.adapter = () => Promise.resolve({
+                    data: cached.data,
+                    status: 200,
+                    statusText: 'OK (cached)',
+                    headers: {},
+                    config
+                });
+            }
+        }
+
         return config;
     },
     (error) => {
@@ -24,9 +45,25 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle errors
+// Response interceptor to handle caching and errors
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // Cache successful GET responses
+        if (response.config.method === 'get' && response.status === 200) {
+            const cacheKey = `${response.config.baseURL}${response.config.url}`;
+            apiCache.set(cacheKey, {
+                data: response.data,
+                timestamp: Date.now()
+            });
+        }
+
+        // Invalidate cache on mutations
+        if (['post', 'put', 'patch', 'delete'].includes(response.config.method)) {
+            apiCache.clear(); // Simple approach: clear all cache on any mutation
+        }
+
+        return response;
+    },
     (error) => {
         console.error('API Error:', {
             url: error.config?.url,

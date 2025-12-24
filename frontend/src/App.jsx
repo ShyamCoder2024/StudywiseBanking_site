@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { BottomNavbar } from './components/layout/BottomNavbar';
@@ -7,41 +8,45 @@ import { AnimatePresence, motion } from 'framer-motion';
 import './styles/index.css';
 import './App.css';
 
-// Page Imports
+// Lazy load all page components for better performance
+// Auth Pages - Load immediately (critical path)
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import StudentDashboard from './pages/student/StudentDashboard';
-import SubjectsPage from './pages/student/SubjectsPage';
-import TopicsPage from './pages/student/TopicsPage';
-import QuizListPage from './pages/student/QuizListPage';
-import QuizPage from './pages/student/QuizPage';
-import ResultPage from './pages/student/ResultPage';
-import ProfilePage from './pages/ProfilePage';
-import AboutTutor from './pages/AboutTutor';
-import TutorVideosPage from './pages/student/TutorVideosPage';
-import TasksPage from './pages/student/TasksPage';
-import PerformancePage from './pages/student/PerformancePage';
-import LeaderboardPage from './pages/student/LeaderboardPage';
-import AIAnalysisPage from './pages/student/AIAnalysisPage';
-import TestCenterPage from './pages/student/TestCenterPage';
-import TestReviewPage from './pages/student/TestReviewPage';
-import CoursesPage from './pages/student/CoursesPage';
 
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminLoginPage from './pages/admin/AdminLoginPage';
-import SubjectManagement from './pages/admin/SubjectManagement';
-import TopicManagement from './pages/admin/TopicManagement';
-import QuizManagement from './pages/admin/QuizManagement';
-import QuestionManagement from './pages/admin/QuestionManagement';
-import StudentMonitoring from './pages/admin/StudentMonitoring';
-import TaskManagementPage from './pages/admin/TaskManagementPage';
-import AllTasksPage from './pages/admin/AllTasksPage';
-import AllInactiveStudentsPage from './pages/admin/AllInactiveStudentsPage';
-import QuizAnalytics from './pages/admin/QuizAnalytics';
-import CourseManagement from './pages/admin/CourseManagement';
-import CourseDetailPage from './pages/student/CourseDetailPage';
+// Student Pages - Lazy loaded
+const StudentDashboard = lazy(() => import('./pages/student/StudentDashboard'));
+const SubjectsPage = lazy(() => import('./pages/student/SubjectsPage'));
+const TopicsPage = lazy(() => import('./pages/student/TopicsPage'));
+const QuizListPage = lazy(() => import('./pages/student/QuizListPage'));
+const QuizPage = lazy(() => import('./pages/student/QuizPage'));
+const ResultPage = lazy(() => import('./pages/student/ResultPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AboutTutor = lazy(() => import('./pages/AboutTutor'));
+const TutorVideosPage = lazy(() => import('./pages/student/TutorVideosPage'));
+const TasksPage = lazy(() => import('./pages/student/TasksPage'));
+const PerformancePage = lazy(() => import('./pages/student/PerformancePage'));
+const LeaderboardPage = lazy(() => import('./pages/student/LeaderboardPage'));
+const AIAnalysisPage = lazy(() => import('./pages/student/AIAnalysisPage'));
+const TestCenterPage = lazy(() => import('./pages/student/TestCenterPage'));
+const TestReviewPage = lazy(() => import('./pages/student/TestReviewPage'));
+const CoursesPage = lazy(() => import('./pages/student/CoursesPage'));
+const CourseDetailPage = lazy(() => import('./pages/student/CourseDetailPage'));
+
+// Admin Pages - Lazy loaded
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'));
+const SubjectManagement = lazy(() => import('./pages/admin/SubjectManagement'));
+const TopicManagement = lazy(() => import('./pages/admin/TopicManagement'));
+const QuizManagement = lazy(() => import('./pages/admin/QuizManagement'));
+const QuestionManagement = lazy(() => import('./pages/admin/QuestionManagement'));
+const StudentMonitoring = lazy(() => import('./pages/admin/StudentMonitoring'));
+const TaskManagementPage = lazy(() => import('./pages/admin/TaskManagementPage'));
+const AllTasksPage = lazy(() => import('./pages/admin/AllTasksPage'));
+const AllInactiveStudentsPage = lazy(() => import('./pages/admin/AllInactiveStudentsPage'));
+const QuizAnalytics = lazy(() => import('./pages/admin/QuizAnalytics'));
+const CourseManagement = lazy(() => import('./pages/admin/CourseManagement'));
 
 // SIMPLIFIED Protected Route - Direct localStorage check
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -95,17 +100,42 @@ function PublicRoute({ children }) {
   return children;
 }
 
+// Loading component for lazy routes
+const LoadingFallback = () => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
+    flexDirection: 'column',
+    gap: '16px'
+  }}>
+    <div style={{
+      width: '40px',
+      height: '40px',
+      border: '3px solid #f3f4f6',
+      borderTopColor: '#8A75BA',
+      borderRadius: '50%',
+      animation: 'spin 0.8s linear infinite'
+    }} />
+    <p style={{ color: '#6B6B6B', fontSize: '14px' }}>Loading...</p>
+    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  </div>
+);
+
 // Page Transition - Optimized for faster perceived performance
 const PageTransition = ({ children }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 8 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -8 }}
-    transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
-    style={{ width: '100%', height: '100%' }}
-  >
-    {children}
-  </motion.div>
+  <Suspense fallback={<LoadingFallback />}>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
+      style={{ width: '100%', height: '100%' }}
+    >
+      {children}
+    </motion.div>
+  </Suspense>
 );
 
 function AppContent() {
