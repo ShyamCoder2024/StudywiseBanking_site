@@ -276,11 +276,11 @@ export function StudentDashboard() {
                     </div>
                     <div className="header-stats-pill">
                         <div className="pill-item">
-                            <Flame size={18} className="text-orange" />
+                            <Flame size={18} style={{ color: '#FF6B35' }} />
                             <span>{stats.streak} Day Streak</span>
                         </div>
                         <div className="pill-item">
-                            <Star size={18} className="text-yellow" />
+                            <Star size={18} style={{ color: '#FFD700', fill: '#FFD700' }} />
                             <span>{stats.xpPoints} XP</span>
                         </div>
                     </div>
