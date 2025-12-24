@@ -16,7 +16,7 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 
-// Student Pages - Lazy loaded
+// Student Pages - Lazy loaded with retry for critical routes
 const StudentDashboard = lazy(() => import('./pages/student/StudentDashboard'));
 const SubjectsPage = lazy(() => import('./pages/student/SubjectsPage'));
 const TopicsPage = lazy(() => import('./pages/student/TopicsPage'));
@@ -25,14 +25,14 @@ const QuizPage = lazy(() => import('./pages/student/QuizPage'));
 const ResultPage = lazy(() => import('./pages/student/ResultPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AboutTutor = lazy(() => import('./pages/AboutTutor'));
-const TutorVideosPage = lazy(() => import('./pages/student/TutorVideosPage'));
-const TasksPage = lazy(() => import('./pages/student/TasksPage'));
-const PerformancePage = lazy(() => import('./pages/student/PerformancePage'));
-const LeaderboardPage = lazy(() => import('./pages/student/LeaderboardPage'));
-const AIAnalysisPage = lazy(() => import('./pages/student/AIAnalysisPage'));
-const TestCenterPage = lazy(() => import('./pages/student/TestCenterPage'));
+const TutorVideosPage = lazy(() => lazyWithRetry(() => import('./pages/student/TutorVideosPage')));
+const TasksPage = lazy(() => lazyWithRetry(() => import('./pages/student/TasksPage')));
+const PerformancePage = lazy(() => lazyWithRetry(() => import('./pages/student/PerformancePage')));
+const LeaderboardPage = lazy(() => lazyWithRetry(() => import('./pages/student/LeaderboardPage')));
+const AIAnalysisPage = lazy(() => lazyWithRetry(() => import('./pages/student/AIAnalysisPage')));
+const TestCenterPage = lazy(() => lazyWithRetry(() => import('./pages/student/TestCenterPage')));
 const TestReviewPage = lazy(() => import('./pages/student/TestReviewPage'));
-const CoursesPage = lazy(() => import('./pages/student/CoursesPage'));
+const CoursesPage = lazy(() => lazyWithRetry(() => import('./pages/student/CoursesPage')));
 const CourseDetailPage = lazy(() => import('./pages/student/CourseDetailPage'));
 
 // Admin Pages - Lazy loaded with retry for deployment stability

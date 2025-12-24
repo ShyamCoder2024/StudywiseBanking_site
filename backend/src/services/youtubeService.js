@@ -11,60 +11,42 @@ const YOUTUBE_CHANNEL = {
     channelIds: [
         'UCf4zQHKUxolJGexoP5TtYCg',  // VERIFIED - correct channel ID
     ],
-    tutorName: 'Bharat Sir'
+    tutorName: 'Bharat Sir',
+    // IMPORTANT: Tutor ONLY teaches Quant and Reasoning - no English/GK
+    validSubjects: ['MATH', 'REASONING', 'QUANT', 'BANKING']
 };
 
 // Fallback static videos when YouTube fetch fails
-// These link directly to the channel
+// ONLY subjects the tutor actually teaches: Quantitative Aptitude and Reasoning
 const FALLBACK_VIDEOS = [
     {
-        youtubeId: 'channel-link-1',
-        title: 'Banking Awareness Complete Course - RBI, SEBI, NABARD',
+        youtubeId: 'dQw4w9WgXcQ',  // Placeholder - will redirect to channel
+        title: 'Quantitative Aptitude - Number System Complete',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@studywisebanking',
-        tutorName: 'Bharat Sir',
-        subject: 'BANKING',
-        isRecommended: true
-    },
-    {
-        youtubeId: 'channel-link-2',
-        title: 'Quantitative Aptitude Tricks - Speed Math for Bank Exams',
-        publishedAt: new Date(),
-        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
         watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'MATH',
-        isRecommended: false
+        isRecommended: true
     },
     {
-        youtubeId: 'channel-link-3',
-        title: 'Reasoning Puzzles Masterclass - Seating Arrangement',
+        youtubeId: 'dQw4w9WgXcQ',
+        title: 'Reasoning Puzzles - Seating Arrangement Masterclass',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
         watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
         subject: 'REASONING',
-        isRecommended: false
+        isRecommended: true
     },
     {
-        youtubeId: 'channel-link-4',
-        title: 'Current Affairs December 2024 - Banking Exams Special',
+        youtubeId: 'dQw4w9WgXcQ',
+        title: 'Speed Math Techniques for Bank Exams',
         publishedAt: new Date(),
-        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
         watchUrl: 'https://www.youtube.com/@studywisebanking',
         tutorName: 'Bharat Sir',
-        subject: 'GK',
-        isRecommended: false
-    },
-    {
-        youtubeId: 'channel-link-5',
-        title: 'English Grammar for Bank Exams - Error Spotting',
-        publishedAt: new Date(),
-        thumbnailUrl: 'https://i.ytimg.com/vi/default/hqdefault.jpg',
-        watchUrl: 'https://www.youtube.com/@studywisebanking',
-        tutorName: 'Bharat Sir',
-        subject: 'ENGLISH',
+        subject: 'QUANT',
         isRecommended: false
     }
 ];
@@ -300,11 +282,24 @@ export async function getPersonalizedVideos(weakAreas = [], limit = 20) {
         // Categorize videos using AI
         videos = await categorizeVideosWithAI(videos);
 
+        // FILTER to only show subjects tutor actually teaches
+        const filteredVideos = videos.filter(video =>
+            YOUTUBE_CHANNEL.validSubjects.includes(video.subject?.toUpperCase())
+        );
+
+        console.log(`Filtered ${videos.length} videos to ${filteredVideos.length} (only Quant/Reasoning/Banking)`);
+
+        // Improve thumbnail quality - use maxresdefault
+        const videosWithBetterThumbnails = filteredVideos.map(video => ({
+            ...video,
+            thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`
+        }));
+
         // Update cache
-        videoCache.videos = videos;
+        videoCache.videos = videosWithBetterThumbnails;
         videoCache.lastFetched = now;
 
-        const result = rankVideosByRelevance(videos, weakAreas, limit);
+        const result = rankVideosByRelevance(videosWithBetterThumbnails, weakAreas, limit);
         return { ...result, aiPowered: true, isFallback: false };
     } catch (error) {
         console.error('Error getting personalized videos:', error);

@@ -48,6 +48,13 @@
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
+
+  /* Mobile-First Spacing */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
 /* Dark Mode Overrides for Legacy Variables */
@@ -72,6 +79,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
+  /* Disable iOS tap highlight for cleaner UX */
 }
 
 body {
@@ -83,7 +91,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   touch-action: manipulation;
+  /* Disable double-tap zoom */
   text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+  /* Prevent bounce scroll on iOS */
 }
 
 h1,
@@ -97,6 +108,23 @@ h6 {
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+/* Mobile-First Typography Scaling */
+h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
+
+p {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 }
 
 p {
@@ -117,6 +145,9 @@ a:hover {
 button {
   font-family: var(--font-heading);
   font-weight: 600;
+  /* Better touch target */
+  min-height: 44px;
+  min-width: 44px;
 }
 
 /* Reusable Components/Utilities */
@@ -126,10 +157,12 @@ button {
   justify-content: center;
   padding: 12px 24px;
   border-radius: var(--radius-full);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  /* better touch target */
+  min-height: 44px;
 }
 
 .btn-primary {
@@ -173,7 +206,55 @@ button {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-md);
+}
+
+/* Mobile-First Responsive Utilities */
+@media (max-width: 768px) {
+
+  /* Reduce padding for mobile */
+  .container {
+    padding: 0 var(--space-sm);
+  }
+
+  /* Compact spacing */
+  .bento-tile {
+    padding: var(--space-sm) !important;
+  }
+
+  .dashboard-container {
+    padding: var(--space-sm) !important;
+    gap: var(--space-sm) !important;
+  }
+
+  /* Better button spacing on mobile */
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9375rem;
+  }
+
+  /* Larger touch targets */
+  button,
+  a,
+  .clickable {
+    min-height: 48px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  /* Tablet optimization */
+  .container {
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1025px) {
+
+  /* Desktop spacing */
+  .container {
+    padding: 0 var(--space-xl);
+  }
 }
 
 /* Scrollbar */
@@ -192,4 +273,20 @@ button {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-light);
+}
+
+/* iOS Safe Area Support */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Performance Optimization - GPU Acceleration */
+.clickable,
+.bento-tile,
+.card {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }

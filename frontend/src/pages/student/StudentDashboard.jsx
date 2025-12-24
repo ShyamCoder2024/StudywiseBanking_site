@@ -189,12 +189,20 @@ export function StudentDashboard() {
     const fetchEnrollment = async (isMounted = true) => {
         try {
             const res = await api.get('/student/enrollment');
-            if (isMounted) {
-                setEnrollment(res.data.data || { isPaid: false, courses: [] });
+            if (isMounted && res.data && res.data.data) {
+                setEnrollment(res.data.data);
+            } else if (isMounted) {
+                // Fallback if no data returned
+                setEnrollment({ isPaid: false, courses: [] });
             }
         } catch (error) {
             console.error('Failed to fetch enrollment:', error);
+            // Set default on error
+            if (isMounted) {
+                setEnrollment({ isPaid: false, courses: [] });
+            }
         } finally {
+            // ALWAYS set enrollmentLoaded to prevent perpetual loading state
             if (isMounted) {
                 setEnrollmentLoaded(true);
             }
@@ -294,7 +302,14 @@ export function StudentDashboard() {
                     animate="show"
                 >
                     {/* 1. Hero / Exam Countdown (Large Tile) */}
-                    <motion.div className="bento-tile hero-tile clickable" variants={tile} onClick={() => navigate('/tests')}>
+                    <motion.div
+                        className="bento-tile hero-tile clickable"
+                        variants={tile}
+                        onClick={() => navigate('/tests')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <div className="hero-bg-overlay"></div>
 
                         {/* New Quiz Notification Badge */}
@@ -443,7 +458,14 @@ export function StudentDashboard() {
 
 
                     {/* 3. Stats Rows (Clickable) - Go to Performance */}
-                    <motion.div className="bento-tile stats-tile-1 clickable" variants={tile} onClick={() => navigate('/performance')}>
+                    <motion.div
+                        className="bento-tile stats-tile-1 clickable"
+                        variants={tile}
+                        onClick={() => navigate('/performance')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <div className="stat-top">
                             <Target size={24} className="text-coral" />
                             <div className="trend-up">{hasRealData ? 'Real Data' : 'Demo'}</div>
@@ -454,7 +476,14 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    <motion.div className="bento-tile stats-tile-2 clickable" variants={tile} onClick={() => navigate('/analysis')}>
+                    <motion.div
+                        className="bento-tile stats-tile-2 clickable"
+                        variants={tile}
+                        onClick={() => navigate('/analysis')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <div className="stat-top">
                             <BookOpen size={24} className="text-teal" />
                             <span className="tag-micro">AI Suggested</span>
@@ -466,7 +495,14 @@ export function StudentDashboard() {
                     </motion.div>
 
                     {/* 4. Tutor Videos (New Section) */}
-                    <motion.div className="bento-tile video-tile clickable" variants={tile} onClick={() => navigate('/videos')}>
+                    <motion.div
+                        className="bento-tile video-tile clickable"
+                        variants={tile}
+                        onClick={() => navigate('/videos')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <div className="tile-header">
                             <h3><Youtube size={20} className="text-red" /> Tutor's Picks</h3>
                         </div>
@@ -561,7 +597,14 @@ export function StudentDashboard() {
                     </motion.div>
 
                     {/* 6. Todo Sidebar - Interactive */}
-                    <motion.div className="bento-tile todo-tile clickable" variants={tile} onClick={() => navigate('/tasks')}>
+                    <motion.div
+                        className="bento-tile todo-tile clickable"
+                        variants={tile}
+                        onClick={() => navigate('/tasks')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <div className="tile-header">
                             <h3><ClipboardList size={20} /> Today's Plan</h3>
                             <span className="badge">{todos.filter(t => !t.done).length}</span>
@@ -607,7 +650,14 @@ export function StudentDashboard() {
 
 
                     {/* 8. Leaderboard */}
-                    <motion.div className="bento-tile rank-tile clickable" variants={tile} onClick={() => navigate('/leaderboard')}>
+                    <motion.div
+                        className="bento-tile rank-tile clickable"
+                        variants={tile}
+                        onClick={() => navigate('/leaderboard')}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.15 }}
+                    >
                         <Leaderboard limit={10} />
                     </motion.div>
                 </motion.div>
