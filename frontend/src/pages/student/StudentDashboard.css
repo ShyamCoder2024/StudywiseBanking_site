@@ -1878,40 +1878,49 @@ a:focus-visible {
 
 @media (max-width: 600px) {
     .ai-coach-card {
-        min-height: 160px;
+        min-height: 180px;
     }
 
     .ai-coach-content {
-        padding: 14px;
+        padding: 16px;
     }
 
     .ai-coach-header {
-        margin-bottom: 12px;
+        margin-bottom: 16px;
     }
 
     .coach-badge {
-        padding: 4px 8px;
+        padding: 5px 10px;
     }
 
     .coach-badge span {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
+    }
+
+    .ai-coach-main {
+        gap: 20px;
     }
 
     .coach-ring-container {
-        width: 65px;
-        height: 65px;
+        width: 75px;
+        height: 75px;
+        flex-shrink: 0;
     }
 
     .coach-num {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+    }
+
+    .coach-lbl {
+        font-size: 0.55rem;
     }
 
     .coach-insights {
-        gap: 6px;
+        gap: 8px;
     }
 
     .coach-item {
-        padding: 5px 8px;
+        padding: 8px 10px;
     }
 
     .coach-t-label {
