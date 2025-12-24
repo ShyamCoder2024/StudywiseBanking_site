@@ -2,6 +2,13 @@
     padding-bottom: var(--space-6);
 }
 
+/* Mobile: Add extra padding to prevent bottom nav overlap */
+@media (max-width: 768px) {
+    .result-page {
+        padding-bottom: 120px;
+    }
+}
+
 /* Result Summary */
 .result-summary {
     text-align: center;
@@ -294,6 +301,10 @@
     }
 
     /* AI Coach Tab Mobile */
+    .ai-coach-section {
+        margin-bottom: 40px;
+    }
+
     .ai-coach-tab {
         padding: 20px;
     }

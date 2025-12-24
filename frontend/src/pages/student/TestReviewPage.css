@@ -3,6 +3,13 @@
     padding-bottom: 40px;
 }
 
+/* Mobile: Add extra padding to prevent bottom nav overlap */
+@media (max-width: 768px) {
+    .test-review-page {
+        padding-bottom: 120px;
+    }
+}
+
 .review-header {
     text-align: center;
     margin-bottom: 32px;

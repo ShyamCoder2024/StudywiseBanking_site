@@ -39,6 +39,7 @@ export function StudentMonitoring() {
     // Batch selection modal state
     const [showBatchModal, setShowBatchModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [selectedCourseIds, setSelectedCourseIds] = useState([]); // NEW: Multi-course selection
     const [selectedBatch, setSelectedBatch] = useState('');
     // Course duration state
     const [courseDuration, setCourseDuration] = useState('');
@@ -123,21 +124,30 @@ export function StudentMonitoring() {
         }
     };
 
-    // Confirm enrollment with selected batch and duration
+    // Toggle course selection for multi-select
+    const toggleCourseSelection = (courseId) => {
+        setSelectedCourseIds(prev => {
+            if (prev.includes(courseId)) {
+                return prev.filter(id => id !== courseId);
+            } else {
+                return [...prev, courseId];
+            }
+        });
+    };
+
+    // Confirm enrollment with selected batch and duration (Multi-course support)
     const confirmEnrollmentWithBatch = async () => {
         if (!selectedStudent) return;
-        if (!selectedCourseId || !selectedBatch) {
-            alert('Please select both a course and a batch');
+
+        // Support both single and multi-course selection
+        const coursesToEnroll = selectedCourseIds.length > 0 ? selectedCourseIds : (selectedCourseId ? [selectedCourseId] : []);
+
+        if (coursesToEnroll.length === 0 || !selectedBatch) {
+            alert('Please select at least one course and a batch');
             return;
         }
         if (!courseDuration || parseInt(courseDuration) <= 0) {
             alert('Please enter a valid course duration');
-            return;
-        }
-
-        const course = availableCourses.find(c => c.id === selectedCourseId || c._id === selectedCourseId);
-        if (!course) {
-            alert('Selected course not found');
             return;
         }
 
@@ -153,32 +163,40 @@ export function StudentMonitoring() {
 
         setSavingEnrollment(true);
         try {
-            await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
-                isPaid: true,
-                courseId: course.id || course._id,
-                courseName: course.name,
-                batch: selectedBatch,
-                duration: parseInt(courseDuration),
-                durationType: durationType,
-                expiryDate: expiryDate.toISOString()
-            });
+            // Enroll in all selected courses
+            const enrolledCourses = [];
 
-            const newCourse = {
-                courseId: course.id || course._id,
-                courseName: course.name,
-                batch: selectedBatch,
-                enrolledAt: new Date(),
-                duration: parseInt(courseDuration),
-                durationType: durationType,
-                expiryDate: expiryDate.toISOString()
-            };
+            for (const courseId of coursesToEnroll) {
+                const course = availableCourses.find(c => c.id === courseId || c._id === courseId);
+                if (!course) continue;
+
+                await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
+                    isPaid: true,
+                    courseId: course.id || course._id,
+                    courseName: course.name,
+                    batch: selectedBatch,
+                    duration: parseInt(courseDuration),
+                    durationType: durationType,
+                    expiryDate: expiryDate.toISOString()
+                });
+
+                enrolledCourses.push({
+                    courseId: course.id || course._id,
+                    courseName: course.name,
+                    batch: selectedBatch,
+                    enrolledAt: new Date(),
+                    duration: parseInt(courseDuration),
+                    durationType: durationType,
+                    expiryDate: expiryDate.toISOString()
+                });
+            }
 
             setSelectedStudent(prev => ({
                 ...prev,
                 enrollment: {
                     ...prev.enrollment,
                     isPaid: true,
-                    courses: [...(prev.enrollment?.courses || []), newCourse]
+                    courses: [...(prev.enrollment?.courses || []), ...enrolledCourses]
                 }
             }));
 
@@ -191,6 +209,8 @@ export function StudentMonitoring() {
             setShowBatchModal(false);
             setCourseDuration('');
             setDurationType('months');
+            setSelectedCourseIds([]); // Clear multi-select
+            alert(`✅ Successfully enrolled in ${enrolledCourses.length} course(s)!`);
         } catch (err) {
             alert('Failed to enroll student');
         } finally {
@@ -972,46 +992,140 @@ export function StudentMonitoring() {
 
                         {/* Modal Body */}
                         <div style={{ padding: '24px' }}>
-                            {/* Course Selection */}
-                            <div style={{ marginBottom: '20px' }}>
-                                <label style={{
-                                    display: 'block',
-                                    fontSize: '12px',
-                                    fontWeight: '600',
-                                    color: BRAND.textSecondary,
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.5px'
+                            {/* Multi-Course Selection with Checkboxes */}
+                            <div style={{ marginBottom: '24px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                    <label style={{
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        color: BRAND.textSecondary,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        Select Course(s) *
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedCourseIds(availableCourses.map(c => c._id || c.id))}
+                                            style={{
+                                                padding: '4px 10px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                color: BRAND.primary,
+                                                background: 'transparent',
+                                                border: `1px solid ${BRAND.primary}`,
+                                                borderRadius: '6px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            Select All
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedCourseIds([])}
+                                            style={{
+                                                padding: '4px 10px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                color: BRAND.textMuted,
+                                                background: 'transparent',
+                                                border: `1px solid ${BRAND.border}`,
+                                                borderRadius: '6px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            Clear All
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                                    gap: '10px',
+                                    maxHeight: '300px',
+                                    overflowY: 'auto',
+                                    padding: '12px',
+                                    backgroundColor: BRAND.bg,
+                                    borderRadius: '10px',
+                                    border: `2px solid ${selectedCourseIds.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
-                                    Select Course *
-                                </label>
-                                <select
-                                    value={selectedCourseId}
-                                    onChange={(e) => {
-                                        setSelectedCourseId(e.target.value);
-                                        setSelectedBatch(''); // Reset batch when course changes
-                                    }}
-                                    style={{
-                                        width: '100%',
-                                        padding: '14px 16px',
-                                        borderRadius: '10px',
-                                        border: `2px solid ${selectedCourseId ? BRAND.success : BRAND.border}`,
-                                        fontSize: '14px',
-                                        fontWeight: '500',
-                                        backgroundColor: BRAND.card,
-                                        color: BRAND.text,
-                                        cursor: 'pointer',
-                                        outline: 'none',
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                >
-                                    <option value="">{availableCourses.length === 0 ? '⚠️ No courses available - Add courses first' : '-- Choose a course --'}</option>
-                                    {availableCourses.map(course => (
-                                        <option key={course.id || course._id} value={course.id || course._id}>
-                                            {course.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    {availableCourses.length === 0 ? (
+                                        <p style={{ fontSize: '13px', color: BRAND.textMuted, padding: '12px', textAlign: 'center' }}>
+                                            No courses available. Please add courses first.
+                                        </p>
+                                    ) : (
+                                        availableCourses.map(course => {
+                                            const courseId = course._id || course.id;
+                                            const isEnrolled = selectedStudent?.enrollment?.courses?.some(
+                                                c => c.courseId === courseId
+                                            );
+                                            const isSelected = selectedCourseIds.includes(courseId);
+
+                                            return (
+                                                <label
+                                                    key={courseId}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '10px',
+                                                        padding: '12px',
+                                                        backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
+                                                        borderRadius: '8px',
+                                                        border: `2px solid ${isSelected ? BRAND.success : (isEnrolled ? BRAND.warning : BRAND.border)}`,
+                                                        cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                        opacity: isEnrolled ? 0.6 : 1,
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isSelected || isEnrolled}
+                                                        onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
+                                                        disabled={isEnrolled}
+                                                        style={{
+                                                            width: '18px',
+                                                            height: '18px',
+                                                            cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                            accentColor: BRAND.success
+                                                        }}
+                                                    />
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{
+                                                            fontSize: '13px',
+                                                            fontWeight: '600',
+                                                            color: BRAND.text
+                                                        }}>
+                                                            {course.name}
+                                                        </div>
+                                                        {isEnrolled && (
+                                                            <div style={{
+                                                                fontSize: '11px',
+                                                                color: BRAND.warning,
+                                                                marginTop: '2px',
+                                                                fontWeight: '500'
+                                                            }}>
+                                                                ✓ Already enrolled
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </label>
+                                            );
+                                        })
+                                    )}
+                                </div>
+
+                                {selectedCourseIds.length > 0 && (
+                                    <p style={{
+                                        fontSize: '12px',
+                                        color: BRAND.success,
+                                        marginTop: '8px',
+                                        fontWeight: '600'
+                                    }}>
+                                        ✓ {selectedCourseIds.length} course{selectedCourseIds.length !== 1 ? 's' : ''} selected
+                                    </p>
+                                )}
                             </div>
 
                             {/* Batch Selection */}
@@ -1025,12 +1139,11 @@ export function StudentMonitoring() {
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.5px'
                                 }}>
-                                    Select Batch *
+                                    Select Batch * (applies to all selected courses)
                                 </label>
                                 <select
                                     value={selectedBatch}
                                     onChange={(e) => setSelectedBatch(e.target.value)}
-                                    disabled={!selectedCourseId}
                                     style={{
                                         width: '100%',
                                         padding: '14px 16px',
@@ -1038,22 +1151,18 @@ export function StudentMonitoring() {
                                         border: `2px solid ${selectedBatch ? BRAND.success : BRAND.border}`,
                                         fontSize: '14px',
                                         fontWeight: '500',
-                                        backgroundColor: !selectedCourseId ? BRAND.bg : BRAND.card,
                                         color: BRAND.text,
-                                        cursor: selectedCourseId ? 'pointer' : 'not-allowed',
+                                        backgroundColor: BRAND.card,
+                                        cursor: 'pointer',
                                         outline: 'none',
-                                        opacity: selectedCourseId ? 1 : 0.6,
                                         transition: 'border-color 0.2s'
                                     }}
                                 >
-                                    <option value="">
-                                        {selectedCourseId ? '-- Choose a batch --' : '-- Select course first --'}
-                                    </option>
-                                    {selectedCourseId &&
-                                        (availableCourses.find(c => (c.id || c._id) === selectedCourseId)?.batches || []).map(batch => (
-                                            <option key={batch} value={batch}>{batch}</option>
-                                        ))
-                                    }
+                                    <option value="">-- Choose a batch --</option>
+                                    {/* Get unique batches from all courses */}
+                                    {Array.from(new Set(availableCourses.flatMap(c => c.batches || ['Main Batch']))).map(batch => (
+                                        <option key={batch} value={batch}>{batch}</option>
+                                    ))}
                                 </select>
                             </div>
 
@@ -1127,7 +1236,7 @@ export function StudentMonitoring() {
                             </div>
 
                             {/* Summary */}
-                            {selectedCourseId && selectedBatch && courseDuration && (
+                            {selectedCourseIds.length > 0 && selectedBatch && courseDuration && (
                                 <div style={{
                                     backgroundColor: BRAND.successLight,
                                     borderRadius: '10px',
@@ -1141,9 +1250,14 @@ export function StudentMonitoring() {
                                     </div>
                                     <p style={{ fontSize: '13px', color: BRAND.text, margin: 0 }}>
                                         <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong> will be enrolled in{' '}
-                                        <strong>{availableCourses.find(c => (c.id || c._id) === selectedCourseId)?.name}</strong> ({selectedBatch})
+                                        <strong>{selectedCourseIds.length} course{selectedCourseIds.length !== 1 ? 's' : ''}</strong> ({selectedBatch})
                                         <br />
-                                        <span style={{ fontSize: '12px', color: BRAND.success, fontWeight: '600' }}>
+                                        {selectedCourseIds.length <= 3 && (
+                                            <span style={{ fontSize: '12px', color: BRAND.textMuted, display: 'block', marginTop: '6px' }}>
+                                                📚 {selectedCourseIds.map(id => availableCourses.find(c => (c._id || c.id) === id)?.name).join(', ')}
+                                            </span>
+                                        )}
+                                        <span style={{ fontSize: '12px', color: BRAND.success, fontWeight: '600', display: 'block', marginTop: '6px' }}>
                                             ⏱️ Access: {courseDuration} {durationType}
                                         </span>
                                     </p>

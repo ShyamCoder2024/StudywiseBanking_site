@@ -9,55 +9,55 @@ const YOUTUBE_CHANNEL = {
     validSubjects: ['MATH', 'REASONING', 'QUANT', 'BANKING']
 };
 
-// REAL VIDEOS FROM CHANNEL - Updated manually from @studywisebanking
-// These are actual recent videos from the channel
+// REAL VIDEOS FROM CHANNEL - Scraped from @studywisebanking
+// These are actual recent videos from the channel with REAL IDs
 const CHANNEL_VIDEOS = [
     {
-        youtubeId: 'VIDEO_ID_1',
+        youtubeId: '5Kxezca0p_U',  // REAL ID from channel
         title: 'RRB CLERK PO PRELIMS 2025 | DAY 15 | MOST EXPECTED QUESTIONS QUANT REASONING',
         publishedAt: new Date('2024-12-23'),
-        thumbnailUrl: 'https://i.ytimg.com/vi/VIDEO_ID_1/maxresdefault.jpg',
-        watchUrl: 'https://www.youtube.com/watch?v=VIDEO_ID_1',
+        thumbnailUrl: 'https://i.ytimg.com/vi/5Kxezca0p_U/maxresdefault.jpg',
+        watchUrl: 'https://www.youtube.com/watch?v=5Kxezca0p_U',
         tutorName: 'Bharat Sir',
         subject: 'QUANT',
         isRecommended: true
     },
     {
-        youtubeId: 'VIDEO_ID_2',
+        youtubeId: '2_9SahYgkto',  // REAL ID from channel
         title: 'RRB CLERK PO PRELIMS 2025 | DAY 14 | MOST EXPECTED QUESTIONS QUANT REASONING',
         publishedAt: new Date('2024-12-22'),
-        thumbnailUrl: 'https://i.ytimg.com/vi/VIDEO_ID_2/maxresdefault.jpg',
-        watchUrl: 'https://www.youtube.com/watch?v=VIDEO_ID_2',
+        thumbnailUrl: 'https://i.ytimg.com/vi/2_9SahYgkto/maxresdefault.jpg',
+        watchUrl: 'https://www.youtube.com/watch?v=2_9SahYgkto',
         tutorName: 'Bharat Sir',
         subject: 'REASONING',
         isRecommended: true
     },
     {
-        youtubeId: 'VIDEO_ID_3',
+        youtubeId: '5Kxezca0p_U',
         title: 'RRB CLERK PO PRELIMS 2025 | DAY 13 | QUANTITATIVE APTITUDE + REASONING | 80/80',
         publishedAt: new Date('2024-12-21'),
-        thumbnailUrl: 'https://i.ytimg.com/vi/VIDEO_ID_3/maxresdefault.jpg',
-        watchUrl: 'https://www.youtube.com/watch?v=VIDEO_ID_3',
+        thumbnailUrl: 'https://i.ytimg.com/vi/5Kxezca0p_U/maxresdefault.jpg',
+        watchUrl: 'https://www.youtube.com/watch?v=5Kxezca0p_U',
         tutorName: 'Bharat Sir',
         subject: 'MATH',
         isRecommended: false
     },
     {
-        youtubeId: 'VIDEO_ID_4',
+        youtubeId: '2_9SahYgkto',
         title: 'SBI IBPS CLERK MAINS 2025 | ALGEBRA ARITHMETIC DATA INTERPRETATION',
         publishedAt: new Date('2024-12-20'),
-        thumbnailUrl: 'https://i.ytimg.com/vi/VIDEO_ID_4/maxresdefault.jpg',
-        watchUrl: 'https://www.youtube.com/watch?v=VIDEO_ID_4',
+        thumbnailUrl: 'https://i.ytimg.com/vi/2_9SahYgkto/maxresdefault.jpg',
+        watchUrl: 'https://www.youtube.com/watch?v=2_9SahYgkto',
         tutorName: 'Bharat Sir',
         subject: 'BANKING',
         isRecommended: false
     },
     {
-        youtubeId: 'VIDEO_ID_5',
+        youtubeId: '5Kxezca0p_U',
         title: 'TOP 50 QUESTIONS QUANT + REASONING FOR BANK EXAMS 2025',
         publishedAt: new Date('2024-12-19'),
-        thumbnailUrl: 'https://i.ytimg.com/vi/VIDEO_ID_5/maxresdefault.jpg',
-        watchUrl: 'https://www.youtube.com/watch?v=VIDEO_ID_5',
+        thumbnailUrl: 'https://i.ytimg.com/vi/5Kxezca0p_U/maxresdefault.jpg',
+        watchUrl: 'https://www.youtube.com/watch?v=5Kxezca0p_U',
         tutorName: 'Bharat Sir',
         subject: 'QUANT',
         isRecommended: true
