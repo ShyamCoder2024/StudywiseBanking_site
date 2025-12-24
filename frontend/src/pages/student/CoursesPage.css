@@ -95,7 +95,7 @@
 .courses-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 /* Course Card - Horizontal Layout */
@@ -225,14 +225,15 @@
 }
 
 .course-desc {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--color-text-muted);
-    line-height: 1.4;
-    margin: 0;
+    line-height: 1.5;
+    margin: 4px 0 0;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 
@@ -436,7 +437,7 @@
     }
 
     .course-card-content {
-        padding: 12px;
+        padding: 16px;
     }
 
     .course-subject {
@@ -453,7 +454,8 @@
     }
 
     .course-desc {
-        font-size: 10px;
+        font-size: 11px;
+        line-height: 1.5;
     }
 
     .lecture-count {

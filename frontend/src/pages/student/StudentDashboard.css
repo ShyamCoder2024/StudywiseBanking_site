@@ -1260,6 +1260,16 @@
 @media (max-width: 600px) {
     .bento-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .bento-tile {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .tile-header {
+        margin-bottom: 16px;
     }
 
     .tile-header h3 {
