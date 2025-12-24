@@ -14,24 +14,30 @@ export function Leaderboard({ limit }) {
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
+                const token = localStorage.getItem('token');
                 const res = await fetch('/api/student/leaderboard', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success && data.data.leaderboard?.length > 0) {
+
+                const data = await res.json();
+                console.log('Leaderboard API response:', data); // Debug log
+
+                if (data.success && data.data?.leaderboard) {
+                    const leaderboardArray = data.data.leaderboard;
+                    if (leaderboardArray.length > 0) {
                         // Transform backend data to match our format
-                        const students = data.data.leaderboard.map((student, index) => ({
+                        const students = leaderboardArray.map((student, index) => ({
                             id: student._id,
-                            name: student.name,
+                            name: student.name || 'Student',
                             score: student.xpPoints || 0,
                             accuracy: student.avgScore || 0,
                             testsCompleted: student.testsCompleted || 0,
                             avatar: student.avatar,
                             isCurrentUser: student.isCurrentUser,
-                            rank: index + 1
+                            rank: student.rank || (index + 1)
                         }));
                         setLeaderboardData(students);
                     }
