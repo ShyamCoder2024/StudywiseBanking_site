@@ -220,7 +220,7 @@ export function QuizPage() {
                                 variant="primary"
                                 onClick={() => {
                                     const message = encodeURIComponent(`Hi! I need to enroll in a course to access premium tests. Please help me with enrollment.`);
-                                    const whatsappUrl = `https://wa.me/919325616800?text=${message}`;
+                                    const whatsappUrl = `https://wa.me/919518329260?text=${message}`;
                                     window.open(whatsappUrl, '_blank');
                                 }}
                             >

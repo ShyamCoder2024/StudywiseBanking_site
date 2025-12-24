@@ -211,7 +211,7 @@ export function CourseDetailPage() {
                                 className="cdp-modal-btn"
                                 onClick={() => {
                                     const message = encodeURIComponent(`Hi! I'm interested in enrolling in the course: ${course.title}. Please provide details about enrollment.`);
-                                    const whatsappUrl = `https://wa.me/919325616800?text=${message}`;
+                                    const whatsappUrl = `https://wa.me/919518329260?text=${message}`;
                                     window.open(whatsappUrl, '_blank');
                                 }}
                                 whileHover={{ scale: 1.02 }}
