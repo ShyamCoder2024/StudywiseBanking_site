@@ -1167,9 +1167,10 @@
     grid-column: span 3;
 }
 
-/* Desktop (Fixed Grid) */
+/* Desktop (Fixed Grid - Adjusted after removing video-tile) */
 @media (min-width: 1025px) {
     .bento-grid {
+        grid-template-columns: repeat(4, 1fr);
         grid-template-rows: 280px 220px 320px;
     }
 
@@ -1184,20 +1185,18 @@
         grid-row: 1;
     }
 
-    .ai-tile {
-        grid-column: 1;
+    /* AI Coach spans 2 columns now that video-tile is removed */
+    .ai-coach-card {
+        grid-column: 1 / 3;
         grid-row: 2;
     }
 
     .stats-tile-1 {
-        grid-column: 2;
-        grid-row: 2;
-    }
-
-    .video-tile {
         grid-column: 3;
         grid-row: 2;
     }
+
+    /* video-tile REMOVED */
 
     .todo-tile {
         grid-column: 4;
@@ -1246,7 +1245,6 @@
     }
 
     .stats-tile-1,
-    .video-tile,
     .todo-tile {
         grid-column: span 1;
         grid-row: auto;
@@ -1281,7 +1279,6 @@
     .course-card-dynamic,
     .stats-tile-1,
     .stats-tile-2,
-    .video-tile,
     .todo-tile,
     .rank-tile {
         grid-column: span 1;
