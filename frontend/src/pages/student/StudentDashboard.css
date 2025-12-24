@@ -73,6 +73,37 @@
     }
 }
 
+/* ============================================
+   MOBILE-ONLY: Integrated Header Branding
+   ============================================ */
+.mobile-header-branding {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-header-branding {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }
+
+    .header-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .header-brand-text {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--color-text-secondary);
+        letter-spacing: -0.2px;
+    }
+}
+
 /* Header */
 .dashboard-header-row {
     display: flex;

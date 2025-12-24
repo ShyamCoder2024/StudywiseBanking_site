@@ -292,6 +292,12 @@ export function StudentDashboard() {
                 {/* Header Welcome */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dashboard-header-row">
                     <div>
+                        {/* Mobile-Only: Integrated Logo & Branding */}
+                        <div className="mobile-header-branding">
+                            <img src="/logo_new.jpg" alt="StudyWise" className="header-logo" />
+                            <span className="header-brand-text">StudyWiseBanking</span>
+                        </div>
+
                         <h1>Hello, {user?.firstName || 'Student'}! 👋</h1>
                         <p>Keep pushing! Your goal is closer than you think.</p>
                     </div>
