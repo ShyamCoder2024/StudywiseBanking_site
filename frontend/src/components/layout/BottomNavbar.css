@@ -13,8 +13,8 @@
     z-index: 1000;
     background: rgba(255, 255, 255, 0.85);
     border-top: 1px solid rgba(138, 117, 186, 0.1);
-    padding: 10px 0;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    padding: 8px 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
     /* iOS safe area with fallback */
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(20px) saturate(180%);
@@ -44,7 +44,7 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 8px 12px;
+    padding: 6px 12px;
     text-decoration: none;
     color: var(--color-text-muted);
     transition: all 0.2s ease;
@@ -135,9 +135,9 @@
         display: grid;
     }
 
-    /* Add padding to body to account for bottom nav - increased for safety */
+    /* Add padding to body to account for bottom nav - reduced for compact design */
     body {
-        padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     }
 }
 

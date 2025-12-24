@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, BookOpen, GraduationCap, User } from 'lucide-react';
+import { Home, BookOpen, GraduationCap, User } from 'lucide-react';
 import './BottomNavbar.css';
 
 // Haptic feedback helper (works on iOS)
@@ -14,7 +14,7 @@ export function BottomNavbar() {
     const location = useLocation();
 
     const navItems = [
-        { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/dashboard', icon: Home, label: 'Home' },
         { to: '/courses', icon: GraduationCap, label: 'Courses' },
         { to: '/subjects', icon: BookOpen, label: 'Subjects' },
         { to: '/about-tutor', icon: User, label: 'About' }
