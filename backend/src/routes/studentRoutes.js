@@ -506,25 +506,32 @@ router.get('/leaderboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }),
             };
         });
 
-        // Combine user data with stats
-        const studentsWithStats = allUsers.map(user => {
-            const userStats = statsMap[user._id.toString()] || { totalAttempts: 0, avgScore: 0, accuracy: 0 };
-            return {
-                _id: user._id,
-                name: `${user.firstName || 'Student'} ${user.lastName || ''}`.trim(),
-                xpPoints: user.xpPoints || 0,
-                streakCount: user.streakCount || 0,
-                avatar: user.avatar,
-                testsCompleted: userStats.totalAttempts,
-                avgScore: userStats.avgScore,
-                accuracy: userStats.accuracy,
-                // Combined score for ranking: XP + (avgScore * 10) + (accuracy * 5)
-                rankScore: (user.xpPoints || 0) + (userStats.avgScore * 10) + (userStats.accuracy * 5)
-            };
-        });
+        // Combine user data with stats - INCLUDE ALL STUDENTS even with 0 activity
+        const studentsWithStats = allUsers
+            .filter(user => user.firstName || user.lastName) // Only filter out completely empty names
+            .map(user => {
+                const userStats = statsMap[user._id.toString()] || { totalAttempts: 0, avgScore: 0, accuracy: 0 };
+                return {
+                    _id: user._id,
+                    name: `${user.firstName || 'Student'} ${user.lastName || ''}`.trim(),
+                    xpPoints: user.xpPoints || 0,
+                    streakCount: user.streakCount || 0,
+                    avatar: user.avatar,
+                    testsCompleted: userStats.totalAttempts,
+                    avgScore: userStats.avgScore,
+                    accuracy: userStats.accuracy,
+                    // Combined score for ranking: XP + (avgScore * 10) + (accuracy * 5) + (testsCompleted * 5)
+                    rankScore: (user.xpPoints || 0) + (userStats.avgScore * 10) + (userStats.accuracy * 5) + (userStats.totalAttempts * 5)
+                };
+            });
 
-        // Sort by combined rank score (descending)
-        studentsWithStats.sort((a, b) => b.rankScore - a.rankScore);
+        // Sort by combined rank score (descending) - active students first, then by name
+        studentsWithStats.sort((a, b) => {
+            // First by rank score
+            if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
+            // Then by name alphabetically
+            return a.name.localeCompare(b.name);
+        });
 
         // Get current user's rank
         const currentUserId = req.user._id.toString();
