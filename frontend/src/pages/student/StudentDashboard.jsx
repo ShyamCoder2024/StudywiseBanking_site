@@ -97,6 +97,14 @@ export function StudentDashboard() {
         };
     }, []);
 
+    // Add 'dashboard-page' class to body for hiding navbar on mobile
+    useEffect(() => {
+        document.body.classList.add('dashboard-page');
+        return () => {
+            document.body.classList.remove('dashboard-page');
+        };
+    }, []);
+
     // Optimized countdown - calculate once on mount/data change, no interval needed
     useEffect(() => {
         let targetDate = null;
@@ -276,9 +284,20 @@ export function StudentDashboard() {
     return (
         <div className="bento-dashboard" >
             <div className="dashboard-container">
+                {/* Mobile-Only: Fixed Floating Profile Button */}
+                <Link to="/profile" className="mobile-floating-profile">
+                    <AvatarDisplay avatar={user?.avatar} size={40} />
+                </Link>
+
                 {/* Header Welcome */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dashboard-header-row">
                     <div>
+                        {/* Mobile-Only: Logo and Branding */}
+                        <div className="mobile-dashboard-branding">
+                            <img src="/logo_new.jpg" alt="StudyWise" className="mobile-logo" />
+                            <span className="mobile-brand-name">StudyWiseBanking</span>
+                        </div>
+
                         <h1>Hello, {user?.firstName || 'Student'}! 👋</h1>
                         <p>Keep pushing! Your goal is closer than you think.</p>
                     </div>

@@ -19,6 +19,11 @@
     .drd-navbar {
         border-bottom: none;
     }
+
+    /* Hide navbar on dashboard page for seamless experience */
+    body.dashboard-page .drd-navbar {
+        display: none;
+    }
 }
 
 .drd-navbar-inner {
