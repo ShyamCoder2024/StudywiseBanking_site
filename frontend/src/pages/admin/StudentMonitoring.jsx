@@ -604,15 +604,15 @@ export function StudentMonitoring() {
                             <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '6px 8px', marginBottom: '5px' }}>
                                 <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Performance Stats</h4>
                                 <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                         <div style={{ fontSize: '18px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
                                         <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Avg Score</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                         <div style={{ fontSize: '18px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
                                         <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Quizzes</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                         <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
                                         <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Rank</div>
                                     </div>
@@ -647,35 +647,35 @@ export function StudentMonitoring() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                                     {/* Row 1: Gender & Age */}
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                             <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Gender</span>
                                             <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                             <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Age</span>
                                             <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} yrs</span>
                                         </div>
                                     </div>
 
                                     {/* Row 2: Email */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                         <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Email</span>
                                         <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
                                     </div>
 
                                     {/* Row 3: Mobile */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                         <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Mobile</span>
                                         <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'N/A'}</span>
                                     </div>
 
                                     {/* Row 4: Joined & Account */}
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                             <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Joined</span>
                                             <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
                                             <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Account</span>
                                             <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.success }}>Active</span>
                                         </div>
