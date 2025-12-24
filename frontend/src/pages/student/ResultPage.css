@@ -273,6 +273,31 @@
 .result-actions {
     text-align: center;
     margin-top: var(--space-4);
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Mobile: Stack buttons vertically with spacing */
+@media (max-width: 768px) {
+    .result-actions {
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 24px;
+        margin-bottom: 100px;
+        padding: 0 16px;
+    }
+
+    .result-actions button,
+    .result-actions a {
+        width: 100%;
+    }
+
+    .result-actions button {
+        padding: 16px 24px;
+        font-size: 15px;
+    }
 }
 
 /* Mobile Responsive */
