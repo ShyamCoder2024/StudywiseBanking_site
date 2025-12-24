@@ -536,17 +536,20 @@ router.get('/leaderboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }),
         // Get current user's rank
         const currentUserId = req.user._id.toString();
         let currentUserRank = 0;
+        let currentUserInList = false;
+
         studentsWithStats.forEach((student, index) => {
             if (student._id.toString() === currentUserId) {
                 currentUserRank = index + 1;
+                currentUserInList = true;
             }
         });
 
         // Format leaderboard data (top 50)
-        const leaderboard = studentsWithStats.slice(0, 50).map((student, index) => ({
+        let leaderboard = studentsWithStats.slice(0, 50).map((student, index) => ({
             rank: index + 1,
             _id: student._id,
-            name: student.name,
+            name: student.name || 'Student',
             xpPoints: student.xpPoints,
             streakCount: student.streakCount,
             testsCompleted: student.testsCompleted,
@@ -555,12 +558,29 @@ router.get('/leaderboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }),
             isCurrentUser: student._id.toString() === currentUserId
         }));
 
+        // CRITICAL: If leaderboard is empty, add the current user
+        if (leaderboard.length === 0) {
+            const currentUser = req.user;
+            leaderboard = [{
+                rank: 1,
+                _id: currentUser._id,
+                name: `${currentUser.firstName || 'You'} ${currentUser.lastName || ''}`.trim(),
+                xpPoints: currentUser.xpPoints || 0,
+                streakCount: currentUser.streakCount || 0,
+                testsCompleted: 0,
+                avgScore: 0,
+                avatar: currentUser.avatar,
+                isCurrentUser: true
+            }];
+            currentUserRank = 1;
+        }
+
         res.json({
             success: true,
             data: {
                 leaderboard,
-                currentUserRank,
-                totalStudents: studentsWithStats.length
+                currentUserRank: currentUserRank || 1,
+                totalStudents: Math.max(studentsWithStats.length, 1)
             }
         });
     } catch (error) {
