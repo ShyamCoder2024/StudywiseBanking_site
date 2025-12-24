@@ -138,8 +138,8 @@ export default function CoursesPage() {
                                     {course.status && (
                                         <span className={`course-status-badge status-${course.status}`}>
                                             {course.status === 'complete' && '✓ Complete'}
-                                            {course.status === 'ongoing' && '🔴 Live'}
-                                            {course.status === 'upcoming' && '🔜 Soon'}
+                                            {course.status === 'ongoing' && '🔴 Ongoing'}
+                                            {course.status === 'upcoming' && '🔜 Upcoming'}
                                         </span>
                                     )}
                                 </div>
