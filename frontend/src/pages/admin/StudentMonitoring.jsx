@@ -516,7 +516,7 @@ export function StudentMonitoring() {
                         {/* Modal Header - DRD Primary Color */}
                         <div style={{
                             backgroundColor: BRAND.primary,
-                            padding: '28px 24px',
+                            padding: '20px',
                             position: 'relative'
                         }}>
                             <button
@@ -576,93 +576,93 @@ export function StudentMonitoring() {
                         </div>
 
                         {/* Modal Body - Scrollable */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
 
                             {/* Performance Stats - Top */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '20px', marginBottom: '20px' }}>
-                                <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 16px 0' }}>Performance Stats</h4>
-                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                                    <div style={{ textAlign: 'center', padding: '16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '28px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
-                                        <div style={{ fontSize: '11px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '4px' }}>Avg Score</div>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '14px', marginBottom: '14px' }}>
+                                <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px 0' }}>Performance Stats</h4>
+                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                                    <div style={{ textAlign: 'center', padding: '12px 8px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
+                                        <div style={{ fontSize: '10px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '2px' }}>Avg Score</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '28px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
-                                        <div style={{ fontSize: '11px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '4px' }}>Quizzes Taken</div>
+                                    <div style={{ textAlign: 'center', padding: '12px 8px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
+                                        <div style={{ fontSize: '10px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '2px' }}>Quizzes Taken</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                        <div style={{ fontSize: '28px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
-                                        <div style={{ fontSize: '11px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '4px' }}>Rank</div>
+                                    <div style={{ textAlign: 'center', padding: '12px 8px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
+                                        <div style={{ fontSize: '10px', color: BRAND.textMuted, textTransform: 'uppercase', marginTop: '2px' }}>Rank</div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Personal Information - All Registration Fields */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '20px', marginBottom: '20px' }}>
-                                <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 16px 0' }}>Personal Information</h4>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '14px', marginBottom: '14px' }}>
+                                <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px 0' }}>Personal Information</h4>
 
                                 {/* Preparing For - Highlighted */}
                                 <div style={{
                                     backgroundColor: BRAND.primaryLight,
-                                    borderRadius: '10px',
-                                    padding: '16px',
-                                    marginBottom: '16px',
+                                    borderRadius: '8px',
+                                    padding: '12px',
+                                    marginBottom: '10px',
                                     border: `1px solid ${BRAND.primary}30`,
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}>
-                                    <span style={{ fontSize: '13px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
-                                    <span style={{ fontSize: '14px', fontWeight: '700', color: BRAND.primary, textTransform: 'capitalize' }}>
-                                        {selectedStudent.status === 'preparing_fulltime' ? 'Full-time Preparation' :
+                                    <span style={{ fontSize: '12px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
+                                    <span style={{ fontSize: '13px', fontWeight: '700', color: BRAND.primary, textTransform: 'capitalize' }}>
+                                        {selectedStudent.status === 'preparing_fulltime' ? 'Full-Time Preparation' :
                                             selectedStudent.status === 'working_professional' ? 'Working Professional' :
                                                 selectedStudent.status === 'student' ? 'Student' :
                                                     selectedStudent.status?.replace(/_/g, ' ') || 'Banking Exams'}
                                     </span>
                                 </div>
 
-                                {/* Info Grid - All Fields */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {/* Info Grid - Compact */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                     {/* Row 1: Gender & Age */}
-                                    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Gender</span>
-                                            <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
+                                    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Gender</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Age</span>
-                                            <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} years</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Age</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} years</span>
                                         </div>
                                     </div>
 
                                     {/* Row 2: Email */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                        <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Email</span>
-                                        <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                        <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Email</span>
+                                        <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
                                     </div>
 
                                     {/* Row 3: Mobile */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                        <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Mobile</span>
-                                        <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'Not provided'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                        <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Mobile</span>
+                                        <span style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'Not provided'}</span>
                                     </div>
 
                                     {/* Row 4: Joined & Account Status */}
-                                    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Joined On</span>
-                                            <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
+                                    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Joined</span>
+                                            <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: BRAND.card, borderRadius: '10px', border: `1px solid ${BRAND.border}` }}>
-                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>Account</span>
-                                            <span style={{ fontSize: '14px', fontWeight: '600', color: BRAND.success }}>Active</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', backgroundColor: BRAND.card, borderRadius: '8px', border: `1px solid ${BRAND.border}` }}>
+                                            <span style={{ fontSize: '11px', color: BRAND.textMuted }}>Account</span>
+                                            <span style={{ fontSize: '12px', fontWeight: '600', color: BRAND.success }}>Active</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Enrollment Management Section */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '20px', marginBottom: '20px' }}>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: BRAND.radius, padding: '14px', marginBottom: '14px' }}>
                                 <h4 style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <CreditCard size={14} />
                                     Enrollment Management
