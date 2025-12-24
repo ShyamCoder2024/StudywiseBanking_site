@@ -59,26 +59,42 @@ export function StudentDashboard() {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
-        // Fetch all data in parallel for faster initial load
+        let isMounted = true;
+
+        // Fetch all data with individual error handling
         const fetchAllData = async () => {
             try {
-                await Promise.all([
-                    fetchDashboardData(),
-                    fetchTodos(),
-                    fetchNewQuizzes(),
-                    fetchExamSettings(),
-                    fetchEnrollment(),
-                    fetchVideoCourses()
+                // Use Promise.allSettled to handle failures gracefully
+                const results = await Promise.allSettled([
+                    fetchDashboardData(isMounted),
+                    fetchTodos(isMounted),
+                    fetchNewQuizzes(isMounted),
+                    fetchExamSettings(isMounted),
+                    fetchEnrollment(isMounted),
+                    fetchVideoCourses(isMounted)
                 ]);
+
+                // Log any failures for debugging
+                results.forEach((result, index) => {
+                    if (result.status === 'rejected') {
+                        console.warn(`Dashboard API call ${index} failed:`, result.reason);
+                    }
+                });
+            } catch (error) {
+                console.error('Dashboard data fetch error:', error);
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchAllData();
 
-        // REMOVED: Aggressive polling intervals that were killing performance
-        // Users can refresh manually if needed
+        // Cleanup function to prevent state updates after unmount
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     // Optimized countdown - calculate once on mount/data change, no interval needed
@@ -114,34 +130,40 @@ export function StudentDashboard() {
     }, [examSettings, newQuizzes]);
 
     // Fetch real dashboard data from backend
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = async (isMounted = true) => {
         try {
             const res = await api.get('/student/dashboard');
-            setDashboardData(res.data.data);
+            if (isMounted) {
+                setDashboardData(res.data.data);
+            }
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
             // Will use mock data as fallback
         }
     };
 
-    const fetchTodos = async () => {
+    const fetchTodos = async (isMounted = true) => {
         try {
             const res = await api.get('/student/global-tasks');
-            setTodos(res.data.data || []);
-            if (res.data.progress) {
-                setTaskProgress(res.data.progress);
+            if (isMounted) {
+                setTodos(res.data.data || []);
+                if (res.data.progress) {
+                    setTaskProgress(res.data.progress);
+                }
             }
         } catch (error) {
             console.error(error);
         } finally {
-            setTodosLoaded(true);
+            if (isMounted) {
+                setTodosLoaded(true);
+            }
         }
     };
 
-    const fetchExamSettings = async () => {
+    const fetchExamSettings = async (isMounted = true) => {
         try {
             const res = await api.get('/student/settings/upcoming_exam');
-            if (res.data.data) {
+            if (isMounted && res.data.data) {
                 setExamSettings(res.data.data);
             }
         } catch (error) {
@@ -149,35 +171,43 @@ export function StudentDashboard() {
         }
     };
 
-    const fetchNewQuizzes = async () => {
+    const fetchNewQuizzes = async (isMounted = true) => {
         try {
             const res = await api.get('/student/quizzes/all');
-            const activeQuizzes = res.data.data?.active || [];
-            // Filter quizzes that are not expired
-            const pendingQuizzes = activeQuizzes.filter(q => !q.isExpired);
-            setNewQuizzes(pendingQuizzes);
+            if (isMounted) {
+                const activeQuizzes = res.data.data?.active || [];
+                // Filter quizzes that are not expired
+                const pendingQuizzes = activeQuizzes.filter(q => !q.isExpired);
+                setNewQuizzes(pendingQuizzes);
+            }
         } catch (error) {
             console.error('Failed to fetch quizzes:', error);
         }
     };
 
     // Fetch enrollment status
-    const fetchEnrollment = async () => {
+    const fetchEnrollment = async (isMounted = true) => {
         try {
             const res = await api.get('/student/enrollment');
-            setEnrollment(res.data.data || { isPaid: false, courses: [] });
+            if (isMounted) {
+                setEnrollment(res.data.data || { isPaid: false, courses: [] });
+            }
         } catch (error) {
             console.error('Failed to fetch enrollment:', error);
         } finally {
-            setEnrollmentLoaded(true);
+            if (isMounted) {
+                setEnrollmentLoaded(true);
+            }
         }
     };
 
     // Fetch video courses
-    const fetchVideoCourses = async () => {
+    const fetchVideoCourses = async (isMounted = true) => {
         try {
             const res = await api.get('/student/video-courses');
-            setVideoCourses(res.data.data || []);
+            if (isMounted) {
+                setVideoCourses(res.data.data || []);
+            }
         } catch (error) {
             console.error('Failed to fetch courses:', error);
         }
