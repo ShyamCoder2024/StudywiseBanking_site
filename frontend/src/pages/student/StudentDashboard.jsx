@@ -513,28 +513,7 @@ export function StudentDashboard() {
                         </div>
                     </motion.div>
 
-                    {/* 4. Tutor Videos (New Section) */}
-                    <motion.div
-                        className="bento-tile video-tile clickable"
-                        variants={tile}
-                        onClick={() => navigate('/videos')}
-                        whileTap={{ scale: 0.98 }}
-                        whileHover={{ scale: 1.01 }}
-                        transition={{ duration: 0.15 }}
-                    >
-                        <div className="tile-header">
-                            <h3><Youtube size={20} className="text-red" /> Tutor's Picks</h3>
-                        </div>
-                        <div className="video-list-mini">
-                            <div className="video-card-mini">
-                                <div className="play-icon"><Play size={20} fill="white" /></div>
-                                <div className="video-info">
-                                    <h4>Math Tricks: 5s Multiply</h4>
-                                    <span>Added Today</span>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
+                    {/* Tutor's Picks - REMOVED */}
 
                     {/* 5. Dynamic Course Card - Paid vs Free */}
                     <motion.div

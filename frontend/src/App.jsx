@@ -26,7 +26,7 @@ const QuizPage = lazy(() => import('./pages/student/QuizPage'));
 const ResultPage = lazy(() => import('./pages/student/ResultPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AboutTutor = lazy(() => import('./pages/AboutTutor'));
-const TutorVideosPage = lazy(() => lazyWithRetry(() => import('./pages/student/TutorVideosPage')));
+// TutorVideosPage - REMOVED
 const TasksPage = lazy(() => lazyWithRetry(() => import('./pages/student/TasksPage')));
 const PerformancePage = lazy(() => lazyWithRetry(() => import('./pages/student/PerformancePage')));
 const LeaderboardPage = lazy(() => lazyWithRetry(() => import('./pages/student/LeaderboardPage')));
@@ -192,7 +192,7 @@ function AppContent() {
           <Route path="/result/:attemptId" element={<ProtectedRoute><PageTransition><ResultPage /></PageTransition></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
           <Route path="/about-tutor" element={<ProtectedRoute><PageTransition><AboutTutor /></PageTransition></ProtectedRoute>} />
-          <Route path="/videos" element={<ProtectedRoute><PageTransition><TutorVideosPage /></PageTransition></ProtectedRoute>} />
+          {/* /videos route - REMOVED */}
           <Route path="/tasks" element={<ProtectedRoute><PageTransition><TasksPage /></PageTransition></ProtectedRoute>} />
           <Route path="/performance" element={<ProtectedRoute><PageTransition><PerformancePage /></PageTransition></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><PageTransition><LeaderboardPage /></PageTransition></ProtectedRoute>} />
