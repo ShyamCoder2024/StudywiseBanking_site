@@ -1039,84 +1039,116 @@ export function StudentMonitoring() {
                                 <div style={{
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    gap: '8px',
-                                    maxHeight: '200px',
+                                    gap: '6px',
+                                    maxHeight: '180px',
                                     overflowY: 'auto',
-                                    padding: '10px',
+                                    padding: '8px',
                                     backgroundColor: BRAND.bg,
                                     borderRadius: '8px',
                                     border: `2px solid ${selectedCourseIds.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
                                     {availableCourses.length === 0 ? (
-                                        <p style={{ fontSize: '13px', color: BRAND.textMuted, padding: '12px', textAlign: 'center' }}>
+                                        <p style={{ fontSize: '12px', color: BRAND.textMuted, padding: '10px', textAlign: 'center' }}>
                                             No courses available. Please add courses first.
                                         </p>
                                     ) : (
-                                        availableCourses.map(course => {
-                                            const courseId = course._id || course.id;
-                                            const isEnrolled = selectedStudent?.enrollment?.courses?.some(
-                                                c => c.courseId === courseId
-                                            );
-                                            const isSelected = selectedCourseIds.includes(courseId);
-
-                                            return (
-                                                <label
-                                                    key={courseId}
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '10px',
-                                                        padding: '12px',
-                                                        backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
-                                                        borderRadius: '8px',
-                                                        border: `2px solid ${isSelected ? BRAND.success : (isEnrolled ? BRAND.warning : BRAND.border)}`,
-                                                        cursor: isEnrolled ? 'not-allowed' : 'pointer',
-                                                        opacity: isEnrolled ? 0.6 : 1,
-                                                        transition: 'all 0.2s'
+                                        <>
+                                            {/* All Courses Option */}
+                                            <label
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    padding: '10px',
+                                                    backgroundColor: selectedCourseIds.length === availableCourses.length ? BRAND.primaryLight : BRAND.card,
+                                                    borderRadius: '6px',
+                                                    border: `2px solid ${selectedCourseIds.length === availableCourses.length ? BRAND.primary : BRAND.border}`,
+                                                    cursor: 'pointer',
+                                                    fontWeight: '600'
+                                                }}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedCourseIds.length === availableCourses.length}
+                                                    onChange={() => {
+                                                        if (selectedCourseIds.length === availableCourses.length) {
+                                                            setSelectedCourseIds([]);
+                                                        } else {
+                                                            setSelectedCourseIds(availableCourses.map(c => c._id || c.id));
+                                                        }
                                                     }}
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isSelected || isEnrolled}
-                                                        onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
-                                                        disabled={isEnrolled}
+                                                    style={{ width: '16px', height: '16px', accentColor: BRAND.primary }}
+                                                />
+                                                <span style={{ fontSize: '12px', color: BRAND.primary }}>📚 All Courses</span>
+                                            </label>
+
+                                            {/* Individual Courses */}
+                                            {availableCourses.map(course => {
+                                                const courseId = course._id || course.id;
+                                                const isEnrolled = selectedStudent?.enrollment?.courses?.some(
+                                                    c => c.courseId === courseId
+                                                );
+                                                const isSelected = selectedCourseIds.includes(courseId);
+
+                                                return (
+                                                    <label
+                                                        key={courseId}
                                                         style={{
-                                                            width: '18px',
-                                                            height: '18px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px',
+                                                            padding: '10px',
+                                                            backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
+                                                            borderRadius: '8px',
+                                                            border: `2px solid ${isSelected ? BRAND.success : (isEnrolled ? BRAND.warning : BRAND.border)}`,
                                                             cursor: isEnrolled ? 'not-allowed' : 'pointer',
-                                                            accentColor: BRAND.success
+                                                            opacity: isEnrolled ? 0.6 : 1,
+                                                            transition: 'all 0.2s'
                                                         }}
-                                                    />
-                                                    <div style={{ flex: 1 }}>
-                                                        <div style={{
-                                                            fontSize: '13px',
-                                                            fontWeight: '600',
-                                                            color: BRAND.text
-                                                        }}>
-                                                            {course.name}
-                                                        </div>
-                                                        {isEnrolled && (
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isSelected || isEnrolled}
+                                                            onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
+                                                            disabled={isEnrolled}
+                                                            style={{
+                                                                width: '18px',
+                                                                height: '18px',
+                                                                cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                                accentColor: BRAND.success
+                                                            }}
+                                                        />
+                                                        <div style={{ flex: 1 }}>
                                                             <div style={{
-                                                                fontSize: '11px',
-                                                                color: BRAND.warning,
-                                                                marginTop: '2px',
-                                                                fontWeight: '500'
+                                                                fontSize: '13px',
+                                                                fontWeight: '600',
+                                                                color: BRAND.text
                                                             }}>
-                                                                ✓ Already enrolled
+                                                                {course.name}
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                </label>
-                                            );
-                                        })
+                                                            {isEnrolled && (
+                                                                <div style={{
+                                                                    fontSize: '11px',
+                                                                    color: BRAND.warning,
+                                                                    marginTop: '2px',
+                                                                    fontWeight: '500'
+                                                                }}>
+                                                                    ✓ Already enrolled
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </label>
+                                                );
+                                            })}
+                                        </>
                                     )}
                                 </div>
 
                                 {selectedCourseIds.length > 0 && (
                                     <p style={{
-                                        fontSize: '12px',
+                                        fontSize: '11px',
                                         color: BRAND.success,
-                                        marginTop: '8px',
+                                        marginTop: '6px',
                                         fontWeight: '600'
                                     }}>
                                         ✓ {selectedCourseIds.length} course{selectedCourseIds.length !== 1 ? 's' : ''} selected
