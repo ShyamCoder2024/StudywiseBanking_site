@@ -56,6 +56,13 @@
     padding-bottom: 100px;
 }
 
+/* Mobile: Extra padding for bottom navbar */
+@media (max-width: 768px) {
+    .test-center-page {
+        padding-bottom: 160px;
+    }
+}
+
 /* Hero Section */
 .test-center-hero {
     padding: 40px 20px 30px;
