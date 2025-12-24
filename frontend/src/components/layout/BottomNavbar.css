@@ -63,9 +63,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 32px;
-    border-radius: 16px;
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
     transition: all 0.2s ease;
 }
 
@@ -92,30 +92,7 @@
     color: var(--color-primary);
 }
 
-/* Active Indicator Dot */
-.bottom-nav-indicator {
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    animation: indicatorPulse 0.3s ease;
-}
 
-@keyframes indicatorPulse {
-    0% {
-        transform: translateX(-50%) scale(0);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateX(-50%) scale(1);
-        opacity: 1;
-    }
-}
 
 /* Hover effect for touch devices */
 @media (hover: hover) {
