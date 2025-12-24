@@ -270,9 +270,22 @@ router.get('/quizzes/all', async (req, res, next) => {
             .populate('questionCount')
             .sort({ createdAt: -1 });
 
-        // Get user's attempts to determine which quizzes are completed
-        const attempts = await Attempt.find({ user: req.user._id });
-        const completedQuizIds = attempts.map(a => a.quiz.toString());
+        // Get user's SUBMITTED attempts only (not in-progress ones)
+        // An attempt is considered complete only if submittedAt exists
+        const attempts = await Attempt.find({
+            user: req.user._id,
+            submittedAt: { $exists: true, $ne: null }  // Only completed/submitted attempts
+        });
+
+        // Create a map of quiz ID to completed attempt
+        const completedAttemptMap = {};
+        attempts.forEach(a => {
+            // Store the most recent attempt for each quiz
+            const quizId = a.quiz.toString();
+            if (!completedAttemptMap[quizId] || new Date(a.submittedAt) > new Date(completedAttemptMap[quizId].submittedAt)) {
+                completedAttemptMap[quizId] = a;
+            }
+        });
 
         // Organize quizzes
         const activeQuizzes = [];
@@ -292,13 +305,16 @@ router.get('/quizzes/all', async (req, res, next) => {
                 createdAt: q.createdAt,
             };
 
-            if (completedQuizIds.includes(q._id.toString())) {
-                // Find the attempt for this quiz
-                const attempt = attempts.find(a => a.quiz.toString() === q._id.toString());
-                quizData.score = attempt?.score;
-                quizData.attemptId = attempt?._id;
+            const completedAttempt = completedAttemptMap[q._id.toString()];
+
+            if (completedAttempt) {
+                // Quiz has a submitted attempt - it's completed
+                quizData.score = completedAttempt.score;
+                quizData.attemptId = completedAttempt._id;
+                quizData.completedAt = completedAttempt.submittedAt;
                 completedQuizzes.push(quizData);
             } else {
+                // No submitted attempt - quiz is active
                 activeQuizzes.push(quizData);
             }
         });
