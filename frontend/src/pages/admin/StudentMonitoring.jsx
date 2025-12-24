@@ -40,6 +40,10 @@ export function StudentMonitoring() {
     const [showBatchModal, setShowBatchModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState('');
     const [selectedBatch, setSelectedBatch] = useState('');
+    // Course duration state
+    const [courseDuration, setCourseDuration] = useState('');
+    const [durationType, setDurationType] = useState('months'); // 'days' or 'months'
+
 
     useEffect(() => {
         fetchStudents();
@@ -49,14 +53,21 @@ export function StudentMonitoring() {
     const fetchCourses = async () => {
         try {
             const res = await api.get('/admin/courses');
-            setAvailableCourses(res.data.data || []);
-        } catch {
-            setAvailableCourses([
-                { id: 'banking-complete-2024', name: 'Complete Banking Course 2024', batches: ['Batch A', 'Batch B', 'Batch C'] },
-                { id: 'sbi-po-2024', name: 'SBI PO 2024', batches: ['January Batch', 'March Batch'] },
-                { id: 'ibps-clerk-2024', name: 'IBPS Clerk 2024', batches: ['Main Batch'] },
-                { id: 'rbi-grade-b', name: 'RBI Grade B', batches: ['Phase 1', 'Phase 2'] }
-            ]);
+            const courses = res.data.data || [];
+
+            // Map courses to ensure they have batches array
+            const coursesWithBatches = courses.map(course => ({
+                ...course,
+                batches: course.batches && course.batches.length > 0
+                    ? course.batches
+                    : ['Main Batch'] // Default batch if none specified
+            }));
+
+            setAvailableCourses(coursesWithBatches);
+        } catch (error) {
+            console.error('Failed to fetch courses:', error);
+            // Show empty instead of dummy data - admin needs to add real courses
+            setAvailableCourses([]);
         }
     };
 
@@ -106,15 +117,21 @@ export function StudentMonitoring() {
             // If marking as paid, show batch selection modal
             setSelectedCourseId('');
             setSelectedBatch('');
+            setCourseDuration('');
+            setDurationType('months');
             setShowBatchModal(true);
         }
     };
 
-    // Confirm enrollment with selected batch
+    // Confirm enrollment with selected batch and duration
     const confirmEnrollmentWithBatch = async () => {
         if (!selectedStudent) return;
         if (!selectedCourseId || !selectedBatch) {
             alert('Please select both a course and a batch');
+            return;
+        }
+        if (!courseDuration || parseInt(courseDuration) <= 0) {
+            alert('Please enter a valid course duration');
             return;
         }
 
@@ -124,20 +141,36 @@ export function StudentMonitoring() {
             return;
         }
 
+        // Calculate expiry date
+        const enrollmentDate = new Date();
+        const expiryDate = new Date(enrollmentDate);
+
+        if (durationType === 'months') {
+            expiryDate.setMonth(expiryDate.getMonth() + parseInt(courseDuration));
+        } else {
+            expiryDate.setDate(expiryDate.getDate() + parseInt(courseDuration));
+        }
+
         setSavingEnrollment(true);
         try {
             await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
                 isPaid: true,
                 courseId: course.id || course._id,
                 courseName: course.name,
-                batch: selectedBatch
+                batch: selectedBatch,
+                duration: parseInt(courseDuration),
+                durationType: durationType,
+                expiryDate: expiryDate.toISOString()
             });
 
             const newCourse = {
                 courseId: course.id || course._id,
                 courseName: course.name,
                 batch: selectedBatch,
-                enrolledAt: new Date()
+                enrolledAt: new Date(),
+                duration: parseInt(courseDuration),
+                durationType: durationType,
+                expiryDate: expiryDate.toISOString()
             };
 
             setSelectedStudent(prev => ({
@@ -156,6 +189,8 @@ export function StudentMonitoring() {
             ));
 
             setShowBatchModal(false);
+            setCourseDuration('');
+            setDurationType('months');
         } catch (err) {
             alert('Failed to enroll student');
         } finally {
@@ -676,7 +711,9 @@ export function StudentMonitoring() {
                                                 borderRadius: '8px',
                                                 border: `1px solid ${BRAND.border}`,
                                                 fontSize: '13px',
-                                                outline: 'none'
+                                                outline: 'none',
+                                                color: BRAND.text,
+                                                backgroundColor: BRAND.card
                                             }}
                                             onKeyDown={(e) => e.key === 'Enter' && addTag()}
                                         />
@@ -723,6 +760,18 @@ export function StudentMonitoring() {
                                                         <div>
                                                             <div style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text }}>{course.courseName}</div>
                                                             <div style={{ fontSize: '11px', color: BRAND.textMuted }}>{course.batch}</div>
+                                                            {course.expiryDate && (
+                                                                <div style={{
+                                                                    fontSize: '11px',
+                                                                    color: new Date(course.expiryDate) < new Date() ? BRAND.warning : BRAND.success,
+                                                                    fontWeight: '600',
+                                                                    marginTop: '4px'
+                                                                }}>
+                                                                    {new Date(course.expiryDate) < new Date() ?
+                                                                        `❌ Expired on ${new Date(course.expiryDate).toLocaleDateString('en-IN')}` :
+                                                                        `✅ Valid until ${new Date(course.expiryDate).toLocaleDateString('en-IN')}`}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <Check size={16} color={BRAND.success} />
                                                     </div>
@@ -918,12 +967,13 @@ export function StudentMonitoring() {
                                         fontSize: '14px',
                                         fontWeight: '500',
                                         backgroundColor: BRAND.card,
+                                        color: BRAND.text,
                                         cursor: 'pointer',
                                         outline: 'none',
                                         transition: 'border-color 0.2s'
                                     }}
                                 >
-                                    <option value="">-- Choose a course --</option>
+                                    <option value="">{availableCourses.length === 0 ? '⚠️ No courses available - Add courses first' : '-- Choose a course --'}</option>
                                     {availableCourses.map(course => (
                                         <option key={course.id || course._id} value={course.id || course._id}>
                                             {course.name}
@@ -957,6 +1007,7 @@ export function StudentMonitoring() {
                                         fontSize: '14px',
                                         fontWeight: '500',
                                         backgroundColor: !selectedCourseId ? BRAND.bg : BRAND.card,
+                                        color: BRAND.text,
                                         cursor: selectedCourseId ? 'pointer' : 'not-allowed',
                                         outline: 'none',
                                         opacity: selectedCourseId ? 1 : 0.6,
@@ -974,8 +1025,77 @@ export function StudentMonitoring() {
                                 </select>
                             </div>
 
+                            {/* Duration Selection - NEW */}
+                            <div style={{ marginBottom: '24px' }}>
+                                <label style={{
+                                    display: 'block',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    color: BRAND.textSecondary,
+                                    marginBottom: '8px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    Course Access Duration *
+                                </label>
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <input
+                                        type="number"
+                                        value={courseDuration}
+                                        onChange={(e) => setCourseDuration(e.target.value)}
+                                        placeholder="Enter duration"
+                                        min="1"
+                                        style={{
+                                            flex: 1,
+                                            padding: '14px 16px',
+                                            borderRadius: '10px',
+                                            border: `2px solid ${courseDuration ? BRAND.success : BRAND.border}`,
+                                            fontSize: '14px',
+                                            fontWeight: '500',
+                                            color: BRAND.text,
+                                            backgroundColor: BRAND.card,
+                                            outline: 'none',
+                                            transition: 'border-color 0.2s'
+                                        }}
+                                    />
+                                    <select
+                                        value={durationType}
+                                        onChange={(e) => setDurationType(e.target.value)}
+                                        style={{
+                                            width: '130px',
+                                            padding: '14px 16px',
+                                            borderRadius: '10px',
+                                            border: `2px solid ${BRAND.border}`,
+                                            fontSize: '14px',
+                                            fontWeight: '500',
+                                            color: BRAND.text,
+                                            backgroundColor: BRAND.card,
+                                            cursor: 'pointer',
+                                            outline: 'none'
+                                        }}
+                                    >
+                                        <option value="days">Days</option>
+                                        <option value="months">Months</option>
+                                    </select>
+                                </div>
+                                {courseDuration && (
+                                    <p style={{
+                                        fontSize: '12px',
+                                        color: BRAND.success,
+                                        marginTop: '8px',
+                                        fontWeight: '500'
+                                    }}>
+                                        📅 Access will expire on {new Date(new Date().setMonth(
+                                            durationType === 'months'
+                                                ? new Date().getMonth() + parseInt(courseDuration || 0)
+                                                : new Date().getMonth()
+                                        ) + (durationType === 'days' ? parseInt(courseDuration || 0) * 24 * 60 * 60 * 1000 : 0)).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    </p>
+                                )}
+                            </div>
+
                             {/* Summary */}
-                            {selectedCourseId && selectedBatch && (
+                            {selectedCourseId && selectedBatch && courseDuration && (
                                 <div style={{
                                     backgroundColor: BRAND.successLight,
                                     borderRadius: '10px',
@@ -990,6 +1110,10 @@ export function StudentMonitoring() {
                                     <p style={{ fontSize: '13px', color: BRAND.text, margin: 0 }}>
                                         <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong> will be enrolled in{' '}
                                         <strong>{availableCourses.find(c => (c.id || c._id) === selectedCourseId)?.name}</strong> ({selectedBatch})
+                                        <br />
+                                        <span style={{ fontSize: '12px', color: BRAND.success, fontWeight: '600' }}>
+                                            ⏱️ Access: {courseDuration} {durationType}
+                                        </span>
                                     </p>
                                 </div>
                             )}
@@ -1021,16 +1145,16 @@ export function StudentMonitoring() {
                             </button>
                             <button
                                 onClick={confirmEnrollmentWithBatch}
-                                disabled={!selectedCourseId || !selectedBatch || savingEnrollment}
+                                disabled={!selectedCourseId || !selectedBatch || !courseDuration || savingEnrollment}
                                 style={{
                                     padding: '12px 24px',
                                     borderRadius: '10px',
                                     border: 'none',
-                                    backgroundColor: (!selectedCourseId || !selectedBatch) ? BRAND.border : BRAND.success,
+                                    backgroundColor: (!selectedCourseId || !selectedBatch || !courseDuration) ? BRAND.border : BRAND.success,
                                     color: '#ffffff',
                                     fontSize: '14px',
                                     fontWeight: '600',
-                                    cursor: (!selectedCourseId || !selectedBatch) ? 'not-allowed' : 'pointer',
+                                    cursor: (!selectedCourseId || !selectedBatch || !courseDuration) ? 'not-allowed' : 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '8px',
