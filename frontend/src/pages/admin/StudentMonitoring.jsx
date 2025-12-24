@@ -41,6 +41,7 @@ export function StudentMonitoring() {
     const [selectedCourseId, setSelectedCourseId] = useState('');
     const [selectedCourseIds, setSelectedCourseIds] = useState([]); // NEW: Multi-course selection
     const [selectedBatch, setSelectedBatch] = useState('');
+    const [selectedBatches, setSelectedBatches] = useState([]); // NEW: Multi-batch selection
     // Course duration state
     const [courseDuration, setCourseDuration] = useState('');
     const [durationType, setDurationType] = useState('months'); // 'days' or 'months'
@@ -135,15 +136,32 @@ export function StudentMonitoring() {
         });
     };
 
-    // Confirm enrollment with selected batch and duration (Multi-course support)
+    // Toggle batch selection for multi-select
+    const toggleBatchSelection = (batchName) => {
+        setSelectedBatches(prev => {
+            if (prev.includes(batchName)) {
+                return prev.filter(b => b !== batchName);
+            } else {
+                return [...prev, batchName];
+            }
+        });
+    };
+
+    // Confirm enrollment with selected batch and duration (Multi-course & Multi-batch support)
     const confirmEnrollmentWithBatch = async () => {
         if (!selectedStudent) return;
 
         // Support both single and multi-course selection
         const coursesToEnroll = selectedCourseIds.length > 0 ? selectedCourseIds : (selectedCourseId ? [selectedCourseId] : []);
+        // Support both single and multi-batch selection
+        const batchesToEnroll = selectedBatches.length > 0 ? selectedBatches : (selectedBatch ? [selectedBatch] : []);
 
-        if (coursesToEnroll.length === 0 || !selectedBatch) {
-            alert('Please select at least one course and a batch');
+        if (coursesToEnroll.length === 0) {
+            alert('Please select at least one course');
+            return;
+        }
+        if (batchesToEnroll.length === 0) {
+            alert('Please select at least one batch');
             return;
         }
         if (!courseDuration || parseInt(courseDuration) <= 0) {
@@ -163,11 +181,12 @@ export function StudentMonitoring() {
 
         setSavingEnrollment(true);
         try {
-            // NEW: Use single API call with courseIds array for efficiency
+            // NEW: Use single API call with courseIds and batches arrays
             const response = await api.put(`/admin/students/${selectedStudent._id}/enrollment`, {
                 isPaid: true,
                 courseIds: coursesToEnroll,  // Array of course IDs
-                batch: selectedBatch,
+                batches: batchesToEnroll,    // Array of batch names
+                batch: batchesToEnroll.join(', '), // Fallback for backward compatibility
                 duration: parseInt(courseDuration),
                 durationType: durationType,
                 expiryDate: expiryDate.toISOString()
@@ -179,7 +198,8 @@ export function StudentMonitoring() {
                 return {
                     courseId: course?.id || course?._id || courseId,
                     courseName: course?.name || 'Course',
-                    batch: selectedBatch,
+                    batch: batchesToEnroll.join(', '),
+                    batches: batchesToEnroll,
                     enrolledAt: new Date(),
                     duration: parseInt(courseDuration),
                     durationType: durationType,
@@ -205,8 +225,10 @@ export function StudentMonitoring() {
             setShowBatchModal(false);
             setCourseDuration('');
             setDurationType('months');
-            setSelectedCourseIds([]); // Clear multi-select
-            alert(`✅ Successfully enrolled in ${coursesToEnroll.length} course(s)!`);
+            setSelectedCourseIds([]); // Clear multi-select courses
+            setSelectedBatches([]); // Clear multi-select batches
+            setSelectedBatch(''); // Clear single batch
+            alert(`✅ Successfully enrolled in ${coursesToEnroll.length} course(s) with ${batchesToEnroll.length} batch(es)!`);
         } catch (err) {
             alert('Failed to enroll student');
         } finally {
@@ -1164,43 +1186,135 @@ export function StudentMonitoring() {
                                 )}
                             </div>
 
-                            {/* Batch Selection */}
+                            {/* Batch Selection - Multi-select with Checkboxes */}
                             <div style={{ marginBottom: '16px' }}>
-                                <label style={{
-                                    display: 'block',
-                                    fontSize: '11px',
-                                    fontWeight: '600',
-                                    color: BRAND.textSecondary,
-                                    marginBottom: '6px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.5px'
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <label style={{
+                                        fontSize: '11px',
+                                        fontWeight: '600',
+                                        color: BRAND.textSecondary,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        Select Batch(es) *
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '6px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const allBatches = ['All Batches', ...Array.from(new Set(availableCourses.flatMap(c => c.batches || [c.batchName || 'Main Batch']))).filter(b => b)];
+                                                setSelectedBatches(allBatches);
+                                            }}
+                                            style={{
+                                                padding: '4px 10px',
+                                                fontSize: '10px',
+                                                fontWeight: '600',
+                                                color: BRAND.primary,
+                                                background: 'transparent',
+                                                border: `1px solid ${BRAND.primary}`,
+                                                borderRadius: '6px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            Select All
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedBatches([])}
+                                            style={{
+                                                padding: '4px 10px',
+                                                fontSize: '10px',
+                                                fontWeight: '600',
+                                                color: BRAND.textMuted,
+                                                background: 'transparent',
+                                                border: `1px solid ${BRAND.border}`,
+                                                borderRadius: '6px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '4px',
+                                    maxHeight: '150px',
+                                    overflowY: 'auto',
+                                    padding: '6px',
+                                    backgroundColor: BRAND.bg,
+                                    borderRadius: '8px',
+                                    border: `1px solid ${selectedBatches.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
-                                    Select Batch *
-                                </label>
-                                <select
-                                    value={selectedBatch}
-                                    onChange={(e) => setSelectedBatch(e.target.value)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px 14px',
-                                        borderRadius: '8px',
-                                        border: `2px solid ${selectedBatch ? BRAND.success : BRAND.border}`,
-                                        fontSize: '13px',
-                                        fontWeight: '500',
-                                        color: BRAND.text,
-                                        backgroundColor: BRAND.card,
-                                        cursor: 'pointer',
-                                        outline: 'none',
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                >
-                                    <option value="">-- Choose a batch --</option>
-                                    <option value="All Batches">📚 All Batches</option>
-                                    {/* Get unique batches from all courses */}
+                                    {/* All Batches Option */}
+                                    <label
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            padding: '8px 10px',
+                                            backgroundColor: selectedBatches.includes('All Batches') ? BRAND.primaryLight : BRAND.card,
+                                            borderRadius: '6px',
+                                            border: `1px solid ${selectedBatches.includes('All Batches') ? BRAND.primary : BRAND.border}`,
+                                            cursor: 'pointer',
+                                            fontWeight: '600'
+                                        }}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedBatches.includes('All Batches')}
+                                            onChange={() => toggleBatchSelection('All Batches')}
+                                            style={{ width: '14px', height: '14px', accentColor: BRAND.primary }}
+                                        />
+                                        <span style={{ fontSize: '12px', color: BRAND.primary }}>📚 All Batches (Full Access)</span>
+                                    </label>
+
+                                    {/* Individual Batches */}
                                     {Array.from(new Set(availableCourses.flatMap(c => c.batches || [c.batchName || 'Main Batch']))).filter(b => b).map(batch => (
-                                        <option key={batch} value={batch}>{batch}</option>
+                                        <label
+                                            key={batch}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                padding: '8px 10px',
+                                                backgroundColor: selectedBatches.includes(batch) ? BRAND.successLight : BRAND.card,
+                                                borderRadius: '6px',
+                                                border: `1px solid ${selectedBatches.includes(batch) ? BRAND.success : BRAND.border}`,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedBatches.includes(batch)}
+                                                onChange={() => toggleBatchSelection(batch)}
+                                                style={{
+                                                    width: '14px',
+                                                    height: '14px',
+                                                    cursor: 'pointer',
+                                                    accentColor: BRAND.success
+                                                }}
+                                            />
+                                            <div style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>
+                                                {batch}
+                                            </div>
+                                        </label>
                                     ))}
-                                </select>
+                                </div>
+
+                                {selectedBatches.length > 0 && (
+                                    <p style={{
+                                        fontSize: '11px',
+                                        color: BRAND.success,
+                                        marginTop: '6px',
+                                        fontWeight: '600'
+                                    }}>
+                                        ✓ {selectedBatches.length} batch{selectedBatches.length !== 1 ? 'es' : ''} selected
+                                    </p>
+                                )}
                             </div>
 
                             {/* Duration Selection */}
@@ -1273,7 +1387,7 @@ export function StudentMonitoring() {
                             </div>
 
                             {/* Summary */}
-                            {selectedCourseIds.length > 0 && selectedBatch && courseDuration && (
+                            {selectedCourseIds.length > 0 && selectedBatches.length > 0 && courseDuration && (
                                 <div style={{
                                     backgroundColor: BRAND.successLight,
                                     borderRadius: '10px',
@@ -1287,11 +1401,17 @@ export function StudentMonitoring() {
                                     </div>
                                     <p style={{ fontSize: '13px', color: BRAND.text, margin: 0 }}>
                                         <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong> will be enrolled in{' '}
-                                        <strong>{selectedCourseIds.length} course{selectedCourseIds.length !== 1 ? 's' : ''}</strong> ({selectedBatch})
+                                        <strong>{selectedCourseIds.length} course{selectedCourseIds.length !== 1 ? 's' : ''}</strong> with{' '}
+                                        <strong>{selectedBatches.length} batch{selectedBatches.length !== 1 ? 'es' : ''}</strong>
                                         <br />
                                         {selectedCourseIds.length <= 3 && (
                                             <span style={{ fontSize: '12px', color: BRAND.textMuted, display: 'block', marginTop: '6px' }}>
                                                 📚 {selectedCourseIds.map(id => availableCourses.find(c => (c._id || c.id) === id)?.name).join(', ')}
+                                            </span>
+                                        )}
+                                        {selectedBatches.length <= 3 && (
+                                            <span style={{ fontSize: '12px', color: BRAND.textMuted, display: 'block', marginTop: '4px' }}>
+                                                🎯 {selectedBatches.join(', ')}
                                             </span>
                                         )}
                                         <span style={{ fontSize: '12px', color: BRAND.success, fontWeight: '600', display: 'block', marginTop: '6px' }}>
@@ -1328,16 +1448,16 @@ export function StudentMonitoring() {
                             </button>
                             <button
                                 onClick={confirmEnrollmentWithBatch}
-                                disabled={!selectedCourseId || !selectedBatch || !courseDuration || savingEnrollment}
+                                disabled={selectedCourseIds.length === 0 || selectedBatches.length === 0 || !courseDuration || savingEnrollment}
                                 style={{
                                     padding: '12px 24px',
                                     borderRadius: '10px',
                                     border: 'none',
-                                    backgroundColor: (!selectedCourseId || !selectedBatch || !courseDuration) ? BRAND.border : BRAND.success,
+                                    backgroundColor: (selectedCourseIds.length === 0 || selectedBatches.length === 0 || !courseDuration) ? BRAND.border : BRAND.success,
                                     color: '#ffffff',
                                     fontSize: '14px',
                                     fontWeight: '600',
-                                    cursor: (!selectedCourseId || !selectedBatch || !courseDuration) ? 'not-allowed' : 'pointer',
+                                    cursor: (selectedCourseIds.length === 0 || selectedBatches.length === 0 || !courseDuration) ? 'not-allowed' : 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '8px',
