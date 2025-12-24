@@ -489,6 +489,39 @@
     margin: 0;
 }
 
+/* ========================================
+   Responsive - Laptop & Tablet (Fix Thumbnail)
+   ======================================== */
+@media (min-width: 701px) {
+    .course-card {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .course-thumbnail {
+        width: 280px;
+        min-width: 280px;
+        height: auto;
+        min-height: 160px;
+        aspect-ratio: unset;
+    }
+
+    .course-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .course-card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 16px 20px;
+    }
+}
+
 /* Responsive - Tablet (Switch to Vertical Cards) */
 @media (max-width: 700px) {
     .course-card {
