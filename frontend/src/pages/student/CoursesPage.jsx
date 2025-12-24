@@ -148,9 +148,7 @@ export default function CoursesPage() {
                                 <h3>{course.title}</h3>
                                 <p className="course-batch">{course.batchName}</p>
 
-                                {course.description && (
-                                    <p className="course-desc">{course.description}</p>
-                                )}
+                                {/* Description removed from card - shown on course detail page */}
 
                                 {/* Pricing Row - All price info together */}
                                 {(course.pricing?.originalPrice > 0 || course.pricing?.currentPrice > 0) && (
