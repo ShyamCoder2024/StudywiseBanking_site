@@ -1167,7 +1167,7 @@
     grid-column: span 3;
 }
 
-/* Desktop (Fixed Grid - Adjusted after removing video-tile) */
+/* Desktop (Fixed Grid - Course spans 2 columns, Todo fills gap) */
 @media (min-width: 1025px) {
     .bento-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -1179,13 +1179,13 @@
         grid-row: 1;
     }
 
-    /* Course card in top right of row 1 */
+    /* Course card spans 2 columns on the right */
     .course-card-dynamic {
-        grid-column: 3;
+        grid-column: 3 / 5;
         grid-row: 1;
     }
 
-    /* AI Coach spans 2 columns now that video-tile is removed */
+    /* AI Coach spans 2 columns */
     .ai-coach-card {
         grid-column: 1 / 3;
         grid-row: 2;
@@ -1196,23 +1196,20 @@
         grid-row: 2;
     }
 
-    /* video-tile REMOVED */
-
+    /* Todo fills the gap in column 4, row 2 */
     .todo-tile {
         grid-column: 4;
-        grid-row: 1 / 3;
+        grid-row: 2;
     }
 
     .rank-tile {
-        grid-column: 1 / 4;
+        grid-column: 1 / 5;
         grid-row: 3;
     }
 
     .stats-tile-2 {
         display: none;
     }
-
-    /* Removing Stats2 to make room for content */
 }
 
 /* Back Button */
