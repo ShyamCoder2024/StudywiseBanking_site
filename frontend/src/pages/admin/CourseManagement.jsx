@@ -412,13 +412,25 @@ export function CourseManagement() {
 
                 {/* Course Modal */}
                 {showCourseModal && (
-                    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px' }} onClick={() => setShowCourseModal(false)}>
-                        <div style={{ backgroundColor: BRAND.card, borderRadius: '16px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()}>
-                            <div style={{ padding: '20px', borderBottom: `1px solid ${BRAND.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px', overflowY: 'auto' }} onClick={() => setShowCourseModal(false)}>
+                        <div style={{
+                            backgroundColor: BRAND.card,
+                            borderRadius: '16px',
+                            width: '100%',
+                            maxWidth: '500px',
+                            maxHeight: '90vh',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+                            margin: 'auto'
+                        }} onClick={e => e.stopPropagation()}>
+                            {/* Fixed Header */}
+                            <div style={{ padding: '20px', borderBottom: `1px solid ${BRAND.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
                                 <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0, color: BRAND.text }}>{editingCourse ? 'Edit Course' : 'Add New Course'}</h3>
                                 <button onClick={() => setShowCourseModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={BRAND.textMuted} /></button>
                             </div>
-                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {/* Scrollable Body */}
+                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1 }}>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '8px', display: 'block' }}>Course Thumbnail</label>
                                     <input
@@ -591,7 +603,8 @@ export function CourseManagement() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                            {/* Fixed Footer */}
+                            <div style={{ padding: '20px', borderTop: `1px solid ${BRAND.border}`, display: 'flex', gap: '12px', justifyContent: 'flex-end', flexShrink: 0 }}>
                                 <button onClick={() => setShowCourseModal(false)} style={{ padding: '12px 20px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.card, color: BRAND.text, fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
                                 <button onClick={saveCourse} disabled={saving} style={{ padding: '12px 20px', borderRadius: '8px', border: 'none', backgroundColor: BRAND.primary, color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', opacity: saving ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <Save size={16} /> {saving ? 'Saving...' : 'Save Course'}
