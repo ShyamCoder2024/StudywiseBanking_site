@@ -11,22 +11,23 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.85);
-    border-top: 1px solid rgba(138, 117, 186, 0.1);
-    padding: 8px 0;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.92);
+    border-top: none;
+    padding: 10px 0;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
     /* iOS safe area with fallback */
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     will-change: transform;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
 }
 
 /* Dark mode adjustments */
 :root.dark .bottom-navbar {
     background: rgba(26, 26, 26, 0.95);
-    border-top-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Nav Items Container - Grid for equal spacing */
