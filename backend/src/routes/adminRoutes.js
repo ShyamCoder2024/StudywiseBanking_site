@@ -597,21 +597,31 @@ router.put('/settings/:key', async (req, res, next) => {
 
 router.get('/courses', async (req, res, next) => {
     try {
-        // Get courses from settings or return defaults
-        const coursesSetting = await GlobalSettings.findOne({ key: 'available_courses' });
+        // Fetch REAL courses from the database
+        const courses = await Course.find({ isPublished: true })
+            .select('_id title subject batchName description lectures')
+            .sort({ createdAt: -1 })
+            .lean();
 
-        const defaultCourses = [
-            { id: 'banking-complete-2024', name: 'Complete Banking Course 2024', batches: ['Batch A', 'Batch B', 'Batch C'] },
-            { id: 'sbi-po-2024', name: 'SBI PO 2024', batches: ['January Batch', 'March Batch'] },
-            { id: 'ibps-clerk-2024', name: 'IBPS Clerk 2024', batches: ['Main Batch'] },
-            { id: 'rbi-grade-b', name: 'RBI Grade B', batches: ['Phase 1', 'Phase 2'] }
-        ];
+        // Transform to match expected format
+        const formattedCourses = courses.map(course => ({
+            _id: course._id,
+            id: course._id, // Include both for compatibility
+            name: course.title,
+            subject: course.subject,
+            batches: course.batchName ? [course.batchName] : ['Main Batch'], // Convert to array
+            description: course.description || '',
+            lectureCount: course.lectures?.length || 0
+        }));
 
         res.json({
             success: true,
-            data: coursesSetting?.value || defaultCourses
+            data: formattedCourses
         });
-    } catch (error) { next(error); }
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        next(error);
+    }
 });
 
 // Note: Video management has been replaced with AI-powered YouTube integration
