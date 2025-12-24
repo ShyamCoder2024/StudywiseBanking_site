@@ -40,13 +40,20 @@ export default function TutorVideosPage() {
     };
 
     const handleRefresh = async () => {
+        console.log('🔄 Refresh button clicked - clearing cache and fetching fresh videos');
         setRefreshing(true);
+        setVideos([]); // Clear current videos to show loading state
         try {
-            // Clear cache and refetch
-            await api.post('/student/videos/refresh');
+            // Clear cache on backend
+            const clearResponse = await api.post('/student/videos/refresh');
+            console.log('✅ Cache cleared:', clearResponse.data);
+
+            // Fetch fresh videos
             await fetchVideos();
+            console.log('✅ Fresh videos fetched successfully');
         } catch (err) {
-            console.error('Failed to refresh:', err);
+            console.error('❌ Failed to refresh:', err);
+            setError('Failed to refresh videos. Please try again.');
         } finally {
             setRefreshing(false);
         }
@@ -195,8 +202,17 @@ export default function TutorVideosPage() {
                                         src={video.thumbnailUrl}
                                         alt={video.title}
                                         onError={(e) => {
-                                            // Try lower quality thumbnail on error
-                                            e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                                            // Multiple fallback attempts
+                                            if (e.target.src.includes('maxresdefault')) {
+                                                // Try high quality
+                                                e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                                            } else if (e.target.src.includes('hqdefault')) {
+                                                // Try medium quality
+                                                e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`;
+                                            } else {
+                                                // Last resort - default
+                                                e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`;
+                                            }
                                         }}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
