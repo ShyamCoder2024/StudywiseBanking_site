@@ -538,16 +538,16 @@ export function StudentMonitoring() {
                         {/* Modal Header - DRD Primary Color */}
                         <div style={{
                             backgroundColor: BRAND.primary,
-                            padding: '20px',
+                            padding: '12px 14px',
                             position: 'relative'
                         }}>
                             <button
                                 onClick={() => setSelectedStudent(null)}
                                 style={{
                                     position: 'absolute',
-                                    top: '16px',
-                                    right: '16px',
-                                    padding: '8px',
+                                    top: '10px',
+                                    right: '10px',
+                                    padding: '5px',
                                     borderRadius: '50%',
                                     border: 'none',
                                     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -561,33 +561,33 @@ export function StudentMonitoring() {
                                 <X size={18} />
                             </button>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <div style={{
-                                    width: 64,
-                                    height: 64,
+                                    width: 44,
+                                    height: 44,
                                     borderRadius: '50%',
                                     backgroundColor: 'rgba(255,255,255,0.2)',
-                                    border: '3px solid rgba(255,255,255,0.4)',
+                                    border: '2px solid rgba(255,255,255,0.4)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     color: '#fff',
                                     fontWeight: '700',
-                                    fontSize: '22px'
+                                    fontSize: '16px'
                                 }}>
                                     {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
                                 </div>
                                 <div>
-                                    <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', margin: 0 }}>
+                                    <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: 0 }}>
                                         {selectedStudent.firstName} {selectedStudent.lastName}
                                     </h2>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                                         <span style={{
-                                            padding: '4px 10px',
-                                            borderRadius: '6px',
+                                            padding: '2px 8px',
+                                            borderRadius: '4px',
                                             backgroundColor: 'rgba(255,255,255,0.2)',
                                             color: '#fff',
-                                            fontSize: '12px',
+                                            fontSize: '10px',
                                             fontWeight: '600'
                                         }}>
                                             Rank #{selectedStudent.rank || 'N/A'}
@@ -598,12 +598,12 @@ export function StudentMonitoring() {
                         </div>
 
                         {/* Modal Body - Scrollable */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '4px' }}>
 
                             {/* Performance Stats - Top */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
-                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Performance Stats</h4>
-                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '4px 6px', marginBottom: '4px' }}>
+                                <h4 style={{ fontSize: '8px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 2px 0' }}>Performance Stats</h4>
+                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
                                     <div style={{ textAlign: 'center', padding: '4px 2px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
                                         <div style={{ fontSize: '16px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
                                         <div style={{ fontSize: '8px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Avg Score</div>
@@ -620,15 +620,15 @@ export function StudentMonitoring() {
                             </div>
 
                             {/* Personal Information */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
-                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Personal Information</h4>
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '4px 6px', marginBottom: '4px' }}>
+                                <h4 style={{ fontSize: '8px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 2px 0' }}>Personal Information</h4>
 
                                 {/* Preparing For */}
                                 <div style={{
                                     backgroundColor: BRAND.primaryLight,
                                     borderRadius: '4px',
-                                    padding: '4px 8px',
-                                    marginBottom: '4px',
+                                    padding: '3px 6px',
+                                    marginBottom: '2px',
                                     border: `1px solid ${BRAND.primary}30`,
                                     display: 'flex',
                                     justifyContent: 'space-between',
@@ -644,9 +644,9 @@ export function StudentMonitoring() {
                                 </div>
 
                                 {/* Info Grid */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                     {/* Row 1: Gender & Age */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
                                             <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Gender</span>
                                             <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
@@ -670,7 +670,7 @@ export function StudentMonitoring() {
                                     </div>
 
                                     {/* Row 4: Joined & Account */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', backgroundColor: BRAND.card, borderRadius: '4px', border: `1px solid ${BRAND.border}` }}>
                                             <span style={{ fontSize: '9px', color: BRAND.textMuted }}>Joined</span>
                                             <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
@@ -684,9 +684,9 @@ export function StudentMonitoring() {
                             </div>
 
                             {/* Enrollment Management Section */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '8px', padding: '6px 8px', marginBottom: '6px' }}>
-                                <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <CreditCard size={10} />
+                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '4px 6px', marginBottom: '4px' }}>
+                                <h4 style={{ fontSize: '8px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 2px 0', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                    <CreditCard size={9} />
                                     Enrollment Management
                                 </h4>
 
@@ -695,10 +695,10 @@ export function StudentMonitoring() {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    padding: '6px 8px',
+                                    padding: '4px 6px',
                                     backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.successLight : BRAND.warningLight,
                                     borderRadius: '4px',
-                                    marginBottom: '4px',
+                                    marginBottom: '3px',
                                     border: `1px solid ${selectedStudent.enrollment?.isPaid ? BRAND.success : BRAND.warning}30`
                                 }}>
                                     <div>
