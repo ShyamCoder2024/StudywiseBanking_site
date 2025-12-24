@@ -46,56 +46,29 @@
 }
 
 /* ============================================
-   MOBILE-ONLY: Logo & Branding in Dashboard
+   MOBILE-ONLY: Sticky Profile Button
    ============================================ */
-.mobile-dashboard-branding {
+.mobile-sticky-profile {
     display: none;
 }
 
 @media (max-width: 768px) {
-    .mobile-dashboard-branding {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .mobile-logo {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .mobile-brand-name {
-        font-size: 16px;
-        font-weight: 800;
-        color: var(--color-text);
-        letter-spacing: -0.3px;
-    }
-}
-
-/* ============================================
-   MOBILE-ONLY: Fixed Floating Profile Button
-   ============================================ */
-.mobile-floating-profile {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .mobile-floating-profile {
+    .mobile-sticky-profile {
         display: block;
-        position: fixed;
-        top: 16px;
-        right: 16px;
+        position: sticky;
+        top: 12px;
+        right: 0;
+        margin-left: auto;
+        margin-bottom: -50px;
+        width: 40px;
         z-index: 999;
         border-radius: 50%;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         transition: transform 0.2s ease;
     }
 
-    .mobile-floating-profile:hover,
-    .mobile-floating-profile:active {
+    .mobile-sticky-profile:hover,
+    .mobile-sticky-profile:active {
         transform: scale(1.05);
     }
 }
