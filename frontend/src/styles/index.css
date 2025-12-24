@@ -28,7 +28,7 @@
   --color-border: #E5E7EB;
 
   /* Typography */
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
 
   /* Font Sizes - Fluid Typography */
   --font-size-xs: clamp(11px, 1.5vw, 12px);
