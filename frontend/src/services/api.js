@@ -4,17 +4,19 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/ap
 
 // Simple in-memory cache for GET requests
 const apiCache = new Map();
-const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+const pendingRequests = new Map(); // Prevent duplicate requests
+const CACHE_TTL = 60 * 1000; // 1 minute cache (reduced for fresher data)
 
 const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br', // Request compressed responses
     },
-    timeout: 15000, // 15 seconds - faster error feedback
+    timeout: 10000, // 10 seconds - faster error feedback
 });
 
-// Request interceptor to add auth token and implement caching
+// Request interceptor to add auth token and implement caching/deduplication
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -32,9 +34,16 @@ api.interceptors.request.use(
                     data: cached.data,
                     status: 200,
                     statusText: 'OK (cached)',
-                    headers: {},
+                    headers: { 'x-cache': 'HIT' },
                     config
                 });
+                return config;
+            }
+
+            // Deduplicate in-flight requests
+            if (pendingRequests.has(cacheKey)) {
+                config.adapter = () => pendingRequests.get(cacheKey);
+                return config;
             }
         }
 

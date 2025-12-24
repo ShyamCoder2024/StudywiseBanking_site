@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { BottomNavbar } from './components/layout/BottomNavbar';
 import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { lazyWithRetry } from './utils/lazyWithRetry';
+import { preloadCriticalRoutes } from './utils/routePreloader';
 import './styles/index.css';
 import './App.css';
 
@@ -146,9 +147,12 @@ function AppContent() {
   // Check localStorage for navbar visibility (faster than context)
   const storedUser = localStorage.getItem('user');
   let showNavbar = true;
+  let userRole = 'student';
   if (storedUser) {
     try {
-      showNavbar = JSON.parse(storedUser).role !== 'admin';
+      const parsed = JSON.parse(storedUser);
+      showNavbar = parsed.role !== 'admin';
+      userRole = parsed.role || 'student';
     } catch (e) {
       // Invalid JSON, show navbar by default
       showNavbar = true;
@@ -157,6 +161,13 @@ function AppContent() {
 
   // Check if user is authenticated and is a student (for bottom nav)
   const isAuthenticatedStudent = storedUser && showNavbar && localStorage.getItem('token');
+
+  // Preload critical routes after initial render for instant navigation
+  useEffect(() => {
+    if (storedUser && localStorage.getItem('token')) {
+      preloadCriticalRoutes(userRole);
+    }
+  }, [storedUser, userRole]);
 
   return (
     <>

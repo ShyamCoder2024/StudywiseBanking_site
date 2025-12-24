@@ -1,5 +1,6 @@
 import express from 'express';
 import { protect, studentOnly } from '../middleware/authMiddleware.js';
+import { cacheMiddleware, CACHE_DURATIONS } from '../middleware/cacheMiddleware.js';
 import { Subject, Topic, Quiz, Question, Attempt } from '../models/Content.js';
 import User from '../models/User.js';
 import Task from '../models/Task.js';
@@ -21,10 +22,13 @@ router.get('/dashboard', async (req, res, next) => {
     try {
         const userId = req.user._id;
 
-        // Get all attempts for this user
+        // OPTIMIZED: Use lean() for faster queries and limit fields
         const allAttempts = await Attempt.find({ user: userId })
+            .select('quiz score totalQuestions correctAnswers aiAnalysis createdAt')
             .populate('quiz', 'title')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .limit(20)  // Only fetch recent 20 for dashboard
+            .lean();
 
         const totalAttempts = allAttempts.length;
 
@@ -158,9 +162,14 @@ router.get('/ai-analysis', async (req, res, next) => {
 // @route   GET /api/subjects
 // @desc    Get all subjects (for students)
 // @access  Private
-router.get('/subjects', async (req, res, next) => {
+// CACHED: Subjects rarely change, cache for 5 minutes
+router.get('/subjects', cacheMiddleware({ duration: CACHE_DURATIONS.LONG }), async (req, res, next) => {
     try {
-        const subjects = await Subject.find().populate('topicCount');
+        // OPTIMIZED: Use lean() and select only needed fields
+        const subjects = await Subject.find()
+            .select('name description icon')
+            .populate('topicCount')
+            .lean();
 
         res.json({
             success: true,
@@ -464,7 +473,8 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
 // @route   GET /api/student/leaderboard
 // @desc    Get leaderboard ranked by XP points and test performance
 // @access  Private
-router.get('/leaderboard', async (req, res, next) => {
+// CACHED: Leaderboard cached for 30 seconds to reduce aggregation load
+router.get('/leaderboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }), async (req, res, next) => {
     try {
         // Get all non-admin users
         const allUsers = await User.find({ role: { $ne: 'admin' } })
@@ -693,7 +703,8 @@ router.get('/courses', async (req, res, next) => {
 // ============ Video Courses (Private YouTube) ============
 
 // Get all published video courses
-router.get('/video-courses', async (req, res, next) => {
+// CACHED: Course list cached for 1 minute
+router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM }), async (req, res, next) => {
     try {
         const courses = await Course.find({ isPublished: true })
             .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
