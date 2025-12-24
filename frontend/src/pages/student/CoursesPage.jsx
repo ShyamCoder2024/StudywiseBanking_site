@@ -107,26 +107,10 @@ export default function CoursesPage() {
                             className="course-card video-course"
                             variants={item}
                             onClick={() => handleCourseClick(course._id)}
-                            whileHover={{ y: -8, scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ y: -4, scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
                         >
-                            {/* Status Badge */}
-                            {course.status && (
-                                <div className={`status-badge status-${course.status}`}>
-                                    {course.status === 'complete' && '✓ Complete'}
-                                    {course.status === 'ongoing' && '🔴 Ongoing'}
-                                    {course.status === 'upcoming' && '🔜 Upcoming'}
-                                </div>
-                            )}
-
-                            {/* Price Drop Badge */}
-                            {course.pricing?.showPriceDrop && course.pricing?.discountPercent > 0 && (
-                                <div className="price-drop-badge">
-                                    {course.pricing.priceDropLabel || '🔥 Price Drop'}
-                                </div>
-                            )}
-
-                            {/* Thumbnail */}
+                            {/* Thumbnail - Clean, no badges */}
                             <div className="course-thumbnail">
                                 {course.thumbnail ? (
                                     <img src={course.thumbnail} alt={course.title} />
@@ -144,40 +128,51 @@ export default function CoursesPage() {
                                     <BookOpen size={14} />
                                     {course.lectureCount} Lectures
                                 </div>
-                                {/* Discount Badge on Thumbnail */}
-                                {course.pricing?.discountPercent > 0 && (
-                                    <div className="discount-badge">
-                                        {course.pricing.discountPercent}% OFF
-                                    </div>
-                                )}
                             </div>
 
                             {/* Card Content */}
                             <div className="course-card-content">
-                                <span className="course-subject">{course.subject}</span>
+                                {/* Top Row: Subject + Status Badge */}
+                                <div className="course-top-row">
+                                    <span className="course-subject">{course.subject}</span>
+                                    {course.status && (
+                                        <span className={`course-status-badge status-${course.status}`}>
+                                            {course.status === 'complete' && '✓ Complete'}
+                                            {course.status === 'ongoing' && '🔴 Live'}
+                                            {course.status === 'upcoming' && '🔜 Soon'}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Title */}
                                 <h3>{course.title}</h3>
                                 <p className="course-batch">{course.batchName}</p>
+
                                 {course.description && (
                                     <p className="course-desc">{course.description}</p>
                                 )}
 
-                                {/* Pricing Display */}
+                                {/* Pricing Row - All price info together */}
                                 {(course.pricing?.originalPrice > 0 || course.pricing?.currentPrice > 0) && (
-                                    <div className="course-pricing">
-                                        {course.pricing.originalPrice > course.pricing.currentPrice && (
-                                            <span className="original-price">₹{course.pricing.originalPrice}</span>
-                                        )}
-                                        <span className="current-price">₹{course.pricing.currentPrice}</span>
+                                    <div className="course-pricing-row">
+                                        <div className="price-info">
+                                            {course.pricing.originalPrice > course.pricing.currentPrice && (
+                                                <span className="original-price">₹{course.pricing.originalPrice}</span>
+                                            )}
+                                            <span className="current-price">₹{course.pricing.currentPrice}</span>
+                                        </div>
+
+                                        {/* Discount & Price Drop Badges */}
+                                        <div className="price-badges">
+                                            {course.pricing?.discountPercent > 0 && (
+                                                <span className="discount-badge">{course.pricing.discountPercent}% OFF</span>
+                                            )}
+                                            {course.pricing?.showPriceDrop && course.pricing?.discountPercent > 0 && (
+                                                <span className="price-drop-badge">🔥 Deal</span>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
-                            </div>
-
-                            {/* Card Footer */}
-                            <div className="course-card-footer">
-                                <button className="course-btn view">
-                                    View Lectures
-                                    <ArrowRight size={16} />
-                                </button>
                             </div>
 
                             {/* Decorative Elements */}

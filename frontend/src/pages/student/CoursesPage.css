@@ -239,90 +239,62 @@
 }
 
 /* ========================================
-   Badge Styles
+   Badge & Pricing Styles (In Content Area)
    ======================================== */
 
-/* Status Badge - Top Left of Card */
-.status-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 4px 10px;
-    border-radius: 20px;
+/* Top Row: Subject + Status */
+.course-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+/* Status Badge - Inline in content */
+.course-status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
     font-size: 10px;
     font-weight: 600;
-    z-index: 10;
-    backdrop-filter: blur(8px);
+    white-space: nowrap;
 }
 
 .status-complete {
-    background: rgba(16, 185, 129, 0.9);
-    color: white;
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
 }
 
 .status-ongoing {
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
 }
 
 .status-upcoming {
-    background: rgba(59, 130, 246, 0.9);
-    color: white;
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
 }
 
-/* Price Drop Badge - Top Right of Card */
-.price-drop-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 10px;
-    background: linear-gradient(135deg, #f97316, #ef4444);
-    color: white;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 700;
-    z-index: 10;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-/* Discount Badge on Thumbnail */
-.discount-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    padding: 4px 8px;
-    background: #10b981;
-    color: white;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    z-index: 5;
-}
-
-/* Pricing Display */
-.course-pricing {
+/* Pricing Row - Price + Badges together */
+.course-pricing-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    margin-top: 10px;
-    padding-top: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+}
+
+.price-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .original-price {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-text-muted);
     text-decoration: line-through;
 }
@@ -333,7 +305,47 @@
     color: var(--color-primary);
 }
 
-/* Course Card Footer */
+/* Price Badges Container */
+.price-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Discount Badge - Clean inline style */
+.discount-badge {
+    padding: 3px 8px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Price Drop Badge - Inline style */
+.price-drop-badge {
+    padding: 3px 8px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: white;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Course Card Footer - Hidden */
 .course-card-footer {
     display: none;
 }
@@ -491,9 +503,11 @@
 
     .course-card h3 {
         white-space: normal;
+        line-clamp: 2;
         -webkit-line-clamp: 2;
         display: -webkit-box;
         -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 }
 
@@ -533,7 +547,11 @@
     }
 
     .course-card-content {
-        padding: 16px;
+        padding: 14px;
+    }
+
+    .course-top-row {
+        margin-bottom: 4px;
     }
 
     .course-subject {
@@ -541,8 +559,18 @@
         padding: 2px 6px;
     }
 
+    .course-status-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+
     .course-card h3 {
         font-size: 14px;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .course-batch {
@@ -552,6 +580,26 @@
     .course-desc {
         font-size: 11px;
         line-height: 1.5;
+    }
+
+    /* Pricing Row - Mobile */
+    .course-pricing-row {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .current-price {
+        font-size: 16px;
+    }
+
+    .original-price {
+        font-size: 12px;
+    }
+
+    .discount-badge,
+    .price-drop-badge {
+        font-size: 9px;
+        padding: 2px 6px;
     }
 
     .lecture-count {
