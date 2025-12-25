@@ -77,9 +77,14 @@ export function CourseManagement() {
 
     const fetchCourses = async () => {
         try {
+            console.log('Fetching courses from /admin/manage-courses...');
             const res = await api.get('/admin/manage-courses');
+            console.log('Courses response:', res.data);
             setCourses(res.data.data || []);
-        } catch { setCourses([]); }
+        } catch (error) {
+            console.error('Failed to fetch courses:', error.response?.data || error.message);
+            setCourses([]);
+        }
         finally { setLoading(false); }
     };
 
