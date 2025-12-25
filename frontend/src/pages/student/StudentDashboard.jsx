@@ -54,6 +54,8 @@ export function StudentDashboard() {
     const [enrollment, setEnrollment] = useState({ isPaid: false, courses: [] });
     const [enrollmentLoaded, setEnrollmentLoaded] = useState(false);
     const [videoCourses, setVideoCourses] = useState([]);
+    // AI Analysis data for AI Coach card
+    const [aiAnalysis, setAiAnalysis] = useState(null);
     // Live countdown state
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -70,7 +72,8 @@ export function StudentDashboard() {
                     fetchNewQuizzes(isMounted),
                     fetchExamSettings(isMounted),
                     fetchEnrollment(isMounted),
-                    fetchVideoCourses(isMounted)
+                    fetchVideoCourses(isMounted),
+                    fetchAiAnalysis(isMounted)
                 ]);
 
                 // Log any failures for debugging
@@ -225,6 +228,18 @@ export function StudentDashboard() {
             }
         } catch (error) {
             console.error('Failed to fetch courses:', error);
+        }
+    };
+
+    // Fetch AI Analysis for AI Coach card (real data)
+    const fetchAiAnalysis = async (isMounted = true) => {
+        try {
+            const res = await api.get('/student/ai-analysis');
+            if (isMounted && res.data?.data) {
+                setAiAnalysis(res.data.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch AI analysis:', error);
         }
     };
 
@@ -444,13 +459,13 @@ export function StudentDashboard() {
                                             stroke="url(#ringGradient)"
                                             strokeDasharray={264}
                                             initial={{ strokeDashoffset: 264 }}
-                                            animate={{ strokeDashoffset: 264 - (264 * stats.accuracy) / 100 }}
+                                            animate={{ strokeDashoffset: 264 - (264 * (aiAnalysis?.aiScore || stats.accuracy)) / 100 }}
                                             transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
                                             filter="url(#glow)"
                                         />
                                     </svg>
                                     <div className="coach-score">
-                                        <span className="coach-num">{stats.accuracy}%</span>
+                                        <span className="coach-num">{aiAnalysis?.aiScore || stats.accuracy}%</span>
                                     </div>
                                 </div>
 
@@ -459,14 +474,14 @@ export function StudentDashboard() {
                                         <span className="coach-dot strong"></span>
                                         <div className="coach-text">
                                             <span className="coach-t-label">Strong</span>
-                                            <span className="coach-t-val">Reasoning</span>
+                                            <span className="coach-t-val">{aiAnalysis?.strengths?.[0]?.topic || 'Take Quiz'}</span>
                                         </div>
                                     </div>
                                     <div className="coach-item">
                                         <span className="coach-dot focus"></span>
                                         <div className="coach-text">
                                             <span className="coach-t-label">Focus</span>
-                                            <span className="coach-t-val">Math</span>
+                                            <span className="coach-t-val">{aiAnalysis?.weaknesses?.[0]?.topic || 'Practice'}</span>
                                         </div>
                                     </div>
                                 </div>
