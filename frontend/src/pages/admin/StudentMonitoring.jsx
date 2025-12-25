@@ -1082,46 +1082,8 @@ export function StudentMonitoring() {
                                         </p>
                                     ) : (
                                         <>
-                                            {/* All Courses Option - Only for non-enrolled courses */}
-                                            {(() => {
-                                                const nonEnrolledCourses = availableCourses.filter(course => {
-                                                    const courseId = course._id || course.id;
-                                                    return !selectedStudent?.enrollment?.courses?.some(c => c.courseId === courseId);
-                                                });
-                                                const allSelected = nonEnrolledCourses.length > 0 &&
-                                                    nonEnrolledCourses.every(c => selectedCourseIds.includes(c._id || c.id));
-
-                                                return nonEnrolledCourses.length > 0 ? (
-                                                    <label
-                                                        style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: '8px',
-                                                            padding: '8px 10px',
-                                                            backgroundColor: allSelected ? BRAND.primaryLight : BRAND.card,
-                                                            borderRadius: '6px',
-                                                            border: `1px solid ${allSelected ? BRAND.primary : BRAND.border}`,
-                                                            cursor: 'pointer',
-                                                            fontWeight: '600',
-                                                            marginBottom: '4px'
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={allSelected}
-                                                            onChange={() => {
-                                                                if (allSelected) {
-                                                                    setSelectedCourseIds([]);
-                                                                } else {
-                                                                    setSelectedCourseIds(nonEnrolledCourses.map(c => c._id || c.id));
-                                                                }
-                                                            }}
-                                                            style={{ width: '14px', height: '14px', accentColor: BRAND.primary }}
-                                                        />
-                                                        <span style={{ fontSize: '11px', color: BRAND.primary }}>📚 Select All ({nonEnrolledCourses.length} available)</span>
-                                                    </label>
-                                                ) : null;
-                                            })()}
+                                            {/* Individual courses ONLY - no auto-select row */}
+                                            {/* Admin must manually select each course */}
 
                                             {/* Show ALL courses - enrolled ones are disabled */}
                                             {availableCourses.map(course => {
@@ -1255,28 +1217,8 @@ export function StudentMonitoring() {
                                     borderRadius: '8px',
                                     border: `1px solid ${selectedBatches.length > 0 ? BRAND.success : BRAND.border}`
                                 }}>
-                                    {/* All Batches Option */}
-                                    <label
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '8px',
-                                            padding: '8px 10px',
-                                            backgroundColor: selectedBatches.includes('All Batches') ? BRAND.primaryLight : BRAND.card,
-                                            borderRadius: '6px',
-                                            border: `1px solid ${selectedBatches.includes('All Batches') ? BRAND.primary : BRAND.border}`,
-                                            cursor: 'pointer',
-                                            fontWeight: '600'
-                                        }}
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedBatches.includes('All Batches')}
-                                            onChange={() => toggleBatchSelection('All Batches')}
-                                            style={{ width: '14px', height: '14px', accentColor: BRAND.primary }}
-                                        />
-                                        <span style={{ fontSize: '12px', color: BRAND.primary }}>📚 All Batches (Full Access)</span>
-                                    </label>
+                                    {/* Individual batches ONLY - no auto-select row */}
+                                    {/* Admin must manually select each batch */}
 
                                     {/* Individual Batches */}
                                     {Array.from(new Set(availableCourses.flatMap(c => c.batches || [c.batchName || 'Main Batch']))).filter(b => b).map(batch => (
