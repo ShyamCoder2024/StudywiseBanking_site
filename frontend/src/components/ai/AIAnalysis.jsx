@@ -483,54 +483,129 @@ export function AIAnalysis() {
                 whileHover={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)' }}
                 style={cardStyle}
             >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
                     <div style={sectionTitle}>
                         <Activity size={16} color="var(--color-primary)" /> 7-Day Performance Trend
                     </div>
+                    {/* Average Score Badge */}
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '4px 12px', borderRadius: 20,
+                        background: weeklyTrend.length > 0 ?
+                            (weeklyTrend.reduce((a, b) => a + b, 0) / weeklyTrend.length >= 60 ? '#10B98115' : '#F59E0B15') : 'var(--color-bg)',
+                        fontSize: 12, fontWeight: 700,
+                        color: weeklyTrend.length > 0 ?
+                            (weeklyTrend.reduce((a, b) => a + b, 0) / weeklyTrend.length >= 60 ? '#10B981' : '#F59E0B') : 'var(--color-text-secondary)'
+                    }}>
+                        <TrendingUp size={14} />
+                        {weeklyTrend.length > 0
+                            ? `Avg: ${Math.round(weeklyTrend.reduce((a, b) => a + b, 0) / weeklyTrend.length)}%`
+                            : 'No data yet'
+                        }
+                    </div>
                 </div>
+
+                {/* Bar Chart with Real Data */}
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 'clamp(100px, 20vw, 160px)', gap: 'clamp(4px, 1.5vw, 10px)', paddingBottom: 8 }}>
-                    {weeklyTrend.slice(-7).map((val, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ height: 0 }}
-                            animate={{ height: `${val}%` }}
-                            transition={{ duration: 0.6, delay: 0.5 + idx * 0.08, ease: 'easeOut' }}
-                            whileHover={{ opacity: 1, scale: 1.1 }}
-                            style={{
-                                flex: 1,
-                                background: `linear-gradient(to top, var(--color-primary), #A58FD8)`,
-                                borderRadius: '8px 8px 0 0',
-                                opacity: 0.5 + idx * 0.08,
-                                cursor: 'pointer',
-                                position: 'relative',
-                                minWidth: 20
-                            }}
-                        >
+                    {performanceTrend.length > 0 ? (
+                        performanceTrend.slice(-7).map((data, idx) => (
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                whileHover={{ opacity: 1 }}
+                                key={idx}
+                                initial={{ height: 0 }}
+                                animate={{ height: `${Math.max(data.score, 5)}%` }}
+                                transition={{ duration: 0.6, delay: 0.3 + idx * 0.06, ease: 'easeOut' }}
+                                whileHover={{ opacity: 1, scale: 1.08 }}
                                 style={{
-                                    position: 'absolute',
-                                    top: -30,
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    background: 'var(--color-text)',
-                                    color: 'var(--color-bg)',
-                                    padding: '4px 10px',
-                                    borderRadius: 6,
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                    whiteSpace: 'nowrap'
+                                    flex: 1,
+                                    background: data.score >= 70
+                                        ? 'linear-gradient(to top, #10B981, #34D399)'
+                                        : data.score >= 50
+                                            ? 'linear-gradient(to top, #F59E0B, #FBBF24)'
+                                            : data.score > 0
+                                                ? 'linear-gradient(to top, #EF4444, #F87171)'
+                                                : 'var(--color-border)',
+                                    borderRadius: '8px 8px 0 0',
+                                    opacity: data.score > 0 ? (0.6 + idx * 0.06) : 0.3,
+                                    cursor: 'pointer',
+                                    position: 'relative',
+                                    minWidth: 20
                                 }}
                             >
-                                {val}%
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    whileHover={{ opacity: 1 }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: -40,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        background: 'var(--color-text)',
+                                        color: 'var(--color-bg)',
+                                        padding: '6px 10px',
+                                        borderRadius: 8,
+                                        fontSize: 11,
+                                        fontWeight: 700,
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'center',
+                                        lineHeight: 1.3
+                                    }}
+                                >
+                                    {data.score > 0 ? `${data.score}%` : 'No quiz'}
+                                    {data.quizCount > 0 && <div style={{ fontSize: 9, opacity: 0.8 }}>{data.quizCount} quiz{data.quizCount > 1 ? 'zes' : ''}</div>}
+                                </motion.div>
                             </motion.div>
-                        </motion.div>
-                    ))}
+                        ))
+                    ) : (
+                        weeklyTrend.slice(-7).map((val, idx) => (
+                            <motion.div
+                                key={idx}
+                                initial={{ height: 0 }}
+                                animate={{ height: `${Math.max(val, 5)}%` }}
+                                transition={{ duration: 0.6, delay: 0.3 + idx * 0.06, ease: 'easeOut' }}
+                                style={{
+                                    flex: 1,
+                                    background: 'linear-gradient(to top, var(--color-primary), #A58FD8)',
+                                    borderRadius: '8px 8px 0 0',
+                                    opacity: 0.5 + idx * 0.08,
+                                    minWidth: 20
+                                }}
+                            />
+                        ))
+                    )}
                 </div>
+
+                {/* Day Labels - Use real days from backend */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(9px, 2vw, 11px)', color: 'var(--color-text-secondary)', fontWeight: 600, marginTop: 10 }}>
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)}
+                    {performanceTrend.length > 0
+                        ? performanceTrend.slice(-7).map((d, i) => <span key={i}>{d.day}</span>)
+                        : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)
+                    }
                 </div>
+
+                {/* AI Performance Insight */}
+                {ai.summary && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1 }}
+                        style={{
+                            marginTop: 16,
+                            padding: '12px 14px',
+                            background: 'linear-gradient(135deg, rgba(138, 117, 186, 0.08), rgba(99, 102, 241, 0.08))',
+                            borderRadius: 12,
+                            border: '1px solid rgba(138, 117, 186, 0.15)',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 10
+                        }}
+                    >
+                        <Lightbulb size={16} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ fontSize: 12, color: 'var(--color-text)', lineHeight: 1.5 }}>
+                            <strong style={{ color: 'var(--color-primary)' }}>AI Insight:</strong>{' '}
+                            {ai.summary.length > 150 ? ai.summary.slice(0, 150) + '...' : ai.summary}
+                        </div>
+                    </motion.div>
+                )}
             </motion.div>
 
             {/* ============ STRENGTHS & WEAKNESSES ============ */}
