@@ -508,7 +508,7 @@ export function StudentMonitoring() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '16px',
+                        padding: '12px',
                         backgroundColor: 'rgba(0, 0, 0, 0.6)',
                         backdropFilter: 'blur(6px)',
                         boxSizing: 'border-box'
@@ -516,32 +516,23 @@ export function StudentMonitoring() {
                     onClick={() => setSelectedStudent(null)}
                 >
                     <div
-                        className="admin-modal"
                         style={{
-                            backgroundColor: BRAND.card,
-                            borderRadius: '16px',
+                            backgroundColor: '#fff',
+                            borderRadius: '12px',
                             width: '100%',
-                            maxWidth: '520px',
-                            maxHeight: '90vh',
-                            margin: 'auto',
+                            maxWidth: '420px',
+                            maxHeight: '85vh',
                             overflow: 'hidden',
-                            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
+                            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
                             display: 'flex',
-                            flexDirection: 'column',
-                            animation: 'modalFadeIn 0.2s ease-out'
+                            flexDirection: 'column'
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <style>{`
-                            @keyframes modalFadeIn {
-                                from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-                                to { opacity: 1; transform: scale(1) translateY(0); }
-                            }
-                        `}</style>
-                        {/* Modal Header - DRD Primary Color */}
+                        {/* Header - Purple Gradient */}
                         <div style={{
-                            backgroundColor: BRAND.primary,
-                            padding: '12px 14px',
+                            background: 'linear-gradient(135deg, #8A75BA 0%, #6B5B95 100%)',
+                            padding: '14px 16px',
                             position: 'relative'
                         }}>
                             <button
@@ -550,95 +541,91 @@ export function StudentMonitoring() {
                                     position: 'absolute',
                                     top: '10px',
                                     right: '10px',
-                                    padding: '5px',
+                                    padding: '6px',
                                     borderRadius: '50%',
                                     border: 'none',
                                     backgroundColor: 'rgba(255,255,255,0.2)',
                                     cursor: 'pointer',
                                     color: '#fff',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
+                                    display: 'flex'
                                 }}
                             >
-                                <X size={18} />
+                                <X size={16} />
                             </button>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <div style={{
-                                    width: 44,
-                                    height: 44,
+                                    width: 48,
+                                    height: 48,
                                     borderRadius: '50%',
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    border: '2px solid rgba(255,255,255,0.4)',
+                                    backgroundColor: 'rgba(255,255,255,0.25)',
+                                    border: '2px solid rgba(255,255,255,0.5)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     color: '#fff',
                                     fontWeight: '700',
-                                    fontSize: '16px'
+                                    fontSize: '18px'
                                 }}>
                                     {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
                                 </div>
                                 <div>
-                                    <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: 0 }}>
+                                    <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', margin: 0 }}>
                                         {selectedStudent.firstName} {selectedStudent.lastName}
                                     </h2>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                                        <span style={{
-                                            padding: '2px 8px',
-                                            borderRadius: '4px',
-                                            backgroundColor: 'rgba(255,255,255,0.2)',
-                                            color: '#fff',
-                                            fontSize: '10px',
-                                            fontWeight: '600'
-                                        }}>
-                                            Rank #{selectedStudent.rank || 'N/A'}
-                                        </span>
-                                    </div>
+                                    <span style={{
+                                        display: 'inline-block',
+                                        marginTop: '4px',
+                                        padding: '3px 10px',
+                                        borderRadius: '12px',
+                                        backgroundColor: 'rgba(255,255,255,0.2)',
+                                        color: '#fff',
+                                        fontSize: '12px',
+                                        fontWeight: '600'
+                                    }}>
+                                        Rank #{selectedStudent.rank || 'N/A'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Modal Body - Scrollable */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '6px' }}>
+                        {/* Body - Scrollable */}
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
 
-                            {/* Performance Stats - Top */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '6px 8px', marginBottom: '5px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Performance Stats</h4>
-                                <div className="admin-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                        <div style={{ fontSize: '18px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Avg Score</div>
+                            {/* Performance Stats */}
+                            <div style={{ marginBottom: '12px' }}>
+                                <h4 style={{ fontSize: '12px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0' }}>Performance Stats</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                                    <div style={{ textAlign: 'center', padding: '10px 6px', backgroundColor: '#f0f4ff', borderRadius: '8px', border: '1px solid #dde4f8' }}>
+                                        <div style={{ fontSize: '20px', fontWeight: '700', color: BRAND.primary }}>{selectedStudent.avgScore || 0}%</div>
+                                        <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: '500', marginTop: '2px' }}>Avg Score</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                        <div style={{ fontSize: '18px', fontWeight: '700', color: BRAND.success }}>{selectedStudent.totalAttempts || 0}</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Quizzes</div>
+                                    <div style={{ textAlign: 'center', padding: '10px 6px', backgroundColor: '#e6f7f4', borderRadius: '8px', border: '1px solid #c3ebe4' }}>
+                                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#0d9488' }}>{selectedStudent.totalAttempts || 0}</div>
+                                        <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: '500', marginTop: '2px' }}>Quizzes</div>
                                     </div>
-                                    <div style={{ textAlign: 'center', padding: '5px 3px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                        <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>#{selectedStudent.rank || 'N/A'}</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textMuted, textTransform: 'uppercase' }}>Rank</div>
+                                    <div style={{ textAlign: 'center', padding: '10px 6px', backgroundColor: '#fef9e6', borderRadius: '8px', border: '1px solid #fce8a9' }}>
+                                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#d97706' }}>#{selectedStudent.rank || 'N/A'}</div>
+                                        <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: '500', marginTop: '2px' }}>Rank</div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Personal Information */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '6px 8px', marginBottom: '5px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0' }}>Personal Information</h4>
+                            <div style={{ marginBottom: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '10px 12px' }}>
+                                <h4 style={{ fontSize: '12px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0' }}>Personal Information</h4>
 
-                                {/* Preparing For */}
+                                {/* Preparing For - Highlighted */}
                                 <div style={{
                                     backgroundColor: BRAND.primaryLight,
-                                    borderRadius: '4px',
-                                    padding: '3px 6px',
-                                    marginBottom: '2px',
-                                    border: `1px solid ${BRAND.primary}30`,
+                                    borderRadius: '6px',
+                                    padding: '8px 10px',
+                                    marginBottom: '8px',
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}>
-                                    <span style={{ fontSize: '10px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
-                                    <span style={{ fontSize: '11px', fontWeight: '700', color: BRAND.primary }}>
+                                    <span style={{ fontSize: '12px', color: BRAND.primary, fontWeight: '600' }}>Preparing For</span>
+                                    <span style={{ fontSize: '13px', fontWeight: '700', color: BRAND.primary }}>
                                         {selectedStudent.status === 'preparing_fulltime' ? 'Full-Time' :
                                             selectedStudent.status === 'working_professional' ? 'Working Professional' :
                                                 selectedStudent.status === 'student' ? 'Student' :
@@ -646,67 +633,59 @@ export function StudentMonitoring() {
                                     </span>
                                 </div>
 
-                                {/* Info Grid */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                                    {/* Row 1: Gender & Age */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Gender</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text, textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
+                                {/* Info Rows - No excessive white backgrounds */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                            <span style={{ fontSize: '12px', color: '#6B7280' }}>Gender</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937', textTransform: 'capitalize' }}>{selectedStudent.gender || 'N/A'}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Age</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.age || 'N/A'} yrs</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                            <span style={{ fontSize: '12px', color: '#6B7280' }}>Age</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{selectedStudent.age || 'N/A'} yrs</span>
                                         </div>
                                     </div>
-
-                                    {/* Row 2: Email */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                        <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Email</span>
-                                        <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.email}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                        <span style={{ fontSize: '12px', color: '#6B7280' }}>Email</span>
+                                        <span style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{selectedStudent.email}</span>
                                     </div>
-
-                                    {/* Row 3: Mobile */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                        <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Mobile</span>
-                                        <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{selectedStudent.mobile || 'N/A'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
+                                        <span style={{ fontSize: '12px', color: '#6B7280' }}>Mobile</span>
+                                        <span style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{selectedStudent.mobile || 'N/A'}</span>
                                     </div>
-
-                                    {/* Row 4: Joined & Account */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Joined</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
+                                            <span style={{ fontSize: '12px', color: '#6B7280' }}>Joined</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{formatDate(selectedStudent.createdAt || selectedStudent.joinDate)}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', backgroundColor: BRAND.card, borderRadius: '4px' }}>
-                                            <span style={{ fontSize: '10px', color: BRAND.textMuted }}>Account</span>
-                                            <span style={{ fontSize: '11px', fontWeight: '600', color: BRAND.success }}>Active</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
+                                            <span style={{ fontSize: '12px', color: '#6B7280' }}>Account</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600', color: '#10b981' }}>Active</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Enrollment Management Section */}
-                            <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', padding: '6px 8px', marginBottom: '5px' }}>
-                                <h4 style={{ fontSize: '10px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <CreditCard size={10} />
+                            {/* Enrollment Management */}
+                            <div style={{ marginBottom: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '10px 12px' }}>
+                                <h4 style={{ fontSize: '12px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CreditCard size={14} />
                                     Enrollment Management
                                 </h4>
 
-                                {/* Paid Status Toggle */}
+                                {/* Payment Status */}
                                 <div style={{
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    padding: '4px 6px',
-                                    backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.successLight : BRAND.warningLight,
-                                    borderRadius: '4px',
-                                    marginBottom: '3px',
-                                    border: `1px solid ${selectedStudent.enrollment?.isPaid ? BRAND.success : BRAND.warning}30`
+                                    padding: '10px 12px',
+                                    backgroundColor: selectedStudent.enrollment?.isPaid ? '#dcfce7' : '#fee2e2',
+                                    borderRadius: '8px',
+                                    marginBottom: '10px'
                                 }}>
                                     <div>
-                                        <div style={{ fontWeight: '600', color: BRAND.text, fontSize: '11px' }}>Payment Status</div>
-                                        <div style={{ fontSize: '9px', color: BRAND.textSecondary }}>
+                                        <div style={{ fontWeight: '600', color: '#1f2937', fontSize: '13px' }}>Payment Status</div>
+                                        <div style={{ fontSize: '11px', color: '#6B7280' }}>
                                             {selectedStudent.enrollment?.isPaid ? 'Premium Member' : 'Free User'}
                                         </div>
                                     </div>
@@ -714,12 +693,12 @@ export function StudentMonitoring() {
                                         onClick={togglePaidStatus}
                                         disabled={savingEnrollment}
                                         style={{
-                                            padding: '4px 10px',
-                                            borderRadius: '4px',
+                                            padding: '8px 14px',
+                                            borderRadius: '6px',
                                             border: 'none',
-                                            backgroundColor: selectedStudent.enrollment?.isPaid ? BRAND.warning : BRAND.success,
+                                            backgroundColor: selectedStudent.enrollment?.isPaid ? '#ef4444' : '#10b981',
                                             color: '#fff',
-                                            fontSize: '10px',
+                                            fontSize: '12px',
                                             fontWeight: '600',
                                             cursor: 'pointer',
                                             opacity: savingEnrollment ? 0.6 : 1
@@ -729,50 +708,39 @@ export function StudentMonitoring() {
                                     </button>
                                 </div>
 
-                                {/* Tags Section */}
-                                <div style={{ marginTop: '4px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                                        <Tag size={10} color={BRAND.primary} />
-                                        <span style={{ fontSize: '9px', fontWeight: '600', color: BRAND.text }}>Student Tags</span>
+                                {/* Tags */}
+                                <div style={{ marginBottom: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                                        <Tag size={12} color={BRAND.primary} />
+                                        <span style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937' }}>Student Tags</span>
                                     </div>
-
-                                    {/* Existing Tags */}
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginBottom: '4px' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                                         {(selectedStudent.enrollment?.tags || []).map((tag, i) => (
                                             <span key={i} style={{
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
-                                                gap: '2px',
-                                                padding: '2px 6px',
+                                                gap: '4px',
+                                                padding: '4px 10px',
                                                 backgroundColor: BRAND.primaryLight,
                                                 color: BRAND.primary,
-                                                borderRadius: '8px',
-                                                fontSize: '9px',
+                                                borderRadius: '12px',
+                                                fontSize: '11px',
                                                 fontWeight: '500'
                                             }}>
                                                 {tag}
                                                 <button
                                                     onClick={() => removeTag(tag)}
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        color: BRAND.primary,
-                                                        cursor: 'pointer',
-                                                        padding: '0',
-                                                        display: 'flex'
-                                                    }}
+                                                    style={{ background: 'none', border: 'none', color: BRAND.primary, cursor: 'pointer', padding: '0', display: 'flex' }}
                                                 >
-                                                    <X size={8} />
+                                                    <X size={10} />
                                                 </button>
                                             </span>
                                         ))}
                                         {(selectedStudent.enrollment?.tags || []).length === 0 && (
-                                            <span style={{ fontSize: '9px', color: BRAND.textMuted }}>No tags added</span>
+                                            <span style={{ fontSize: '11px', color: '#9ca3af' }}>No tags added</span>
                                         )}
                                     </div>
-
-                                    {/* Add Tag Input */}
-                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                    <div style={{ display: 'flex', gap: '6px' }}>
                                         <input
                                             type="text"
                                             value={newTag}
@@ -780,13 +748,12 @@ export function StudentMonitoring() {
                                             placeholder="Add tag..."
                                             style={{
                                                 flex: 1,
-                                                padding: '4px 8px',
-                                                borderRadius: '4px',
-                                                border: `1px solid ${BRAND.border}`,
-                                                fontSize: '10px',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                border: '1px solid #d1d5db',
+                                                fontSize: '12px',
                                                 outline: 'none',
-                                                color: BRAND.text,
-                                                backgroundColor: BRAND.card
+                                                color: '#1f2937'
                                             }}
                                             onKeyDown={(e) => e.key === 'Enter' && addTag()}
                                         />
@@ -794,98 +761,98 @@ export function StudentMonitoring() {
                                             onClick={addTag}
                                             disabled={!newTag.trim() || savingEnrollment}
                                             style={{
-                                                padding: '4px 8px',
-                                                borderRadius: '4px',
+                                                padding: '8px 14px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: BRAND.primary,
                                                 color: '#fff',
                                                 cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '2px',
-                                                fontSize: '10px',
+                                                gap: '4px',
+                                                fontSize: '12px',
+                                                fontWeight: '600',
                                                 opacity: !newTag.trim() ? 0.5 : 1
                                             }}
                                         >
-                                            <Plus size={10} /> Add
+                                            <Plus size={14} /> Add
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Enrolled Courses */}
                                 {selectedStudent.enrollment?.isPaid && (
-                                    <div style={{ marginTop: '4px' }}>
-                                        <span style={{ fontSize: '10px', fontWeight: '600', color: BRAND.text, marginBottom: '4px', display: 'block' }}>
+                                    <div>
+                                        <span style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937', marginBottom: '6px', display: 'block' }}>
                                             Enrolled Courses
                                         </span>
                                         {(selectedStudent.enrollment?.courses || []).length > 0 ? (
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                                 {selectedStudent.enrollment.courses.map((course, i) => (
                                                     <div key={i} style={{
-                                                        padding: '6px 8px',
-                                                        backgroundColor: BRAND.card,
-                                                        borderRadius: '4px',
-                                                        border: `1px solid ${BRAND.success}40`,
+                                                        padding: '8px 12px',
+                                                        backgroundColor: '#fff',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid #d1fae5',
                                                         display: 'flex',
                                                         justifyContent: 'space-between',
                                                         alignItems: 'center'
                                                     }}>
                                                         <div>
-                                                            <div style={{ fontSize: '11px', fontWeight: '600', color: BRAND.text }}>{course.courseName}</div>
-                                                            <div style={{ fontSize: '9px', color: BRAND.textMuted }}>{course.batch}</div>
+                                                            <div style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937' }}>{course.courseName}</div>
+                                                            <div style={{ fontSize: '11px', color: '#6B7280' }}>{course.batch}</div>
                                                             {course.expiryDate && (
                                                                 <div style={{
-                                                                    fontSize: '9px',
-                                                                    color: new Date(course.expiryDate) < new Date() ? BRAND.warning : BRAND.success,
+                                                                    fontSize: '11px',
+                                                                    color: new Date(course.expiryDate) < new Date() ? '#ef4444' : '#10b981',
                                                                     fontWeight: '600',
                                                                     marginTop: '2px'
                                                                 }}>
                                                                     {new Date(course.expiryDate) < new Date() ?
                                                                         `❌ Expired ${new Date(course.expiryDate).toLocaleDateString('en-IN')}` :
-                                                                        `✅ Valid ${new Date(course.expiryDate).toLocaleDateString('en-IN')}`}
+                                                                        `✅ Valid till ${new Date(course.expiryDate).toLocaleDateString('en-IN')}`}
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <Check size={12} color={BRAND.success} />
+                                                        <Check size={16} color="#10b981" />
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p style={{ fontSize: '10px', color: BRAND.textMuted, margin: '4px 0' }}>No courses enrolled</p>
+                                            <p style={{ fontSize: '12px', color: '#9ca3af', margin: '6px 0' }}>No courses enrolled</p>
                                         )}
                                     </div>
                                 )}
                             </div>
 
                             {/* Recent Quiz Attempts */}
-                            <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                                    <Clock size={10} color={BRAND.primary} />
-                                    <h4 style={{ fontSize: '9px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Recent Quiz Attempts</h4>
+                            <div style={{ marginBottom: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                                    <Clock size={14} color={BRAND.primary} />
+                                    <h4 style={{ fontSize: '12px', fontWeight: '700', color: BRAND.primary, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Recent Quiz Attempts</h4>
                                 </div>
-
-                                <div style={{ backgroundColor: BRAND.bg, borderRadius: '6px', overflow: 'hidden' }}>
+                                <div style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', overflow: 'hidden' }}>
                                     {studentAttempts.length > 0 ? (
-                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <div>
                                             {studentAttempts.slice(0, 3).map((attempt, index) => (
                                                 <div key={attempt._id || index} style={{
                                                     display: 'flex',
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
-                                                    padding: '4px 6px',
-                                                    borderBottom: index < Math.min(studentAttempts.length, 3) - 1 ? `1px solid ${BRAND.border}` : 'none'
+                                                    padding: '10px 12px',
+                                                    borderBottom: index < Math.min(studentAttempts.length, 3) - 1 ? '1px solid #e5e7eb' : 'none'
                                                 }}>
                                                     <div>
-                                                        <div style={{ fontWeight: '500', color: BRAND.text, fontSize: '10px' }}>{attempt.quizTitle}</div>
-                                                        <div style={{ fontSize: '9px', color: BRAND.textMuted }}>{formatDate(attempt.date)}</div>
+                                                        <div style={{ fontWeight: '600', color: '#1f2937', fontSize: '13px' }}>{attempt.quizTitle}</div>
+                                                        <div style={{ fontSize: '11px', color: '#6B7280' }}>{formatDate(attempt.date)}</div>
                                                     </div>
                                                     <span style={{
-                                                        padding: '2px 6px',
-                                                        borderRadius: '4px',
-                                                        fontSize: '10px',
-                                                        fontWeight: '600',
-                                                        backgroundColor: (attempt.score || 0) >= 70 ? BRAND.successLight : BRAND.warningLight,
-                                                        color: (attempt.score || 0) >= 70 ? '#0d6652' : '#991b1b'
+                                                        padding: '4px 10px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '13px',
+                                                        fontWeight: '700',
+                                                        backgroundColor: (attempt.score || 0) >= 70 ? '#dcfce7' : '#fee2e2',
+                                                        color: (attempt.score || 0) >= 70 ? '#15803d' : '#dc2626'
                                                     }}>
                                                         {attempt.score}%
                                                     </span>
@@ -893,32 +860,32 @@ export function StudentMonitoring() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div style={{ padding: '8px', textAlign: 'center', color: BRAND.textMuted }}>
-                                            <BookOpen size={16} style={{ margin: '0 auto 2px', opacity: 0.4, color: BRAND.primary }} />
-                                            <p style={{ margin: 0, fontSize: '10px' }}>No quiz attempts yet</p>
+                                        <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af' }}>
+                                            <BookOpen size={20} style={{ margin: '0 auto 4px', opacity: 0.5 }} />
+                                            <p style={{ margin: 0, fontSize: '12px' }}>No quiz attempts yet</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Modal Footer - Only Close Button */}
+                        {/* Footer */}
                         <div style={{
-                            padding: '8px 16px',
-                            borderTop: `1px solid ${BRAND.border}`,
-                            backgroundColor: BRAND.bg,
+                            padding: '12px 16px',
+                            borderTop: '1px solid #e5e7eb',
+                            backgroundColor: '#f8f9fa',
                             display: 'flex',
                             justifyContent: 'center'
                         }}>
                             <button
                                 onClick={() => setSelectedStudent(null)}
                                 style={{
-                                    padding: '8px 24px',
+                                    padding: '10px 32px',
                                     borderRadius: '8px',
                                     border: 'none',
-                                    backgroundColor: BRAND.primary,
+                                    background: 'linear-gradient(135deg, #8A75BA 0%, #6B5B95 100%)',
                                     color: '#ffffff',
-                                    fontSize: '12px',
+                                    fontSize: '14px',
                                     fontWeight: '600',
                                     cursor: 'pointer',
                                     boxShadow: '0 2px 8px rgba(138, 117, 186, 0.3)'
