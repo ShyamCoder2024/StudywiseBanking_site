@@ -83,6 +83,98 @@ export async function generateStudentAnalysis(userId) {
 
         const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
+        // Calculate AI Score - composite metric based on multiple factors
+        const consistencyBonus = attempts.length >= 10 ? 10 : attempts.length; // Reward consistent practice
+        const coverageBonus = Object.keys(subjectPerformance).length * 5; // Reward covering multiple subjects
+        const recentPerformanceBonus = attempts.slice(0, 5).reduce((sum, a) => sum + (a.score >= 70 ? 2 : 0), 0);
+
+        // AI Score formula: Base accuracy + bonuses (capped at 100)
+        const aiScore = Math.min(100, Math.round(
+            (accuracy * 0.7) + // 70% weight to accuracy
+            (consistencyBonus * 1) + // Up to 10 points for consistency
+            (coverageBonus * 0.5) + // Points for subject coverage
+            (recentPerformanceBonus) // Bonus for recent good performance
+        ));
+
+        // Calculate AI-recommended Study Plan based on performance
+        const calculateStudyPlan = () => {
+            const weakSubjectCount = Object.values(subjectPerformance).filter(s => (s.correct / s.total) * 100 < 60).length;
+
+            if (accuracy < 40 || attempts.length < 3) {
+                return {
+                    hoursPerDay: '5-6',
+                    mode: 'Intensive',
+                    color: '#EF4444',
+                    morning: { time: '2.5 hrs', focus: 'Fundamentals' },
+                    afternoon: { time: '2 hrs', focus: 'Practice Questions' },
+                    evening: { time: '1.5 hrs', focus: 'Revision & Doubts' }
+                };
+            } else if (accuracy < 60) {
+                return {
+                    hoursPerDay: '4-5',
+                    mode: 'Focused',
+                    color: '#F59E0B',
+                    morning: { time: '2 hrs', focus: 'Weak Subjects' },
+                    afternoon: { time: '1.5 hrs', focus: 'Mock Tests' },
+                    evening: { time: '1 hrs', focus: 'Quick Revision' }
+                };
+            } else if (accuracy < 80) {
+                return {
+                    hoursPerDay: '3-4',
+                    mode: 'Balanced',
+                    color: '#10B981',
+                    morning: { time: '1.5 hrs', focus: 'Topic Practice' },
+                    afternoon: { time: '1 hrs', focus: 'Sectional Tests' },
+                    evening: { time: '1 hrs', focus: 'Current Affairs' }
+                };
+            } else {
+                return {
+                    hoursPerDay: '2-3',
+                    mode: 'Maintenance',
+                    color: '#8A75BA',
+                    morning: { time: '1 hrs', focus: 'Mock Tests' },
+                    afternoon: { time: '1 hrs', focus: 'Speed Drills' },
+                    evening: { time: '30 mins', focus: 'Current Affairs' }
+                };
+            }
+        };
+        const studyPlan = calculateStudyPlan();
+
+        // Calculate 7-day performance trend from actual quiz data
+        const calculatePerformanceTrend = () => {
+            const trend = [];
+            const today = new Date();
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+
+                // Find attempts on this day
+                const dayAttempts = attempts.filter(a => {
+                    const attemptDate = new Date(a.createdAt).toISOString().split('T')[0];
+                    return attemptDate === dateStr;
+                });
+
+                // Calculate average score for the day
+                let dayScore = 0;
+                if (dayAttempts.length > 0) {
+                    const totalDayScore = dayAttempts.reduce((sum, a) => sum + (a.score || 0), 0);
+                    dayScore = Math.round(totalDayScore / dayAttempts.length);
+                }
+
+                trend.push({
+                    day: dayName,
+                    date: dateStr,
+                    score: dayScore,
+                    quizCount: dayAttempts.length
+                });
+            }
+            return trend;
+        };
+        const performanceTrend = calculatePerformanceTrend();
+
         // Calculate Subject Strengths and Weaknesses
         const subjectStrengths = [];
         const subjectWeaknesses = [];
@@ -190,6 +282,9 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 topicWeaknesses: topicWeaknesses.slice(0, 5),
                 suggestions,
                 accuracy,
+                aiScore,
+                studyPlan,
+                performanceTrend,
                 totalAttempts: attempts.length,
                 totalQuestions,
                 totalCorrect,
@@ -208,6 +303,9 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 topicWeaknesses: topicWeaknesses.slice(0, 5),
                 suggestions: generateBankingSuggestions(accuracy, finalWeaknesses, topicWeaknesses, attempts.length),
                 accuracy,
+                aiScore,
+                studyPlan,
+                performanceTrend,
                 totalAttempts: attempts.length,
                 totalQuestions,
                 totalCorrect,

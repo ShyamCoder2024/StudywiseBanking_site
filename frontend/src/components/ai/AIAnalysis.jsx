@@ -189,8 +189,15 @@ export function AIAnalysis() {
 
     const data = dashboardData || {};
     const ai = aiAnalysis || {};
-    const score = data.accuracy || ai.accuracy || 0;
-    const weeklyTrend = data.performanceGraph?.map(p => p.score) || [];
+
+    // Use AI-calculated score from backend (composite metric), fallback to accuracy
+    const score = ai.aiScore || data.accuracy || ai.accuracy || 0;
+
+    // Use real performance trend from backend (7-day actual scores)
+    const performanceTrend = ai.performanceTrend || [];
+    const weeklyTrend = performanceTrend.length > 0
+        ? performanceTrend.map(p => p.score)
+        : (data.performanceGraph?.map(p => p.score) || []);
 
     // Use actual data from backend - no fake fallbacks
     const strengths = ai.strengths || [];
@@ -208,7 +215,7 @@ export function AIAnalysis() {
     };
     const actualWeeklyTrend = calculateWeeklyTrend();
 
-    // Dynamic rank based on actual score
+    // Dynamic rank based on actual AI score
     const getRankLabel = () => {
         if (score >= 85) return "Top 5%";
         if (score >= 75) return "Top 15%";
@@ -217,21 +224,23 @@ export function AIAnalysis() {
         return "Keep Going!";
     };
 
-    const getStudyRecommendation = () => {
-        if (score < 40) return { hours: "5-6", level: "Intensive", color: "#EF4444" };
-        if (score < 60) return { hours: "4-5", level: "Focused", color: "#F59E0B" };
-        if (score < 80) return { hours: "3-4", level: "Balanced", color: "#10B981" };
-        return { hours: "2-3", level: "Maintenance", color: "#8A75BA" };
+    // Use AI-calculated study plan from backend, with local fallback
+    const studyRec = ai.studyPlan || {
+        hoursPerDay: score < 40 ? "5-6" : score < 60 ? "4-5" : score < 80 ? "3-4" : "2-3",
+        mode: score < 40 ? "Intensive" : score < 60 ? "Focused" : score < 80 ? "Balanced" : "Maintenance",
+        color: score < 40 ? "#EF4444" : score < 60 ? "#F59E0B" : score < 80 ? "#10B981" : "#8A75BA",
+        morning: { time: "2 hrs", focus: "Core concepts" },
+        afternoon: { time: "1.5 hrs", focus: "Practice tests" },
+        evening: { time: "1.5 hrs", focus: "Revision" }
     };
-    const studyRec = getStudyRecommendation();
 
     const performanceMetrics = {
-        quizzesCompleted: data.totalAttempts || 0,
-        questionsAnswered: data.totalQuestions || 0,
-        correctAnswers: data.totalCorrect || 0,
+        quizzesCompleted: ai.totalAttempts || data.totalAttempts || 0,
+        questionsAnswered: ai.totalQuestions || data.totalQuestions || 0,
+        correctAnswers: ai.totalCorrect || data.totalCorrect || 0,
         streakDays: data.streakCount || 0,
         xpPoints: data.xpPoints || 0,
-        averageScore: data.averageScore || 0
+        averageScore: data.averageScore || ai.accuracy || 0
     };
 
     // Responsive styles
@@ -430,7 +439,7 @@ export function AIAnalysis() {
                             <Timer size={32} style={{ color: studyRec.color }} />
                         </motion.div>
                         <div style={{ flex: 1, minWidth: 100 }}>
-                            <div style={{ fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 800, color: 'var(--color-text)' }}>{studyRec.hours}</div>
+                            <div style={{ fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 800, color: 'var(--color-text)' }}>{studyRec.hoursPerDay || studyRec.hours || '3-4'}</div>
                             <div style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: 'var(--color-text-secondary)' }}>Hours per day</div>
                         </div>
                         <motion.div
@@ -451,9 +460,9 @@ export function AIAnalysis() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2vw, 12px)' }}>
                         {[
-                            { label: 'Morning', time: '2 hrs', desc: 'Core concepts' },
-                            { label: 'Afternoon', time: '1.5 hrs', desc: 'Practice tests' },
-                            { label: 'Evening', time: '1.5 hrs', desc: 'Revision' }
+                            { label: 'Morning', time: studyRec.morning?.time || '2 hrs', desc: studyRec.morning?.focus || 'Core concepts' },
+                            { label: 'Afternoon', time: studyRec.afternoon?.time || '1.5 hrs', desc: studyRec.afternoon?.focus || 'Practice tests' },
+                            { label: 'Evening', time: studyRec.evening?.time || '1.5 hrs', desc: studyRec.evening?.focus || 'Revision' }
                         ].map((slot, i) => (
                             <motion.div
                                 key={i}
