@@ -1277,31 +1277,65 @@
 
 @media (max-width: 600px) {
     .bento-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: flex !important;
+        flex-direction: column;
+        gap: 16px;
     }
 
     .bento-tile {
-        padding: 20px;
-        border-radius: 20px;
+        width: 100% !important;
+        padding: 16px;
+        border-radius: 16px;
     }
 
     .tile-header {
-        margin-bottom: 16px;
+        margin-bottom: 12px;
     }
 
     .tile-header h3 {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
+    /* Reset all grid positioning for mobile - use flexbox order */
     .hero-tile,
-    .ai-tile,
+    .ai-coach-card,
     .course-card-dynamic,
     .stats-tile-1,
     .stats-tile-2,
     .todo-tile,
     .rank-tile {
-        grid-column: span 1;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        width: 100% !important;
+    }
+
+    /* Mobile order for best UX */
+    .hero-tile {
+        order: 1;
+    }
+
+    .ai-coach-card {
+        order: 2;
+    }
+
+    .stats-tile-1 {
+        order: 3;
+    }
+
+    .course-card-dynamic {
+        order: 4;
+    }
+
+    .todo-tile {
+        order: 5;
+    }
+
+    .rank-tile {
+        order: 6;
+    }
+
+    .stats-tile-2 {
+        display: none;
     }
 }
 
