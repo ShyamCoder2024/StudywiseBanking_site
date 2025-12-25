@@ -117,8 +117,11 @@ export function StudentMonitoring() {
             }
         } else {
             // If marking as paid, show batch selection modal
+            // IMPORTANT: Clear ALL selections so modal starts empty
             setSelectedCourseId('');
+            setSelectedCourseIds([]);  // Clear multi-course selection
             setSelectedBatch('');
+            setSelectedBatches([]);    // Clear multi-batch selection
             setCourseDuration('');
             setDurationType('months');
             setShowBatchModal(true);
@@ -1146,7 +1149,7 @@ export function StudentMonitoring() {
                                                     >
                                                         <input
                                                             type="checkbox"
-                                                            checked={isEnrolled || isSelected}
+                                                            checked={isSelected}
                                                             disabled={isEnrolled}
                                                             onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
                                                             style={{
