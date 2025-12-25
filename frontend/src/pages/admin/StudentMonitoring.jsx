@@ -71,6 +71,7 @@ export function StudentMonitoring() {
     useEffect(() => {
         if (showBatchModal) {
             // Force clear all selections when modal opens
+            console.log('📋 Enrollment Modal: Clearing ALL selections - modal should start empty');
             setSelectedCourseId('');
             setSelectedCourseIds([]);
             setSelectedBatch('');
