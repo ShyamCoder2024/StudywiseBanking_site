@@ -16,12 +16,23 @@ export function AboutTutor() {
         name: 'Bharat Mangaonkar',
         title: 'Banking Exam Expert & Mentor',
         youtube: 'https://www.youtube.com/@studywisebanking',
-        headerBio: "Helping aspirants crack SBI PO, IBPS, and RBI exams with ease.",
-        bio: `With over 12 years of dedicated teaching experience, Bharat Mangaonkar has become a trusted name in Banking Exam preparation. His simplified teaching methods, especially in Quantitative Aptitude and Reasoning, have helped over 50,000 students navigate the complex world of competitive exams. He believes in smart work over hard work, focusing on exam-oriented strategies that yield maximum results in minimum time.`,
+        headerBio: "Guiding aspirants to clear SBI PO, IBPS, and RBI exams with confidence.",
+        bio: `With 5+ years of dedicated experience in banking exam preparation, Bharat Mangaonkar has guided 5,000+ aspirants towards clearing SBI PO, IBPS, and RBI examinations.
+
+His teaching philosophy is simple and exam-focused — no unnecessary theory, only what actually appears in the exam. Bharat is widely known for transforming average students into confident performers by focusing on concept clarity, smart problem-solving techniques, and the right exam approach.
+
+He specializes in Quantitative Aptitude and Data Interpretation, where his simplified methods and speed-based strategies help students solve complex questions accurately within strict time limits.
+
+What truly sets him apart is his approach-based teaching. He doesn't just teach how to solve questions — he teaches how to think in the exam, how to choose the right questions, and how to manage time effectively under pressure.
+
+Through personalized mentorship and daily task-based practice, students receive consistent guidance at every stage of their preparation, especially during the critical Prelims phase.
+
+His structured and practical methods have helped thousands of students navigate the challenges of competitive exams with confidence, discipline, and clarity.`,
         features: [
-            { icon: <CheckCircle2 size={28} className="text-green" />, title: 'Exam-Oriented Approach', desc: 'No fluff. Only what appears in the exam.' },
-            { icon: <CheckCircle2 size={28} className="text-blue" />, title: 'Simplified Math Tricks', desc: 'Solve complex problems in seconds.' },
-            { icon: <CheckCircle2 size={28} className="text-purple" />, title: 'Personal Mentorship', desc: 'Guidance at every step of your journey.' },
+            { icon: <CheckCircle2 size={28} className="text-green" />, title: 'Exam-Oriented Teaching', desc: 'Only relevant concepts and patterns that appear in exams.' },
+            { icon: <CheckCircle2 size={28} className="text-blue" />, title: 'Simplified Math Techniques', desc: 'Fast and accurate problem-solving methods.' },
+            { icon: <CheckCircle2 size={28} className="text-purple" />, title: 'Approach-Based Learning', desc: 'Think like the exam expects you to.' },
+            { icon: <CheckCircle2 size={28} className="text-orange" />, title: 'Personalized Mentorship', desc: 'Daily guidance and accountability at every step.' },
         ],
         videos: [
             { id: 1, title: 'SBI PO Prelims Strategy 2025', views: '1.2M views', url: 'https://www.youtube.com/@studywisebanking' },
@@ -58,8 +69,8 @@ export function AboutTutor() {
                                 <Youtube size={20} /> Subscribe Channel
                             </a>
                             <div className="hero-stat-pill">
-                                <span><Users size={16} /> 50k+ Students</span>
-                                <span><TrendingUp size={16} /> 10+ Years</span>
+                                <span><Users size={16} /> 5k+ Aspirants</span>
+                                <span><TrendingUp size={16} /> 5+ Years</span>
                             </div>
                         </div>
                     </motion.div>
@@ -107,7 +118,7 @@ export function AboutTutor() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                 >
-                    <h2>My Journey</h2>
+                    <h2>About the Mentor</h2>
                     <p>{tutorInfo.bio}</p>
                 </motion.div>
             </section>
