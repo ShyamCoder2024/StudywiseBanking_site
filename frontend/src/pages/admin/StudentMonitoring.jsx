@@ -167,12 +167,14 @@ export function StudentMonitoring() {
 
     // Toggle course selection for multi-select
     const toggleCourseSelection = (courseId) => {
+        console.log('🔄 toggleCourseSelection called with:', courseId);
+        console.log('🔄 Current selectedCourseIds BEFORE:', selectedCourseIds);
         setSelectedCourseIds(prev => {
-            if (prev.includes(courseId)) {
-                return prev.filter(id => id !== courseId);
-            } else {
-                return [...prev, courseId];
-            }
+            const newState = prev.includes(courseId)
+                ? prev.filter(id => id !== courseId)
+                : [...prev, courseId];
+            console.log('🔄 New selectedCourseIds AFTER:', newState);
+            return newState;
         });
     };
 
@@ -1084,6 +1086,7 @@ export function StudentMonitoring() {
                                         <>
                                             {/* Individual courses ONLY - no auto-select row */}
                                             {/* Admin must manually select each course */}
+                                            {console.log('🎯 RENDERING COURSES - selectedCourseIds:', selectedCourseIds)}
 
                                             {/* Show ALL courses - enrolled ones are disabled */}
                                             {availableCourses.map(course => {
