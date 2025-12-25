@@ -23,6 +23,20 @@ const BRAND = {
     radius: '12px'
 };
 
+// Common Input Styles - Cross-browser text visibility fix
+const INPUT_STYLES = {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '8px',
+    border: `1px solid ${BRAND.border}`,
+    fontSize: '14px',
+    color: '#131313',
+    backgroundColor: '#FFFFFF',
+    outline: 'none',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box'
+};
+
 export function CourseManagement() {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -485,16 +499,16 @@ export function CourseManagement() {
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Course Title *</label>
-                                    <input type="text" value={courseForm.title} onChange={e => setCourseForm({ ...courseForm, title: e.target.value })} placeholder="e.g., Complete Banking Course 2025" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    <input type="text" value={courseForm.title} onChange={e => setCourseForm({ ...courseForm, title: e.target.value })} placeholder="e.g., Complete Banking Course 2025" style={{ ...INPUT_STYLES }} />
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                     <div>
                                         <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Subject *</label>
-                                        <input type="text" value={courseForm.subject} onChange={e => setCourseForm({ ...courseForm, subject: e.target.value })} placeholder="e.g., Quantitative Aptitude" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                        <input type="text" value={courseForm.subject} onChange={e => setCourseForm({ ...courseForm, subject: e.target.value })} placeholder="e.g., Quantitative Aptitude" style={{ ...INPUT_STYLES }} />
                                     </div>
                                     <div>
                                         <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Batch Name *</label>
-                                        <input type="text" value={courseForm.batchName} onChange={e => setCourseForm({ ...courseForm, batchName: e.target.value })} placeholder="e.g., January 2025 Batch" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                        <input type="text" value={courseForm.batchName} onChange={e => setCourseForm({ ...courseForm, batchName: e.target.value })} placeholder="e.g., January 2025 Batch" style={{ ...INPUT_STYLES }} />
                                     </div>
                                 </div>
                                 <div>
@@ -505,15 +519,10 @@ export function CourseManagement() {
                                         rows={8}
                                         placeholder={`Add a detailed description of this course...\n\n• Point 1: What students will learn\n• Point 2: Topics covered\n• Point 3: Prerequisites\n• Point 4: Course benefits`}
                                         style={{
-                                            width: '100%',
-                                            padding: '12px',
-                                            borderRadius: '8px',
-                                            border: `1px solid ${BRAND.border}`,
-                                            fontSize: '14px',
+                                            ...INPUT_STYLES,
                                             resize: 'vertical',
                                             minHeight: '150px',
                                             lineHeight: '1.6',
-                                            fontFamily: 'inherit',
                                             whiteSpace: 'pre-wrap'
                                         }}
                                     />
@@ -540,7 +549,7 @@ export function CourseManagement() {
                                                     pricing: { ...courseForm.pricing, originalPrice: parseInt(e.target.value) || 0 }
                                                 })}
                                                 placeholder="e.g., 4999"
-                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                                style={{ ...INPUT_STYLES, padding: '10px' }}
                                             />
                                         </div>
                                         <div>
@@ -554,7 +563,7 @@ export function CourseManagement() {
                                                     pricing: { ...courseForm.pricing, currentPrice: parseInt(e.target.value) || 0 }
                                                 })}
                                                 placeholder="e.g., 2999"
-                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                                style={{ ...INPUT_STYLES, padding: '10px' }}
                                             />
                                         </div>
                                     </div>
@@ -583,7 +592,7 @@ export function CourseManagement() {
                                                     pricing: { ...courseForm.pricing, priceDropLabel: e.target.value }
                                                 })}
                                                 placeholder="e.g., 🔥 Price Drop"
-                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                                style={{ ...INPUT_STYLES, padding: '10px' }}
                                             />
                                         </div>
                                     )}
@@ -599,7 +608,7 @@ export function CourseManagement() {
                                         <select
                                             value={courseForm.status || 'ongoing'}
                                             onChange={e => setCourseForm({ ...courseForm, status: e.target.value })}
-                                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px', backgroundColor: '#fff' }}
+                                            style={{ ...INPUT_STYLES, cursor: 'pointer' }}
                                         >
                                             <option value="ongoing">🔴 Ongoing</option>
                                             <option value="complete">✓ Complete</option>
@@ -617,7 +626,7 @@ export function CourseManagement() {
                                             value={courseForm.displayOrder || 0}
                                             onChange={e => setCourseForm({ ...courseForm, displayOrder: parseInt(e.target.value) || 0 })}
                                             placeholder="0 = top"
-                                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }}
+                                            style={{ ...INPUT_STYLES }}
                                         />
                                         <p style={{ fontSize: '11px', color: BRAND.textMuted, margin: '4px 0 0' }}>Lower = Higher priority</p>
                                     </div>
@@ -646,20 +655,20 @@ export function CourseManagement() {
                                 <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '12px' }}>
                                     <div>
                                         <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Lecture #</label>
-                                        <input type="number" min="1" value={lectureForm.lectureNumber} onChange={e => setLectureForm({ ...lectureForm, lectureNumber: parseInt(e.target.value) || 1 })} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                        <input type="number" min="1" value={lectureForm.lectureNumber} onChange={e => setLectureForm({ ...lectureForm, lectureNumber: parseInt(e.target.value) || 1 })} style={{ ...INPUT_STYLES }} />
                                     </div>
                                     <div>
                                         <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Duration (optional)</label>
-                                        <input type="text" value={lectureForm.duration} onChange={e => setLectureForm({ ...lectureForm, duration: e.target.value })} placeholder="e.g., 45 mins" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                        <input type="text" value={lectureForm.duration} onChange={e => setLectureForm({ ...lectureForm, duration: e.target.value })} placeholder="e.g., 45 mins" style={{ ...INPUT_STYLES }} />
                                     </div>
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>Lecture Title *</label>
-                                    <input type="text" value={lectureForm.title} onChange={e => setLectureForm({ ...lectureForm, title: e.target.value })} placeholder="e.g., Introduction to Number Series" style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    <input type="text" value={lectureForm.title} onChange={e => setLectureForm({ ...lectureForm, title: e.target.value })} placeholder="e.g., Introduction to Number Series" style={{ ...INPUT_STYLES }} />
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '13px', fontWeight: '600', color: BRAND.text, marginBottom: '6px', display: 'block' }}>YouTube Link *</label>
-                                    <input type="text" value={lectureForm.youtubeLink} onChange={e => setLectureForm({ ...lectureForm, youtubeLink: e.target.value })} placeholder="https://youtube.com/..." style={{ width: '100%', padding: '12px', borderRadius: '8px', border: `1px solid ${BRAND.border}`, fontSize: '14px' }} />
+                                    <input type="text" value={lectureForm.youtubeLink} onChange={e => setLectureForm({ ...lectureForm, youtubeLink: e.target.value })} placeholder="https://youtube.com/..." style={{ ...INPUT_STYLES }} />
                                     <p style={{ fontSize: '11px', color: BRAND.textMuted, marginTop: '4px' }}>Paste the private YouTube video URL</p>
                                 </div>
                             </div>

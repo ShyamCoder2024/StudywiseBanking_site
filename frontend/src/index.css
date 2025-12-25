@@ -150,6 +150,40 @@ button {
   min-width: 44px;
 }
 
+/* Global Input/Textarea/Select Styles - Cross-browser Text Visibility Fix */
+input,
+textarea,
+select {
+  font-family: var(--font-sans);
+  color: #131313 !important;
+  background-color: #FFFFFF !important;
+  caret-color: var(--primary);
+  -webkit-text-fill-color: #131313 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9AA0A6 !important;
+  -webkit-text-fill-color: #9AA0A6 !important;
+  opacity: 1;
+}
+
+/* Ensure autofill doesn't break text visibility */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #131313 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset !important;
+  box-shadow: 0 0 0px 1000px #FFFFFF inset !important;
+  background-color: #FFFFFF !important;
+}
+
 /* Reusable Components/Utilities */
 .btn {
   display: inline-flex;

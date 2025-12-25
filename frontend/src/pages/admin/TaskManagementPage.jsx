@@ -25,6 +25,20 @@ const BRAND = {
     radius: '12px'
 };
 
+// Common Input Styles - Cross-browser text visibility fix
+const INPUT_STYLES = {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '10px',
+    border: `2px solid ${BRAND.primary}`,
+    fontSize: '14px',
+    color: '#131313',
+    backgroundColor: '#FFFFFF',
+    outline: 'none',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box'
+};
+
 // Tag Colors based on subject
 const getTagColor = (tag) => {
     const colors = {
@@ -255,15 +269,7 @@ export function TaskManagementPage() {
                                         value={newTask.content}
                                         onChange={(e) => setNewTask({ ...newTask, content: e.target.value })}
                                         onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
-                                        style={{
-                                            width: '100%',
-                                            padding: '14px 16px',
-                                            borderRadius: '10px',
-                                            border: `2px solid ${BRAND.primary}`,
-                                            fontSize: '14px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box'
-                                        }}
+                                        style={{ ...INPUT_STYLES }}
                                         autoFocus
                                     />
                                 </div>

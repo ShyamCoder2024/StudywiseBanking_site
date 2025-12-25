@@ -25,6 +25,20 @@ const BRAND = {
     radius: '12px'
 };
 
+// Common Input Styles - Cross-browser text visibility fix
+const INPUT_STYLES = {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '10px',
+    border: `1px solid ${BRAND.border}`,
+    fontSize: '14px',
+    color: '#131313',
+    backgroundColor: '#FFFFFF',
+    outline: 'none',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    boxSizing: 'border-box'
+};
+
 export function StudentMonitoring() {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -342,14 +356,8 @@ export function StudentMonitoring() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             style={{
-                                width: '100%',
-                                padding: '12px 16px 12px 44px',
-                                borderRadius: '10px',
-                                border: `1px solid ${BRAND.border}`,
-                                fontSize: '14px',
-                                outline: 'none',
-                                boxSizing: 'border-box',
-                                fontFamily: 'Inter, system-ui, sans-serif'
+                                ...INPUT_STYLES,
+                                paddingLeft: '44px'
                             }}
                         />
                     </div>
@@ -753,7 +761,8 @@ export function StudentMonitoring() {
                                                 border: '1px solid #d1d5db',
                                                 fontSize: '12px',
                                                 outline: 'none',
-                                                color: '#1f2937'
+                                                color: '#131313',
+                                                backgroundColor: '#FFFFFF'
                                             }}
                                             onKeyDown={(e) => e.key === 'Enter' && addTag()}
                                         />
