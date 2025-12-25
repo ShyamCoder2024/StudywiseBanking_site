@@ -461,8 +461,12 @@
     }
 
     .bio-container p {
-        font-size: 1rem;
+        font-size: 0.95rem;
         line-height: 1.7;
+        text-align: left;
+        letter-spacing: normal;
+        word-spacing: normal;
+        hyphens: none;
     }
 
     /* Videos */
