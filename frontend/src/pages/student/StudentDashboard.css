@@ -1133,87 +1133,206 @@
     }
 }
 
-/* Paid Course Card - Clean Compact Design */
-.paid-course-card {
+/* Premium Course Card - Matches AI Coach Style */
+.course-card-dynamic.paid {
+    background: var(--color-card);
+    border: 1px solid rgba(138, 117, 186, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.course-bg-premium {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.course-orb-1 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(138, 117, 186, 0.15) 0%, transparent 70%);
+    top: -30px;
+    right: -30px;
+    animation: orbFloat 6s ease-in-out infinite alternate;
+}
+
+.course-orb-2 {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    bottom: -20px;
+    left: -20px;
+    animation: orbFloat 8s ease-in-out infinite alternate-reverse;
+}
+
+.course-content-premium {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
-    gap: 16px;
+    gap: 12px;
 }
 
-.paid-card-header {
+.course-header-premium {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.paid-icon-badge {
-    width: 44px;
-    height: 44px;
-    background: linear-gradient(135deg, #8A75BA, #6366f1);
-    border-radius: 14px;
+.course-badge-premium {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.3);
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(138, 117, 186, 0.1);
+    border: 1px solid rgba(138, 117, 186, 0.2);
+    border-radius: 20px;
 }
 
-.paid-arrow {
-    width: 32px;
-    height: 32px;
-    background: var(--color-bg);
+.course-badge-premium span {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.5px;
+}
+
+.sparkle-anim {
+    color: #F59E0B;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(0.9);
+    }
+}
+
+.course-arrow-premium {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--color-text-secondary);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.2s;
 }
 
-.course-card-dynamic:hover .paid-arrow {
-    color: var(--color-primary);
-    background: var(--color-primary-light);
+.course-card-dynamic:hover .course-arrow-premium {
+    background: var(--color-primary);
+    color: white;
 }
 
-.paid-stats-row {
+.course-main-premium {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.course-ring-mini {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.course-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.course-ring-track {
+    fill: none;
+    stroke: rgba(138, 117, 186, 0.15);
+    stroke-width: 5;
+}
+
+.course-ring-fill {
+    fill: none;
+    stroke: #8A75BA;
+    stroke-width: 5;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(138, 117, 186, 0.4));
+}
+
+.course-ring-center {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    flex: 1;
+    color: var(--color-primary);
 }
 
-.paid-stat {
+.course-info-premium {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    gap: 8px;
 }
 
-.paid-stat-num {
-    font-size: clamp(28px, 6vw, 36px);
+.course-stat-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.course-stat-big {
+    font-size: 24px;
     font-weight: 800;
     color: var(--color-text);
     line-height: 1;
 }
 
-.paid-stat-label {
+.course-stat-label {
     font-size: 11px;
     font-weight: 600;
     color: var(--color-text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 4px;
 }
 
-.paid-stat-divider {
-    width: 1px;
-    height: 40px;
-    background: var(--color-border);
+.course-recent {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(138, 117, 186, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(138, 117, 186, 0.1);
 }
 
-.paid-cta {
+.recent-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+.recent-name {
+    font-size: 11px;
+    color: var(--color-text);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.course-cta-premium {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1226,29 +1345,41 @@
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(138, 117, 186, 0.25);
 }
 
-.paid-cta:hover {
+.course-cta-premium:hover {
     box-shadow: 0 6px 20px rgba(138, 117, 186, 0.4);
-    transform: translateY(-2px);
 }
 
-/* Mobile optimization for paid card */
-@media (max-width: 600px) {
-    .paid-icon-badge {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-    }
+/* Dark Mode for Premium Course Card */
+:root.dark .course-card-dynamic.paid {
+    background: #0f1014;
+    border-color: rgba(138, 117, 186, 0.2);
+}
 
-    .paid-stat-num {
-        font-size: 28px;
-    }
+:root.dark .course-orb-1 {
+    background: radial-gradient(circle, rgba(138, 117, 186, 0.25) 0%, transparent 70%);
+}
 
-    .paid-cta {
-        padding: 10px;
-        font-size: 12px;
-    }
+:root.dark .course-orb-2 {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+}
+
+:root.dark .course-badge-premium {
+    background: rgba(138, 117, 186, 0.15);
+    border-color: rgba(138, 117, 186, 0.25);
+}
+
+:root.dark .course-arrow-premium {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: transparent;
+}
+
+:root.dark .course-recent {
+    background: rgba(138, 117, 186, 0.12);
+    border-color: rgba(138, 117, 186, 0.15);
 }
 
 .course-empty {

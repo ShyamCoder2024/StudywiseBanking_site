@@ -529,13 +529,13 @@ export function StudentDashboard() {
 
                     {/* Tutor's Picks - REMOVED */}
 
-                    {/* 5. Dynamic Course Card - Premium Compact Design */}
+                    {/* 5. Course Card - Premium Interactive Design (Matches AI Coach Style) */}
                     <motion.div
                         className={`bento-tile course-card-dynamic ${enrollmentLoaded ? (enrollment.isPaid ? 'paid' : 'free') : 'loading'} clickable`}
                         variants={tile}
                         onClick={() => navigate('/courses')}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover="hover"
+                        initial="rest"
                     >
                         {!enrollmentLoaded ? (
                             <div className="course-card-loading">
@@ -544,40 +544,80 @@ export function StudentDashboard() {
                                 <div className="skeleton-meta" />
                             </div>
                         ) : enrollment.isPaid ? (
-                            /* Paid User - Clean Compact Design */
-                            <div className="paid-course-card">
-                                {/* Header with Icon and Arrow */}
-                                <div className="paid-card-header">
-                                    <div className="paid-icon-badge">
-                                        <GraduationCap size={20} />
+                            /* Paid User - Premium Interactive Design */
+                            <>
+                                {/* Animated Background (like AI Coach) */}
+                                <div className="course-bg-premium">
+                                    <div className="course-orb-1"></div>
+                                    <div className="course-orb-2"></div>
+                                </div>
+
+                                <div className="course-content-premium">
+                                    {/* Header Badge */}
+                                    <div className="course-header-premium">
+                                        <div className="course-badge-premium">
+                                            <Sparkles size={12} className="sparkle-anim" />
+                                            <span>MY COURSES</span>
+                                        </div>
+                                        <motion.div
+                                            className="course-arrow-premium"
+                                            variants={{ rest: { x: 0 }, hover: { x: 4 } }}
+                                        >
+                                            <ArrowRight size={16} />
+                                        </motion.div>
                                     </div>
+
+                                    {/* Main Content */}
+                                    <div className="course-main-premium">
+                                        {/* Mini Progress Ring (like AI Coach) */}
+                                        <div className="course-ring-mini">
+                                            <svg viewBox="0 0 60 60" className="course-ring-svg">
+                                                <circle cx="30" cy="30" r="24" className="course-ring-track" />
+                                                <motion.circle
+                                                    cx="30" cy="30" r="24"
+                                                    className="course-ring-fill"
+                                                    strokeDasharray={151}
+                                                    initial={{ strokeDashoffset: 151 }}
+                                                    animate={{ strokeDashoffset: 151 - (151 * Math.min(videoCourses.length * 25, 100)) / 100 }}
+                                                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+                                                />
+                                            </svg>
+                                            <div className="course-ring-center">
+                                                <GraduationCap size={18} />
+                                            </div>
+                                        </div>
+
+                                        {/* Course Info */}
+                                        <div className="course-info-premium">
+                                            <div className="course-stat-row">
+                                                <span className="course-stat-big">{videoCourses.length || enrollment.courses?.length || 0}</span>
+                                                <span className="course-stat-label">Enrolled</span>
+                                            </div>
+                                            <div className="course-stat-row">
+                                                <span className="course-stat-big">{videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)}</span>
+                                                <span className="course-stat-label">Lectures</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Recent Course Name */}
+                                    {videoCourses.length > 0 && (
+                                        <div className="course-recent">
+                                            <span className="recent-label">Recently:</span>
+                                            <span className="recent-name">{videoCourses[0]?.title?.slice(0, 25) || 'Your Course'}...</span>
+                                        </div>
+                                    )}
+
+                                    {/* CTA Button */}
                                     <motion.div
-                                        className="paid-arrow"
-                                        whileHover={{ x: 4 }}
+                                        className="course-cta-premium"
+                                        whileHover={{ scale: 1.02 }}
                                     >
-                                        <ArrowRight size={18} />
+                                        <Play size={14} fill="white" />
+                                        <span>Continue Learning</span>
                                     </motion.div>
                                 </div>
-
-                                {/* Stats Row */}
-                                <div className="paid-stats-row">
-                                    <div className="paid-stat">
-                                        <span className="paid-stat-num">{videoCourses.length || enrollment.courses?.length || 0}</span>
-                                        <span className="paid-stat-label">Courses</span>
-                                    </div>
-                                    <div className="paid-stat-divider" />
-                                    <div className="paid-stat">
-                                        <span className="paid-stat-num">{videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)}</span>
-                                        <span className="paid-stat-label">Lectures</span>
-                                    </div>
-                                </div>
-
-                                {/* CTA */}
-                                <div className="paid-cta">
-                                    <Play size={12} fill="currentColor" />
-                                    <span>Continue Learning</span>
-                                </div>
-                            </div>
+                            </>
                         ) : (
                             /* Free User - Unlock CTA */
                             <>
