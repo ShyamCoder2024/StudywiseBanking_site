@@ -119,7 +119,13 @@ His structured and practical methods have helped thousands of students navigate 
                     viewport={{ once: true }}
                 >
                     <h2>About the Mentor</h2>
-                    <p>{tutorInfo.bio}</p>
+                    <div className="bio-paragraphs">
+                        {tutorInfo.bio.split('\n\n').map((paragraph, index) => (
+                            <p key={index} style={{ marginBottom: '16px', lineHeight: '1.8' }}>
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
                 </motion.div>
             </section>
 
