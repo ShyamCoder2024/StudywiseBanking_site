@@ -189,18 +189,33 @@ export function AIAnalysis() {
 
     const data = dashboardData || {};
     const ai = aiAnalysis || {};
-    const score = data.accuracy || 0;
-    const weeklyTrend = data.performanceGraph?.map(p => p.score) || [40, 50, 45, 60, 55, 70, 75];
+    const score = data.accuracy || ai.accuracy || 0;
+    const weeklyTrend = data.performanceGraph?.map(p => p.score) || [];
 
-    const strengths = ai.strengths?.length > 0 ? ai.strengths : [
-        { topic: "Data Interpretation", score: 85 },
-        { topic: "Simplification", score: 92 },
-        { topic: "Inequalities", score: 78 }
-    ];
+    // Use actual data from backend - no fake fallbacks
+    const strengths = ai.strengths || [];
+    const weaknesses = ai.weaknesses || [];
 
-    const weaknesses = ai.weaknesses?.length > 0 ? ai.weaknesses : [
-        { topic: "General", score: 0 }
-    ];
+    // Calculate actual weekly trend from recent vs older performance
+    const calculateWeeklyTrend = () => {
+        if (weeklyTrend.length < 2) return null;
+        const recent = weeklyTrend.slice(-3);
+        const older = weeklyTrend.slice(0, Math.min(3, weeklyTrend.length - 3));
+        if (older.length === 0) return null;
+        const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+        const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
+        return Math.round(recentAvg - olderAvg);
+    };
+    const actualWeeklyTrend = calculateWeeklyTrend();
+
+    // Dynamic rank based on actual score
+    const getRankLabel = () => {
+        if (score >= 85) return "Top 5%";
+        if (score >= 75) return "Top 15%";
+        if (score >= 60) return "Top 30%";
+        if (score >= 40) return "Top 50%";
+        return "Keep Going!";
+    };
 
     const getStudyRecommendation = () => {
         if (score < 40) return { hours: "5-6", level: "Intensive", color: "#EF4444" };
@@ -333,7 +348,7 @@ export function AIAnalysis() {
             }}>
                 <StatCard icon={Target} label="Quizzes Taken" value={performanceMetrics.quizzesCompleted} color="#8A75BA" delay={1} />
                 <StatCard icon={BarChart3} label="Questions" value={performanceMetrics.questionsAnswered} color="#6EBCC3" delay={2} />
-                <StatCard icon={Zap} label="Accuracy" value={`${score}%`} trend={5} color="#F59E0B" delay={3} />
+                <StatCard icon={Zap} label="Accuracy" value={`${score}%`} color="#F59E0B" delay={3} />
                 <StatCard icon={Flame} label="Day Streak" value={performanceMetrics.streakDays} color="#EF4444" delay={4} />
                 <StatCard icon={Trophy} label="XP Points" value={performanceMetrics.xpPoints} color="#10B981" delay={5} />
                 <StatCard icon={GraduationCap} label="Avg Score" value={`${performanceMetrics.averageScore}%`} color="#8B5CF6" delay={6} />
@@ -371,7 +386,7 @@ export function AIAnalysis() {
                         >
                             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
                             <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
-                                <Crown size={18} color="#F59E0B" fill="#F59E0B" /> Top 15%
+                                <Crown size={18} color="#F59E0B" fill="#F59E0B" /> {getRankLabel()}
                             </div>
                         </motion.div>
                         <motion.div
@@ -379,8 +394,9 @@ export function AIAnalysis() {
                             style={{ padding: 'clamp(14px, 3vw, 18px)', background: 'var(--color-bg)', borderRadius: 16, border: '1px solid var(--color-border)' }}
                         >
                             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>This Week</div>
-                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
-                                <TrendingUp size={18} /> +12%
+                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: actualWeeklyTrend !== null && actualWeeklyTrend >= 0 ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                                <TrendingUp size={18} style={{ transform: actualWeeklyTrend !== null && actualWeeklyTrend < 0 ? 'rotate(180deg)' : 'none' }} />
+                                {actualWeeklyTrend !== null ? `${actualWeeklyTrend >= 0 ? '+' : ''}${actualWeeklyTrend}%` : 'N/A'}
                             </div>
                         </motion.div>
                     </div>
@@ -533,7 +549,7 @@ export function AIAnalysis() {
                         <Award size={16} color="#10B981" /> Strong Areas
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                        {strengths.map((item, i) => (
+                        {strengths.length > 0 ? strengths.map((item, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, x: -10 }}
@@ -547,7 +563,12 @@ export function AIAnalysis() {
                                 </div>
                                 <AnimatedBar value={item.score} color="linear-gradient(to right, #10B981, #34D399)" delay={0.6 + i * 0.1} />
                             </motion.div>
-                        ))}
+                        )) : (
+                            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-secondary)' }}>
+                                <Star size={32} color="#10B981" style={{ marginBottom: 8, opacity: 0.5 }} />
+                                <div style={{ fontSize: 14 }}>Complete more quizzes to discover your strengths!</div>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
 
@@ -562,7 +583,7 @@ export function AIAnalysis() {
                         <AlertTriangle size={16} color="#EF4444" /> Areas to Improve
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                        {weaknesses.map((item, i) => (
+                        {weaknesses.length > 0 ? weaknesses.map((item, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, x: 10 }}
@@ -576,7 +597,12 @@ export function AIAnalysis() {
                                 </div>
                                 <AnimatedBar value={Math.max(item.score, 8)} color="linear-gradient(to right, #EF4444, #F87171)" delay={0.7 + i * 0.1} />
                             </motion.div>
-                        ))}
+                        )) : (
+                            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-secondary)' }}>
+                                <Trophy size={32} color="#10B981" style={{ marginBottom: 8, opacity: 0.5 }} />
+                                <div style={{ fontSize: 14 }}>Great job! No weak areas detected yet.</div>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             </div>
