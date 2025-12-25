@@ -1086,7 +1086,7 @@ export function StudentMonitoring() {
                                         <>
                                             {/* Individual courses ONLY - no auto-select row */}
                                             {/* Admin must manually select each course */}
-                                            {/* Show ALL courses - already enrolled ones are disabled but visible */}
+                                            {/* ALL courses have same white background - no visual difference */}
 
                                             {availableCourses.map(course => {
                                                 const courseId = course._id || course.id;
@@ -1095,6 +1095,31 @@ export function StudentMonitoring() {
                                                 );
                                                 const isSelected = selectedCourseIds.includes(courseId);
 
+                                                // Already enrolled courses - show as label only (NO checkbox)
+                                                if (isEnrolled) {
+                                                    return (
+                                                        <div
+                                                            key={courseId}
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                padding: '8px 10px',
+                                                                backgroundColor: BRAND.card,
+                                                                borderRadius: '6px',
+                                                                border: `1px solid ${BRAND.border}`,
+                                                                opacity: 0.6
+                                                            }}
+                                                        >
+                                                            <span style={{ fontSize: '12px', color: '#059669', fontWeight: '600' }}>✓</span>
+                                                            <div style={{ fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>
+                                                                {course.name} <span style={{ fontSize: '10px', color: '#059669' }}>(Already enrolled)</span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                // Selectable courses - checkbox starts UNCHECKED
                                                 return (
                                                     <label
                                                         key={courseId}
@@ -1103,39 +1128,26 @@ export function StudentMonitoring() {
                                                             alignItems: 'center',
                                                             gap: '8px',
                                                             padding: '8px 10px',
-                                                            backgroundColor: isEnrolled ? '#e5e7eb' : (isSelected ? BRAND.successLight : BRAND.card),
+                                                            backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
                                                             borderRadius: '6px',
-                                                            border: `1px solid ${isEnrolled ? '#9ca3af' : (isSelected ? BRAND.success : BRAND.border)}`,
-                                                            cursor: isEnrolled ? 'not-allowed' : 'pointer',
-                                                            transition: 'all 0.2s',
-                                                            opacity: isEnrolled ? 0.6 : 1
+                                                            border: `1px solid ${isSelected ? BRAND.success : BRAND.border}`,
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s'
                                                         }}
                                                     >
                                                         <input
                                                             type="checkbox"
                                                             checked={isSelected}
-                                                            disabled={isEnrolled}
-                                                            onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
+                                                            onChange={() => toggleCourseSelection(courseId)}
                                                             style={{
                                                                 width: '14px',
                                                                 height: '14px',
-                                                                cursor: isEnrolled ? 'not-allowed' : 'pointer',
-                                                                accentColor: isEnrolled ? '#9ca3af' : BRAND.success
+                                                                cursor: 'pointer',
+                                                                accentColor: BRAND.success
                                                             }}
                                                         />
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{
-                                                                fontSize: '12px',
-                                                                fontWeight: '600',
-                                                                color: isEnrolled ? '#6b7280' : BRAND.text
-                                                            }}>
-                                                                {course.name}
-                                                            </div>
-                                                            {isEnrolled && (
-                                                                <div style={{ fontSize: '10px', color: '#059669', fontWeight: '500' }}>
-                                                                    ✓ Already enrolled
-                                                                </div>
-                                                            )}
+                                                        <div style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>
+                                                            {course.name}
                                                         </div>
                                                     </label>
                                                 );
