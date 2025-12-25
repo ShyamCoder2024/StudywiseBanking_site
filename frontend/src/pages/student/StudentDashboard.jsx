@@ -529,7 +529,7 @@ export function StudentDashboard() {
 
                     {/* Tutor's Picks - REMOVED */}
 
-                    {/* 5. Dynamic Course Card - Paid vs Free - REDESIGNED INTERACTIVE */}
+                    {/* 5. Dynamic Course Card - Premium Compact Design */}
                     <motion.div
                         className={`bento-tile course-card-dynamic ${enrollmentLoaded ? (enrollment.isPaid ? 'paid' : 'free') : 'loading'} clickable`}
                         variants={tile}
@@ -538,87 +538,48 @@ export function StudentDashboard() {
                         whileTap={{ scale: 0.98 }}
                     >
                         {!enrollmentLoaded ? (
-                            /* Loading Skeleton */
                             <div className="course-card-loading">
                                 <div className="skeleton-badge" />
                                 <div className="skeleton-title" />
                                 <div className="skeleton-meta" />
                             </div>
                         ) : enrollment.isPaid ? (
-                            /* Paid User - INTERACTIVE COURSE CARD */
-                            <>
-                                <div className="course-card-header">
-                                    <div className="course-badge premium">
-                                        <Star size={12} fill="#fbbf24" />
-                                        <span>{enrollment.courses?.length || 0} Course{enrollment.courses?.length !== 1 ? 's' : ''}</span>
+                            /* Paid User - Clean Compact Design */
+                            <div className="paid-course-card">
+                                {/* Header with Icon and Arrow */}
+                                <div className="paid-card-header">
+                                    <div className="paid-icon-badge">
+                                        <GraduationCap size={20} />
                                     </div>
-                                    <ArrowRight size={16} className="card-arrow" />
+                                    <motion.div
+                                        className="paid-arrow"
+                                        whileHover={{ x: 4 }}
+                                    >
+                                        <ArrowRight size={18} />
+                                    </motion.div>
                                 </div>
-                                <div className="course-card-content">
-                                    {videoCourses.length > 0 ? (
-                                        <>
-                                            {/* Course Thumbnails Stack */}
-                                            <div className="course-thumbnails-stack">
-                                                {videoCourses.slice(0, 3).map((course, idx) => (
-                                                    <div
-                                                        key={course._id}
-                                                        className="thumb-item"
-                                                        style={{
-                                                            zIndex: 3 - idx,
-                                                            transform: `translateX(${idx * 20}px)`,
-                                                            opacity: 1 - (idx * 0.2)
-                                                        }}
-                                                    >
-                                                        {course.thumbnail ? (
-                                                            <img src={course.thumbnail} alt={course.title} />
-                                                        ) : (
-                                                            <div className="thumb-placeholder">
-                                                                <GraduationCap size={16} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                                {videoCourses.length > 3 && (
-                                                    <div className="thumb-more" style={{ transform: `translateX(60px)` }}>
-                                                        +{videoCourses.length - 3}
-                                                    </div>
-                                                )}
-                                            </div>
 
-                                            {/* Course Info */}
-                                            <h3 className="course-title-main">
-                                                {videoCourses.length === 1
-                                                    ? videoCourses[0]?.title
-                                                    : `${videoCourses.length} Enrolled Courses`
-                                                }
-                                            </h3>
-
-                                            <div className="course-meta">
-                                                <span className="meta-item">
-                                                    <BookOpen size={14} />
-                                                    {videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)} Total Lectures
-                                                </span>
-                                            </div>
-
-                                            {/* Continue Button */}
-                                            <motion.div
-                                                className="continue-learning-btn"
-                                                whileHover={{ scale: 1.03 }}
-                                            >
-                                                <Play size={14} fill="white" />
-                                                <span>Continue Learning</span>
-                                            </motion.div>
-                                        </>
-                                    ) : (
-                                        <div className="course-empty">
-                                            <GraduationCap size={24} />
-                                            <p>Explore Courses</p>
-                                        </div>
-                                    )}
+                                {/* Stats Row */}
+                                <div className="paid-stats-row">
+                                    <div className="paid-stat">
+                                        <span className="paid-stat-num">{videoCourses.length || enrollment.courses?.length || 0}</span>
+                                        <span className="paid-stat-label">Courses</span>
+                                    </div>
+                                    <div className="paid-stat-divider" />
+                                    <div className="paid-stat">
+                                        <span className="paid-stat-num">{videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)}</span>
+                                        <span className="paid-stat-label">Lectures</span>
+                                    </div>
                                 </div>
-                            </>
+
+                                {/* CTA */}
+                                <div className="paid-cta">
+                                    <Play size={12} fill="currentColor" />
+                                    <span>Continue Learning</span>
+                                </div>
+                            </div>
                         ) : (
-                            /* Free User - Show Unlock CTA */
+                            /* Free User - Unlock CTA */
                             <>
                                 <div className="free-course-bg">
                                     <div className="unlock-glow" />

@@ -1133,6 +1133,124 @@
     }
 }
 
+/* Paid Course Card - Clean Compact Design */
+.paid-course-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 16px;
+}
+
+.paid-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.paid-icon-badge {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #8A75BA, #6366f1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(138, 117, 186, 0.3);
+}
+
+.paid-arrow {
+    width: 32px;
+    height: 32px;
+    background: var(--color-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    transition: all 0.2s;
+}
+
+.course-card-dynamic:hover .paid-arrow {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.paid-stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.paid-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.paid-stat-num {
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1;
+}
+
+.paid-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+.paid-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--color-border);
+}
+
+.paid-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: linear-gradient(135deg, #8A75BA, #6366f1);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.paid-cta:hover {
+    box-shadow: 0 6px 20px rgba(138, 117, 186, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Mobile optimization for paid card */
+@media (max-width: 600px) {
+    .paid-icon-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+
+    .paid-stat-num {
+        font-size: 28px;
+    }
+
+    .paid-cta {
+        padding: 10px;
+        font-size: 12px;
+    }
+}
+
 .course-empty {
     display: flex;
     flex-direction: column;
