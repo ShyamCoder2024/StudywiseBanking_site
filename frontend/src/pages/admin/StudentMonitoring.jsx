@@ -73,19 +73,26 @@ export function StudentMonitoring() {
         if (showBatchModal) {
             // Force clear all selections when modal opens
             console.log('📋 MODAL OPENED - Clearing ALL selections...');
-            console.log('📋 BEFORE: selectedCourseIds =', selectedCourseIds);
             setSelectedCourseId('');
             setSelectedCourseIds([]);
             setSelectedBatch('');
             setSelectedBatches([]);
             setCourseDuration('');
             setDurationType('months');
-            // Log after a tick to see the new state
-            setTimeout(() => {
-                console.log('📋 AFTER: All selections should be EMPTY now');
-            }, 100);
         }
     }, [showBatchModal]);
+
+    // CRITICAL: Also clear selections when student changes (prevents stale state from previous student)
+    useEffect(() => {
+        console.log('👤 STUDENT CHANGED - Clearing ALL selections...');
+        setSelectedCourseId('');
+        setSelectedCourseIds([]);
+        setSelectedBatch('');
+        setSelectedBatches([]);
+        setCourseDuration('');
+        setDurationType('months');
+        setShowBatchModal(false);
+    }, [selectedStudent?._id]);
 
     const fetchCourses = async () => {
         try {
