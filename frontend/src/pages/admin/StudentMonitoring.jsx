@@ -1097,9 +1097,12 @@ export function StudentMonitoring() {
 
                                             {availableCourses.map(course => {
                                                 const courseId = course._id || course.id;
-                                                const isEnrolled = selectedStudent?.enrollment?.courses?.some(
-                                                    c => c.courseId === courseId
-                                                );
+                                                // Only show as "already enrolled" if student is CURRENTLY paid AND has this course
+                                                // If student is unpaid (even with old enrollment data), show ALL as selectable
+                                                const isEnrolled = selectedStudent?.enrollment?.isPaid === true &&
+                                                    selectedStudent?.enrollment?.courses?.some(
+                                                        c => c.courseId === courseId
+                                                    );
                                                 const isSelected = selectedCourseIds.includes(courseId);
 
                                                 // Already enrolled courses - show as label only (NO checkbox)
