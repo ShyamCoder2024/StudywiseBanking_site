@@ -772,7 +772,7 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM 
     } catch (error) { next(error); }
 });
 
-// Get single course with lectures (enrollment check)
+// Get single course with lectures (enrollment check for SPECIFIC course)
 router.get('/video-courses/:id', async (req, res, next) => {
     try {
         const course = await Course.findById(req.params.id);
@@ -780,11 +780,15 @@ router.get('/video-courses/:id', async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Course not found' });
         }
 
-        // Check if user is paid
+        // Check if user is enrolled in THIS specific course
         const user = await User.findById(req.user._id);
-        const isPaid = user?.enrollment?.isPaid || false;
+        const isPaidUser = user?.enrollment?.isPaid || false;
+        const enrolledCourseIds = user?.enrollment?.courses?.map(c => c.courseId) || [];
 
-        // Return course with/without links based on enrollment
+        // User must be paid AND enrolled in this specific course
+        const isEnrolledInThisCourse = isPaidUser && enrolledCourseIds.includes(course._id.toString());
+
+        // Return course with/without links based on SPECIFIC course enrollment
         const courseData = {
             _id: course._id,
             title: course.title,
@@ -793,16 +797,17 @@ router.get('/video-courses/:id', async (req, res, next) => {
             batchName: course.batchName,
             description: course.description,
             lectureCount: course.lectures?.length || 0,
-            isPaid: isPaid,
+            isPaid: isPaidUser,
+            isEnrolled: isEnrolledInThisCourse,
             lectures: course.lectures.map(lecture => ({
                 _id: lecture._id,
                 lectureNumber: lecture.lectureNumber,
                 title: lecture.title,
                 duration: lecture.duration,
                 isPublished: lecture.isPublished,
-                // Only include YouTube link if user is paid
-                youtubeLink: isPaid ? lecture.youtubeLink : null,
-                isLocked: !isPaid
+                // Only include YouTube link if user is enrolled in THIS course
+                youtubeLink: isEnrolledInThisCourse ? lecture.youtubeLink : null,
+                isLocked: !isEnrolledInThisCourse
             }))
         };
 
@@ -810,22 +815,28 @@ router.get('/video-courses/:id', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
-// Get lecture link (requires enrollment)
+// Get lecture link (requires enrollment in THIS SPECIFIC course)
 router.get('/video-courses/:id/lectures/:lectureId', async (req, res, next) => {
     try {
-        // Check if user is paid
-        const user = await User.findById(req.user._id);
-        const isPaid = user?.enrollment?.isPaid || false;
+        const courseId = req.params.id;
 
-        if (!isPaid) {
+        // Check if user is enrolled in THIS specific course
+        const user = await User.findById(req.user._id);
+        const isPaidUser = user?.enrollment?.isPaid || false;
+        const enrolledCourseIds = user?.enrollment?.courses?.map(c => c.courseId) || [];
+        const isEnrolledInThisCourse = isPaidUser && enrolledCourseIds.includes(courseId);
+
+        // Must be enrolled in this specific course
+        if (!isEnrolledInThisCourse) {
             return res.status(403).json({
                 success: false,
-                message: 'Please enroll in a course to access this content',
-                requiresEnrollment: true
+                message: 'Please enroll in this course to access content',
+                requiresEnrollment: true,
+                courseId: courseId
             });
         }
 
-        const course = await Course.findById(req.params.id);
+        const course = await Course.findById(courseId);
         if (!course || !course.isPublished) {
             return res.status(404).json({ success: false, message: 'Course not found' });
         }
