@@ -1086,53 +1086,60 @@ export function StudentMonitoring() {
                                         <>
                                             {/* Individual courses ONLY - no auto-select row */}
                                             {/* Admin must manually select each course */}
-                                            {/* ONLY show courses student is NOT already enrolled in */}
+                                            {/* Show ALL courses - already enrolled ones are disabled but visible */}
 
-                                            {/* Filter and show ONLY selectable courses */}
-                                            {availableCourses
-                                                .filter(course => {
-                                                    const courseId = course._id || course.id;
-                                                    // HIDE courses the student is already enrolled in
-                                                    return !selectedStudent?.enrollment?.courses?.some(
-                                                        c => c.courseId === courseId
-                                                    );
-                                                })
-                                                .map(course => {
-                                                    const courseId = course._id || course.id;
-                                                    const isSelected = selectedCourseIds.includes(courseId);
+                                            {availableCourses.map(course => {
+                                                const courseId = course._id || course.id;
+                                                const isEnrolled = selectedStudent?.enrollment?.courses?.some(
+                                                    c => c.courseId === courseId
+                                                );
+                                                const isSelected = selectedCourseIds.includes(courseId);
 
-                                                    return (
-                                                        <label
-                                                            key={courseId}
+                                                return (
+                                                    <label
+                                                        key={courseId}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px',
+                                                            padding: '8px 10px',
+                                                            backgroundColor: isEnrolled ? '#e5e7eb' : (isSelected ? BRAND.successLight : BRAND.card),
+                                                            borderRadius: '6px',
+                                                            border: `1px solid ${isEnrolled ? '#9ca3af' : (isSelected ? BRAND.success : BRAND.border)}`,
+                                                            cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                            transition: 'all 0.2s',
+                                                            opacity: isEnrolled ? 0.6 : 1
+                                                        }}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isEnrolled || isSelected}
+                                                            disabled={isEnrolled}
+                                                            onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
                                                             style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '8px',
-                                                                padding: '8px 10px',
-                                                                backgroundColor: isSelected ? BRAND.successLight : BRAND.card,
-                                                                borderRadius: '6px',
-                                                                border: `1px solid ${isSelected ? BRAND.success : BRAND.border}`,
-                                                                cursor: 'pointer',
-                                                                transition: 'all 0.2s'
+                                                                width: '14px',
+                                                                height: '14px',
+                                                                cursor: isEnrolled ? 'not-allowed' : 'pointer',
+                                                                accentColor: isEnrolled ? '#9ca3af' : BRAND.success
                                                             }}
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={isSelected}
-                                                                onChange={() => toggleCourseSelection(courseId)}
-                                                                style={{
-                                                                    width: '14px',
-                                                                    height: '14px',
-                                                                    cursor: 'pointer',
-                                                                    accentColor: BRAND.success
-                                                                }}
-                                                            />
-                                                            <div style={{ fontSize: '12px', fontWeight: '600', color: BRAND.text }}>
+                                                        />
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{
+                                                                fontSize: '12px',
+                                                                fontWeight: '600',
+                                                                color: isEnrolled ? '#6b7280' : BRAND.text
+                                                            }}>
                                                                 {course.name}
                                                             </div>
-                                                        </label>
-                                                    );
-                                                })}
+                                                            {isEnrolled && (
+                                                                <div style={{ fontSize: '10px', color: '#059669', fontWeight: '500' }}>
+                                                                    ✓ Already enrolled
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </label>
+                                                );
+                                            })}
                                         </>
                                     )}
                                 </div>
