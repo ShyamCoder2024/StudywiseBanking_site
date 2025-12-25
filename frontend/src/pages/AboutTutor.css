@@ -177,6 +177,9 @@
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text-secondary);
+    text-align: justify;
+    hyphens: auto;
+    word-break: break-word;
 }
 
 /* VIDEOS */
