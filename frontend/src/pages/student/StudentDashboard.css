@@ -1286,6 +1286,8 @@
         width: 100% !important;
         padding: 16px;
         border-radius: 16px;
+        display: flex !important;
+        flex-direction: column;
     }
 
     .tile-header {
@@ -1309,6 +1311,20 @@
         width: 100% !important;
     }
 
+    /* Ensure Course Card is visible and properly sized */
+    .course-card-dynamic {
+        order: 4;
+        display: flex !important;
+        min-height: 150px;
+    }
+
+    /* Ensure Todo List is visible and properly sized */
+    .todo-tile {
+        order: 5;
+        display: flex !important;
+        min-height: 280px;
+    }
+
     /* Mobile order for best UX */
     .hero-tile {
         order: 1;
@@ -1322,20 +1338,12 @@
         order: 3;
     }
 
-    .course-card-dynamic {
-        order: 4;
-    }
-
-    .todo-tile {
-        order: 5;
-    }
-
     .rank-tile {
         order: 6;
     }
 
     .stats-tile-2 {
-        display: none;
+        display: none !important;
     }
 }
 
