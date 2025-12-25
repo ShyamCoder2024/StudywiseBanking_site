@@ -20,6 +20,15 @@ router.post('/register', async (req, res, next) => {
             throw new ConflictError('Email already registered');
         }
 
+        // Check if same firstName + lastName combination already exists (case-insensitive)
+        const existingNameUser = await User.findOne({
+            firstName: { $regex: new RegExp(`^${firstName.trim()}$`, 'i') },
+            lastName: { $regex: new RegExp(`^${lastName.trim()}$`, 'i') }
+        });
+        if (existingNameUser) {
+            throw new ConflictError('An account with this name already exists. Please use a different name or contact support if this is your account.');
+        }
+
         // Create user
         const user = await User.create({
             firstName,
