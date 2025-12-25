@@ -1113,7 +1113,7 @@ export function StudentMonitoring() {
                                                     >
                                                         <input
                                                             type="checkbox"
-                                                            checked={isEnrolled || isSelected}
+                                                            checked={isSelected}
                                                             disabled={isEnrolled}
                                                             onChange={() => !isEnrolled && toggleCourseSelection(courseId)}
                                                             style={{
