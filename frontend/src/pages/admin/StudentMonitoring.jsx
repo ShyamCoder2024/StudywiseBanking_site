@@ -66,6 +66,20 @@ export function StudentMonitoring() {
         fetchCourses();
     }, []);
 
+    // CRITICAL: Ensure enrollment modal ALWAYS starts with empty selections
+    // This useEffect guarantees no courses/batches are pre-selected when modal opens
+    useEffect(() => {
+        if (showBatchModal) {
+            // Force clear all selections when modal opens
+            setSelectedCourseId('');
+            setSelectedCourseIds([]);
+            setSelectedBatch('');
+            setSelectedBatches([]);
+            setCourseDuration('');
+            setDurationType('months');
+        }
+    }, [showBatchModal]);
+
     const fetchCourses = async () => {
         try {
             const res = await api.get('/admin/courses');
