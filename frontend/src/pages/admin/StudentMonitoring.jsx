@@ -52,10 +52,11 @@ export function StudentMonitoring() {
     const [savingEnrollment, setSavingEnrollment] = useState(false);
     // Batch selection modal state
     const [showBatchModal, setShowBatchModal] = useState(false);
+    const [modalKey, setModalKey] = useState(0); // Force remount modal each time it opens
     const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [selectedCourseIds, setSelectedCourseIds] = useState([]); // NEW: Multi-course selection
+    const [selectedCourseIds, setSelectedCourseIds] = useState([]); // Multi-course selection - STARTS EMPTY
     const [selectedBatch, setSelectedBatch] = useState('');
-    const [selectedBatches, setSelectedBatches] = useState([]); // NEW: Multi-batch selection
+    const [selectedBatches, setSelectedBatches] = useState([]); // Multi-batch selection - STARTS EMPTY
     // Course duration state
     const [courseDuration, setCourseDuration] = useState('');
     const [durationType, setDurationType] = useState('months'); // 'days' or 'months'
@@ -71,13 +72,18 @@ export function StudentMonitoring() {
     useEffect(() => {
         if (showBatchModal) {
             // Force clear all selections when modal opens
-            console.log('📋 Enrollment Modal: Clearing ALL selections - modal should start empty');
+            console.log('📋 MODAL OPENED - Clearing ALL selections...');
+            console.log('📋 BEFORE: selectedCourseIds =', selectedCourseIds);
             setSelectedCourseId('');
             setSelectedCourseIds([]);
             setSelectedBatch('');
             setSelectedBatches([]);
             setCourseDuration('');
             setDurationType('months');
+            // Log after a tick to see the new state
+            setTimeout(() => {
+                console.log('📋 AFTER: All selections should be EMPTY now');
+            }, 100);
         }
     }, [showBatchModal]);
 
@@ -146,11 +152,13 @@ export function StudentMonitoring() {
             }
         } else {
             // If marking as paid, show batch selection modal
+            // CRITICAL: Increment modal key to FORCE complete remount (no stale state)
+            setModalKey(prev => prev + 1);
             // IMPORTANT: Clear ALL selections so modal starts empty
             setSelectedCourseId('');
-            setSelectedCourseIds([]);  // Clear multi-course selection
+            setSelectedCourseIds([]);  // Clear multi-course selection - MUST BE EMPTY
             setSelectedBatch('');
-            setSelectedBatches([]);    // Clear multi-batch selection
+            setSelectedBatches([]);    // Clear multi-batch selection - MUST BE EMPTY
             setCourseDuration('');
             setDurationType('months');
             setShowBatchModal(true);
@@ -922,9 +930,10 @@ export function StudentMonitoring() {
                 </div>
             )}
 
-            {/* Batch Selection Modal */}
+            {/* Batch Selection Modal - key forces complete remount with empty state */}
             {showBatchModal && (
                 <div
+                    key={`enrollment-modal-${modalKey}`}
                     style={{
                         position: 'fixed',
                         top: 0,
