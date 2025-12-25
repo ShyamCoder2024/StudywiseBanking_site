@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 import {
     BookOpen, Target, Zap, Star, RefreshCw,
@@ -10,8 +10,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
-// ============ ANIMATED COUNTER HOOK ============
-function useAnimatedCounter(end, duration = 1500) {
+// ============ ANIMATED COUNTER HOOK (OPTIMIZED) ============
+function useAnimatedCounter(end, duration = 1000) {
     const [count, setCount] = useState(0);
     const countRef = useRef(null);
 
@@ -33,30 +33,30 @@ function useAnimatedCounter(end, duration = 1500) {
     return count;
 }
 
-// ============ ANIMATED PROGRESS BAR ============
-function AnimatedBar({ value, color, delay = 0 }) {
+// ============ ANIMATED PROGRESS BAR (MEMOIZED) ============
+const AnimatedBar = memo(function AnimatedBar({ value, color, delay = 0 }) {
     return (
         <div style={{ height: 10, background: 'var(--color-bg)', borderRadius: 5, overflow: 'hidden' }}>
             <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${value}%` }}
-                transition={{ duration: 1.2, delay, ease: 'easeOut' }}
+                transition={{ duration: 0.8, delay: Math.min(delay, 0.3), ease: 'easeOut' }}
                 style={{ height: '100%', background: color, borderRadius: 5 }}
             />
         </div>
     );
-}
+});
 
-// ============ STAT CARD WITH ANIMATION ============
-function StatCard({ icon: Icon, label, value, trend, color, delay }) {
+// ============ STAT CARD WITH ANIMATION (MEMOIZED) ============
+const StatCard = memo(function StatCard({ icon: Icon, label, value, trend, color, delay }) {
     const [hovered, setHovered] = useState(false);
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: delay * 0.08, type: 'spring', stiffness: 100 }}
-            whileHover={{ y: -6, scale: 1.02 }}
+            transition={{ delay: delay * 0.04, type: 'spring', stiffness: 150, damping: 20 }}
+            whileHover={{ y: -4, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -66,14 +66,12 @@ function StatCard({ icon: Icon, label, value, trend, color, delay }) {
                 borderRadius: 18,
                 padding: 'clamp(16px, 3vw, 22px)',
                 cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: hovered ? `0 12px 32px ${color}20` : '0 4px 16px rgba(0,0,0,0.04)'
+                transition: 'border-color 0.2s, box-shadow 0.2s',
+                boxShadow: hovered ? `0 8px 24px ${color}15` : '0 2px 8px rgba(0,0,0,0.04)'
             }}
         >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                <motion.div
-                    animate={{ rotate: hovered ? [0, -10, 10, 0] : 0 }}
-                    transition={{ duration: 0.5 }}
+                <div
                     style={{
                         width: 48, height: 48,
                         background: `${color}15`,
@@ -82,11 +80,9 @@ function StatCard({ icon: Icon, label, value, trend, color, delay }) {
                     }}
                 >
                     <Icon size={24} style={{ color }} />
-                </motion.div>
+                </div>
                 {trend !== undefined && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                    <div
                         style={{
                             display: 'flex', alignItems: 'center', gap: 2,
                             fontSize: 12, fontWeight: 700,
@@ -98,27 +94,24 @@ function StatCard({ icon: Icon, label, value, trend, color, delay }) {
                     >
                         <ChevronUp size={14} style={{ transform: trend < 0 ? 'rotate(180deg)' : 'none' }} />
                         {Math.abs(trend)}%
-                    </motion.div>
+                    </div>
                 )}
             </div>
-            <motion.div
-                animate={{ scale: hovered ? 1.05 : 1 }}
-                style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}
-            >
+            <div style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>
                 {value}
-            </motion.div>
+            </div>
             <div style={{ fontSize: 'clamp(10px, 2vw, 12px)', fontWeight: 600, color: 'var(--color-text-secondary)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 {label}
             </div>
         </motion.div>
     );
-}
+});
 
-// ============ CIRCULAR PROGRESS ============
-function CircularProgress({ value, size = 180, strokeWidth = 12, color }) {
+// ============ CIRCULAR PROGRESS (MEMOIZED) ============
+const CircularProgress = memo(function CircularProgress({ value, size = 180, strokeWidth = 12, color }) {
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
-    const animatedValue = useAnimatedCounter(value, 2000);
+    const animatedValue = useAnimatedCounter(value, 1200);
 
     return (
         <div style={{ position: 'relative', width: size, height: size }}>
@@ -133,7 +126,7 @@ function CircularProgress({ value, size = 180, strokeWidth = 12, color }) {
                     strokeLinecap="round"
                     initial={{ strokeDasharray: circumference, strokeDashoffset: circumference }}
                     animate={{ strokeDashoffset: circumference - (circumference * value) / 100 }}
-                    transition={{ duration: 2, ease: 'easeOut' }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
                 />
             </svg>
             <div style={{
@@ -141,19 +134,14 @@ function CircularProgress({ value, size = 180, strokeWidth = 12, color }) {
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center'
             }}>
-                <motion.span
-                    key={animatedValue}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    style={{ fontSize: 'clamp(36px, 8vw, 48px)', fontWeight: 800, color: 'var(--color-text)' }}
-                >
+                <span style={{ fontSize: 'clamp(36px, 8vw, 48px)', fontWeight: 800, color: 'var(--color-text)' }}>
                     {animatedValue}
-                </motion.span>
+                </span>
                 <span style={{ fontSize: 12, fontWeight: 700, color, textTransform: 'uppercase' }}>AI Score</span>
             </div>
         </div>
     );
-}
+});
 
 // ============ MAIN COMPONENT ============
 export function AIAnalysis() {
