@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
-    Activity, TrendingUp, Award, Target, BookOpen, Clock,
-    CheckCircle2, ArrowRight, Zap, BarChart2, Calendar,
-    ClipboardList, AlertCircle, Play, Flame, Star, Youtube, GraduationCap, X, Sparkles, Bell
+    Target, BookOpen, CheckCircle2, ArrowRight, Zap,
+    ClipboardList, Play, Flame, Star, GraduationCap, Sparkles
 } from 'lucide-react';
 import { AIAnalysis } from '../../components/ai/AIAnalysis';
 import { Leaderboard } from '../../components/leaderboard/Leaderboard';
@@ -77,7 +76,7 @@ export function StudentDashboard() {
                 // Log any failures for debugging
                 results.forEach((result, index) => {
                     if (result.status === 'rejected') {
-                        console.warn(`Dashboard API call ${index} failed:`, result.reason);
+                        console.warn(`Dashboard API call ${index} failed: `, result.reason);
                     }
                 });
             } catch (error) {
@@ -256,7 +255,7 @@ export function StudentDashboard() {
         try {
             // Optimistic update
             setTodos(todos.map(t => t._id === id ? { ...t, isCompleted: !t.isCompleted } : t));
-            await api.patch(`/student/global-tasks/${id}/toggle`);
+            await api.patch(`/ student / global - tasks / ${id}/toggle`);
         } catch (error) {
             console.error(error);
             fetchTodos(); // Revert on error

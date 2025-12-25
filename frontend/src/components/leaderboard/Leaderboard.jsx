@@ -23,7 +23,6 @@ export function Leaderboard({ limit }) {
                 });
 
                 const data = await res.json();
-                console.log('Leaderboard API response:', data); // Debug log
 
                 if (data.success && data.data?.leaderboard) {
                     const leaderboardArray = data.data.leaderboard;

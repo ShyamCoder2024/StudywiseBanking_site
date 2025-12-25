@@ -121,9 +121,8 @@ export function QuizPage() {
     const autosaveAnswers = async () => {
         try {
             await api.post(`/quizzes/${quizId}/autosave`, { answers });
-            console.log('Answers autosaved');
         } catch (error) {
-            console.error('Autosave failed:', error);
+            // Silently fail autosave
         }
     };
 
