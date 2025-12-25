@@ -529,7 +529,7 @@ export function StudentDashboard() {
 
                     {/* Tutor's Picks - REMOVED */}
 
-                    {/* 5. Dynamic Course Card - Paid vs Free */}
+                    {/* 5. Dynamic Course Card - Paid vs Free - REDESIGNED INTERACTIVE */}
                     <motion.div
                         className={`bento-tile course-card-dynamic ${enrollmentLoaded ? (enrollment.isPaid ? 'paid' : 'free') : 'loading'} clickable`}
                         variants={tile}
@@ -545,34 +545,69 @@ export function StudentDashboard() {
                                 <div className="skeleton-meta" />
                             </div>
                         ) : enrollment.isPaid ? (
-                            /* Paid User - Show Course Progress */
+                            /* Paid User - INTERACTIVE COURSE CARD */
                             <>
                                 <div className="course-card-header">
                                     <div className="course-badge premium">
                                         <Star size={12} fill="#fbbf24" />
-                                        <span>Premium</span>
+                                        <span>{enrollment.courses?.length || 0} Course{enrollment.courses?.length !== 1 ? 's' : ''}</span>
                                     </div>
                                     <ArrowRight size={16} className="card-arrow" />
                                 </div>
                                 <div className="course-card-content">
                                     {videoCourses.length > 0 ? (
                                         <>
-                                            <h3 className="course-title-main">{videoCourses[0]?.title || 'My Course'}</h3>
+                                            {/* Course Thumbnails Stack */}
+                                            <div className="course-thumbnails-stack">
+                                                {videoCourses.slice(0, 3).map((course, idx) => (
+                                                    <div
+                                                        key={course._id}
+                                                        className="thumb-item"
+                                                        style={{
+                                                            zIndex: 3 - idx,
+                                                            transform: `translateX(${idx * 20}px)`,
+                                                            opacity: 1 - (idx * 0.2)
+                                                        }}
+                                                    >
+                                                        {course.thumbnail ? (
+                                                            <img src={course.thumbnail} alt={course.title} />
+                                                        ) : (
+                                                            <div className="thumb-placeholder">
+                                                                <GraduationCap size={16} />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {videoCourses.length > 3 && (
+                                                    <div className="thumb-more" style={{ transform: `translateX(60px)` }}>
+                                                        +{videoCourses.length - 3}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Course Info */}
+                                            <h3 className="course-title-main">
+                                                {videoCourses.length === 1
+                                                    ? videoCourses[0]?.title
+                                                    : `${videoCourses.length} Enrolled Courses`
+                                                }
+                                            </h3>
+
                                             <div className="course-meta">
                                                 <span className="meta-item">
                                                     <BookOpen size={14} />
-                                                    {videoCourses[0]?.lectureCount || 0} Lectures
-                                                </span>
-                                                <span className="meta-item batch-tag">
-                                                    {videoCourses[0]?.batchName || 'Batch A'}
+                                                    {videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)} Total Lectures
                                                 </span>
                                             </div>
-                                            <div className="course-progress-mini">
-                                                <div className="progress-info">
-                                                    <span>Course Access</span>
-                                                    <span className="active-status">Active</span>
-                                                </div>
-                                            </div>
+
+                                            {/* Continue Button */}
+                                            <motion.div
+                                                className="continue-learning-btn"
+                                                whileHover={{ scale: 1.03 }}
+                                            >
+                                                <Play size={14} fill="white" />
+                                                <span>Continue Learning</span>
+                                            </motion.div>
                                         </>
                                     ) : (
                                         <div className="course-empty">
