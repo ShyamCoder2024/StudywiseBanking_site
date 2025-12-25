@@ -129,32 +129,6 @@ His structured and practical methods have helped thousands of students navigate 
                 </motion.div>
             </section>
 
-            {/* Popular Videos Section */}
-            <section className="videos-section">
-                <h2><Youtube size={28} color="#FF0000" /> Most Watched Sessions</h2>
-                <div className="video-grid-about">
-                    {tutorInfo.videos.map((v, i) => (
-                        <motion.a
-                            key={v.id}
-                            href={v.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="video-card-about"
-                            whileHover={{ y: -5 }}
-                            style={{ textDecoration: 'none' }}
-                        >
-                            <div className="video-thumb">
-                                <div className="play-overlay"><Play fill="white" size={32} /></div>
-                            </div>
-                            <div className="video-meta">
-                                <h3>{v.title}</h3>
-                                <span>{v.views}</span>
-                            </div>
-                        </motion.a>
-                    ))}
-                </div>
-            </section>
-
             {/* Sliding Testimonials */}
             <section className="testimonials-slider-section">
                 <h2>What Students Say</h2>
