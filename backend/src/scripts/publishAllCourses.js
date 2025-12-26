@@ -7,7 +7,7 @@
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Course from '../src/models/Course.js';
+import Course from '../models/Course.js';
 
 dotenv.config();
 
