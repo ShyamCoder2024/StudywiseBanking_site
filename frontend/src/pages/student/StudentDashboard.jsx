@@ -270,7 +270,7 @@ export function StudentDashboard() {
         try {
             // Optimistic update
             setTodos(todos.map(t => t._id === id ? { ...t, isCompleted: !t.isCompleted } : t));
-            await api.patch(`/ student / global - tasks / ${id}/toggle`);
+            await api.patch(`/student/global-tasks/${id}/toggle`);
         } catch (error) {
             console.error(error);
             fetchTodos(); // Revert on error
