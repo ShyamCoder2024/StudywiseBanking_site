@@ -159,9 +159,16 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
         const score = maxMarks > 0 ? Math.round((totalMarks / maxMarks) * 100) : 0;
 
         // Use actual start time from frontend, or fallback to quiz duration estimate
-        const actualStartTime = startTime
-            ? new Date(startTime)
-            : new Date(Date.now() - quiz.duration * 60 * 1000);
+        console.log('[Quiz Submit] Received startTime from frontend:', startTime);
+
+        let actualStartTime;
+        if (startTime && !isNaN(new Date(startTime).getTime())) {
+            actualStartTime = new Date(startTime);
+            console.log('[Quiz Submit] Using actual start time:', actualStartTime);
+        } else {
+            actualStartTime = new Date(Date.now() - quiz.duration * 60 * 1000);
+            console.log('[Quiz Submit] Using fallback time (no startTime received):', actualStartTime);
+        }
 
         // Create attempt with new marking details
         const attempt = await Attempt.create({
