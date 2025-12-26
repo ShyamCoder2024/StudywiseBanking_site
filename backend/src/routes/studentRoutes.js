@@ -191,8 +191,8 @@ router.get('/subjects', cacheMiddleware({ duration: CACHE_DURATIONS.LONG }), asy
 // @access  Private
 router.get('/subjects/:id/topics', async (req, res, next) => {
     try {
-        const subject = await Subject.findById(req.params.id);
-        const topics = await Topic.find({ subject: req.params.id }).populate('quizCount');
+        const subject = await Subject.findById(req.params.id).lean();
+        const topics = await Topic.find({ subject: req.params.id }).populate('quizCount').lean();
 
         res.json({
             success: true,
@@ -216,21 +216,21 @@ router.get('/subjects/:id/topics', async (req, res, next) => {
 // @access  Private
 router.get('/topics/:id/quizzes', async (req, res, next) => {
     try {
-        const topic = await Topic.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id).lean();
         const userId = req.user._id;
 
         // Only show published quizzes to students
         const quizzes = await Quiz.find({
             topic: req.params.id,
             isPublished: true
-        }).populate('questionCount');
+        }).populate('questionCount').lean();
 
         // Get user's attempts for these quizzes
         const quizIds = quizzes.map(q => q._id);
         const attempts = await Attempt.find({
             user: userId,
             quiz: { $in: quizIds }
-        });
+        }).lean();
 
         // Create a map of quiz ID to attempt
         const attemptMap = {};
@@ -277,14 +277,15 @@ router.get('/quizzes/all', async (req, res, next) => {
             .populate('subject', 'name')
             .populate('topic', 'name')
             .populate('questionCount')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
 
         // Get user's SUBMITTED attempts only (not in-progress ones)
         // An attempt is considered complete only if submittedAt exists
         const attempts = await Attempt.find({
             user: req.user._id,
             submittedAt: { $exists: true, $ne: null }  // Only completed/submitted attempts
-        });
+        }).lean();
 
         // Create a map of quiz ID to completed attempt
         const completedAttemptMap = {};
@@ -347,7 +348,7 @@ router.get('/quizzes/all', async (req, res, next) => {
 // @access  Private
 router.get('/tasks', async (req, res, next) => {
     try {
-        const tasks = await Task.find({ assignedTo: req.user._id }).sort({ createdAt: -1 });
+        const tasks = await Task.find({ assignedTo: req.user._id }).sort({ createdAt: -1 }).lean();
         res.json({ success: true, data: tasks });
     } catch (error) { next(error); }
 });
@@ -372,7 +373,7 @@ router.patch('/tasks/:id/complete', async (req, res, next) => {
 // @access  Private
 router.get('/notifications', async (req, res, next) => {
     try {
-        const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(20);
+        const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(20).lean();
         res.json({ success: true, data: notifications });
     } catch (error) { next(error); }
 });
