@@ -29,7 +29,8 @@ router.get('/dashboard', async (req, res, next) => {
             .populate('user', 'firstName lastName')
             .populate('quiz', 'title')
             .sort({ createdAt: -1 })
-            .limit(5);
+            .limit(5)
+            .lean();
 
         res.json({
             success: true,
@@ -379,7 +380,8 @@ router.get('/students/:id/attempts', async (req, res, next) => {
     try {
         const attempts = await Attempt.find({ user: req.params.id })
             .populate('quiz', 'title')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
         res.json({
             success: true,
             data: attempts.map((a) => ({
@@ -397,7 +399,7 @@ router.get('/students/:id/attempts', async (req, res, next) => {
 
 router.get('/tasks/student/:studentId', async (req, res, next) => {
     try {
-        const tasks = await Task.find({ assignedTo: req.params.studentId }).sort({ createdAt: -1 });
+        const tasks = await Task.find({ assignedTo: req.params.studentId }).sort({ createdAt: -1 }).lean();
         res.json({ success: true, data: tasks });
     } catch (error) { next(error); }
 });
@@ -407,7 +409,8 @@ router.get('/tasks/recent', async (req, res, next) => {
         const tasks = await Task.find()
             .populate('assignedTo', 'firstName lastName')
             .sort({ createdAt: -1 })
-            .limit(10);
+            .limit(10)
+            .lean();
         res.json({ success: true, data: tasks });
     } catch (error) { next(error); }
 });
@@ -433,7 +436,7 @@ router.delete('/tasks/:id', async (req, res, next) => {
 
 router.get('/global-tasks', async (req, res, next) => {
     try {
-        const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 });
+        const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 }).lean();
         res.json({ success: true, data: tasks });
     } catch (error) { next(error); }
 });
