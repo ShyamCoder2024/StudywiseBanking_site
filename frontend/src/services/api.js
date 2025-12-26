@@ -164,23 +164,10 @@ api.interceptors.response.use(
     }
 );
 
-// Create API methods with retry support
-const apiWithRetry = {
-    get: (url, config) => retryRequest({ ...config, method: 'get', url, baseURL: API_URL }),
-    post: (url, data, config) => retryRequest({ ...config, method: 'post', url, data, baseURL: API_URL }),
-    put: (url, data, config) => retryRequest({ ...config, method: 'put', url, data, baseURL: API_URL }),
-    patch: (url, data, config) => retryRequest({ ...config, method: 'patch', url, data, baseURL: API_URL }),
-    delete: (url, config) => retryRequest({ ...config, method: 'delete', url, baseURL: API_URL }),
+// Integrate retry logic into axios instance - PROPER IMPLEMENTATION
+const originalRequest = api.request.bind(api);
+api.request = async function (config) {
+    return retryRequest(config);
 };
 
-// Use api instance for interceptors, but export with retry for methods
-export default new Proxy(api, {
-    get(target, prop) {
-        // Use retry logic for request methods
-        if (apiWithRetry[prop]) {
-            return apiWithRetry[prop];
-        }
-        // Pass through other properties (interceptors, etc.)
-        return target[prop];
-    }
-});
+export default api;
