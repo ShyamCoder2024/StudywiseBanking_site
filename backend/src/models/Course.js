@@ -80,7 +80,7 @@ const CourseSchema = new mongoose.Schema({
     },
     isPublished: {
         type: Boolean,
-        default: false
+        default: true  // Changed to true - courses should be visible by default
     },
     lectures: [LectureSchema],
     createdBy: {
