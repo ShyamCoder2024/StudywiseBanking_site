@@ -2,10 +2,37 @@ import axios from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
+// Retry configuration for failed requests
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000; // Start with 1 second
+
 // Simple in-memory cache for GET requests
 const apiCache = new Map();
 const pendingRequests = new Map(); // Prevent duplicate requests
 const CACHE_TTL = 60 * 1000; // 1 minute cache (reduced for fresher data)
+
+// Exponential backoff retry function
+const retryRequest = async (config, retryCount = 0) => {
+    try {
+        return await axios.request(config);
+    } catch (error) {
+        // Don't retry on 4xx errors (client error, won't change)
+        if (error.response && error.response.status >= 400 && error.response.status < 500) {
+            throw error;
+        }
+
+        // Retry on network errors, 5xx errors, or timeouts
+        if (retryCount < MAX_RETRIES) {
+            const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
+            console.log(`🔄 Retrying request (attempt ${retryCount + 1}/${MAX_RETRIES}) after ${delay}ms...`);
+
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return retryRequest(config, retryCount + 1);
+        }
+
+        throw error;
+    }
+};
 
 const api = axios.create({
     baseURL: API_URL,
@@ -13,7 +40,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept-Encoding': 'gzip, deflate, br', // Request compressed responses
     },
-    timeout: 10000, // 10 seconds - faster error feedback
+    timeout: 8000, // 8 seconds - fail fast, retry will handle it
 });
 
 // Request interceptor to add auth token and implement caching/deduplication
@@ -137,4 +164,23 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+// Create API methods with retry support
+const apiWithRetry = {
+    get: (url, config) => retryRequest({ ...config, method: 'get', url, baseURL: API_URL }),
+    post: (url, data, config) => retryRequest({ ...config, method: 'post', url, data, baseURL: API_URL }),
+    put: (url, data, config) => retryRequest({ ...config, method: 'put', url, data, baseURL: API_URL }),
+    patch: (url, data, config) => retryRequest({ ...config, method: 'patch', url, data, baseURL: API_URL }),
+    delete: (url, config) => retryRequest({ ...config, method: 'delete', url, baseURL: API_URL }),
+};
+
+// Use api instance for interceptors, but export with retry for methods
+export default new Proxy(api, {
+    get(target, prop) {
+        // Use retry logic for request methods
+        if (apiWithRetry[prop]) {
+            return apiWithRetry[prop];
+        }
+        // Pass through other properties (interceptors, etc.)
+        return target[prop];
+    }
+});

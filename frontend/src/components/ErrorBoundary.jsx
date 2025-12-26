@@ -1,99 +1,106 @@
 import { Component } from 'react';
+import './ErrorBoundary.css';
 
 class ErrorBoundary extends Component {
     constructor(props) {
         super(props);
-        this.state = { hasError: false, error: null, errorInfo: null };
+        this.state = {
+            hasError: false,
+            error: null,
+            errorInfo: null,
+            errorCount: 0
+        };
     }
 
     static getDerivedStateFromError(error) {
-        return { hasError: true, error };
+        return { hasError: true };
     }
 
     componentDidCatch(error, errorInfo) {
-        console.error('React Error Boundary caught an error:', error, errorInfo);
-        this.setState({ errorInfo });
+        // Log error details
+        console.error('🚨 Error Boundary Caught:', error, errorInfo);
+
+        // Update state with error details
+        this.setState(prevState => ({
+            error,
+            errorInfo,
+            errorCount: prevState.errorCount + 1
+        }));
+
+        // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
+        // this.sendToErrorTracking(error, errorInfo);
     }
+
+    handleReset = () => {
+        this.setState({
+            hasError: false,
+            error: null,
+            errorInfo: null
+        });
+        // Reload the page to reset app state
+        window.location.reload();
+    };
+
+    handleGoHome = () => {
+        this.setState({
+            hasError: false,
+            error: null,
+            errorInfo: null
+        });
+        window.location.href = '/';
+    };
 
     render() {
         if (this.state.hasError) {
+            const { error, errorCount } = this.state;
+
+            // If error keeps happening (> 3 times), show critical error
+            if (errorCount > 3) {
+                return (
+                    <div className="error-boundary-critical">
+                        <div className="error-content">
+                            <div className="error-icon">⚠️</div>
+                            <h1>Critical Error</h1>
+                            <p>The application encountered multiple errors. Please contact support.</p>
+                            <div className="error-actions">
+                                <button onClick={() => window.location.href = '/'} className="btn-primary">
+                                    Go to Homepage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
-                <div style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    padding: '20px'
-                }}>
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        padding: '32px',
-                        maxWidth: '500px',
-                        textAlign: 'center',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-                    }}>
-                        <h1 style={{ color: '#e53e3e', marginBottom: '16px' }}>
-                            ⚠️ Something went wrong
-                        </h1>
-                        <p style={{ color: '#4a5568', marginBottom: '24px' }}>
-                            The application encountered an error. Please try refreshing the page.
-                        </p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            style={{
-                                background: '#8A75BA',
-                                color: 'white',
-                                border: 'none',
-                                padding: '12px 24px',
-                                borderRadius: '8px',
-                                fontSize: '16px',
-                                cursor: 'pointer',
-                                marginRight: '12px'
-                            }}
-                        >
-                            Refresh Page
-                        </button>
-                        <button
-                            onClick={() => {
-                                localStorage.clear();
-                                window.location.href = '/login';
-                            }}
-                            style={{
-                                background: 'transparent',
-                                color: '#8A75BA',
-                                border: '2px solid #8A75BA',
-                                padding: '12px 24px',
-                                borderRadius: '8px',
-                                fontSize: '16px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Clear & Login
-                        </button>
-                        {/* Always show error details for debugging */}
-                        {this.state.error && (
-                            <details style={{ marginTop: '24px', textAlign: 'left' }} open>
-                                <summary style={{ cursor: 'pointer', color: '#718096' }}>
-                                    Error Details (click to expand)
-                                </summary>
-                                <pre style={{
-                                    background: '#f7fafc',
-                                    padding: '12px',
-                                    borderRadius: '8px',
-                                    overflow: 'auto',
-                                    fontSize: '12px',
-                                    color: '#e53e3e',
-                                    marginTop: '12px',
-                                    whiteSpace: 'pre-wrap',
-                                    wordBreak: 'break-word'
-                                }}>
-                                    {this.state.error.toString()}
-                                    {this.state.errorInfo?.componentStack}
-                                </pre>
+                <div className="error-boundary-container">
+                    <div className="error-content">
+                        <div className="error-icon">😕</div>
+                        <h1>Oops! Something went wrong</h1>
+                        <p>We're sorry for the inconvenience. The application encountered an unexpected error.</p>
+
+                        {process.env.NODE_ENV === 'development' && error && (
+                            <details className="error-details">
+                                <summary>Error Details (Development Only)</summary>
+                                <pre>{error.toString()}</pre>
+                                {this.state.errorInfo && (
+                                    <pre>{this.state.errorInfo.componentStack}</pre>
+                                )}
                             </details>
                         )}
+
+                        <div className="error-actions">
+                            <button onClick={this.handleReset} className="btn-primary">
+                                Try Again
+                            </button>
+                            <button onClick={this.handleGoHome} className="btn-secondary">
+                                Go to Homepage
+                            </button>
+                        </div>
+
+                        <p className="error-support">
+                            If this problem persists, please contact support with error code: <code>{Date.now()}</code>
+                        </p>
                     </div>
                 </div>
             );

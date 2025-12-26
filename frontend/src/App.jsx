@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 import { preloadCriticalRoutes } from './utils/routePreloader';
+import LoadingFallback from './components/LoadingFallback';
 import './styles/index.css';
 import './App.css';
 
@@ -101,29 +102,6 @@ function PublicRoute({ children }) {
 
   return children;
 }
-
-// Loading component for lazy routes
-const LoadingFallback = () => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '60vh',
-    flexDirection: 'column',
-    gap: '16px'
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: '3px solid #f3f4f6',
-      borderTopColor: '#8A75BA',
-      borderRadius: '50%',
-      animation: 'spin 0.8s linear infinite'
-    }} />
-    <p style={{ color: '#6B6B6B', fontSize: '14px' }}>Loading...</p>
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
 
 // Page Transition - Optimized for faster perceived performance
 const PageTransition = ({ children }) => (
