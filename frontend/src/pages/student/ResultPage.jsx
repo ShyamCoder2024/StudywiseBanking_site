@@ -104,8 +104,14 @@ export function ResultPage() {
                             transition={{ delay: 0.3, type: 'spring', stiffness: 150 }}
                         >
                             <div className="score-circle">
-                                <span className="score-value">{result.score}%</span>
-                                <span className="score-label">Score</span>
+                                <span className="score-value">
+                                    {/* Show actual marks instead of percentage */}
+                                    {result.totalMarks !== undefined
+                                        ? Number(result.totalMarks).toFixed(result.totalMarks % 1 === 0 ? 0 : 2)
+                                        : result.correctAnswers}
+                                    <span style={{ fontSize: '0.5em', opacity: 0.8 }}>/{result.maxMarks || result.totalQuestions}</span>
+                                </span>
+                                <span className="score-label">Marks</span>
                             </div>
                         </motion.div>
 

@@ -315,6 +315,10 @@ router.get('/attempts/:id', protect, async (req, res, next) => {
                 correctAnswers: attempt.correctAnswers,
                 wrongAnswers: attempt.wrongAnswers,
                 unanswered: attempt.unanswered,
+                // Include marks for display (marks system: +1 correct, -0.25 wrong)
+                totalMarks: attempt.totalMarks ?? (attempt.correctAnswers - (attempt.wrongAnswers * 0.25)),
+                maxMarks: attempt.maxMarks ?? attempt.totalQuestions,
+                negativeMarks: attempt.negativeMarks ?? (attempt.wrongAnswers * 0.25),
                 timeTaken,
                 submittedAt: attempt.submittedAt.toISOString().split('T')[0],
                 strengths: attempt.aiAnalysis?.strengths || [],
