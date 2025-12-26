@@ -96,49 +96,46 @@ export async function generateStudentAnalysis(userId) {
             (recentPerformanceBonus) // Bonus for recent good performance
         ));
 
-        // Calculate REAL percentile rank by comparing with all students
+        // Calculate REAL rank position based on XP (matching leaderboard)
         const calculatePercentileRank = async () => {
             try {
-                // Get all students' average scores using aggregation
-                const allStudentScores = await Attempt.aggregate([
-                    {
-                        $group: {
-                            _id: '$user',
-                            avgScore: { $avg: '$score' },
-                            count: { $sum: 1 }
-                        }
-                    }
-                ]);
+                // Import User model to get XP data
+                const User = (await import('../models/User.js')).default;
 
-                // Filter to only students with at least 1 attempt
-                const validStudents = allStudentScores.filter(s => s.count >= 1);
+                // Get all students sorted by XP (same as leaderboard)
+                const allStudents = await User.find({ role: 'student' })
+                    .select('_id xpPoints')
+                    .sort({ xpPoints: -1 })
+                    .lean();
 
-                console.log(`[AI Analysis] Total students with attempts: ${validStudents.length}`);
+                console.log(`[AI Analysis] Total students found: ${allStudents.length}`);
 
-                if (validStudents.length <= 1) {
-                    return { percentile: 100, totalStudents: validStudents.length || 1 };
+                if (allStudents.length === 0) {
+                    return { position: 1, totalStudents: 1, xpPoints: 0 };
                 }
 
-                // Sort by average score (ascending)
-                const sortedScores = validStudents.map(s => s.avgScore).sort((a, b) => a - b);
+                // Find current user's position in the leaderboard
+                const userIndex = allStudents.findIndex(s => s._id.toString() === userId.toString());
 
-                // Find current student's average score
-                const studentAvgScore = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
-                console.log(`[AI Analysis] Student avg score: ${studentAvgScore}`);
+                if (userIndex === -1) {
+                    console.log('[AI Analysis] User not found in student list');
+                    return { position: 1, totalStudents: allStudents.length, xpPoints: 0 };
+                }
 
-                // Calculate percentile (what % of students score lower than this student)
-                const lowerCount = sortedScores.filter(s => s < studentAvgScore).length;
-                const percentile = Math.round((lowerCount / sortedScores.length) * 100);
+                const userRank = userIndex + 1; // 1-indexed position
+                const userXP = allStudents[userIndex].xpPoints || 0;
 
-                console.log(`[AI Analysis] Rank data calculated - percentile: ${percentile}, totalStudents: ${validStudents.length}`);
+                console.log(`[AI Analysis] User rank: #${userRank} of ${allStudents.length}, XP: ${userXP}`);
 
                 return {
-                    percentile: Math.min(100, Math.max(0, percentile)),
-                    totalStudents: validStudents.length,
-                    studentAvg: Math.round(studentAvgScore)
+                    position: userRank,
+                    totalStudents: allStudents.length,
+                    xpPoints: userXP,
+                    // For backward compatibility with frontend
+                    percentile: Math.round(((allStudents.length - userRank) / allStudents.length) * 100)
                 };
             } catch (err) {
-                console.error('[AI Analysis] Percentile calculation error:', err);
+                console.error('[AI Analysis] Rank calculation error:', err);
                 return null;
             }
         };

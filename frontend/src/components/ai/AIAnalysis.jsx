@@ -384,8 +384,8 @@ export function AIAnalysis() {
                             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
                             <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
                                 <Crown size={18} color="#F59E0B" fill="#F59E0B" />
-                                {ai.rankData?.percentile !== undefined
-                                    ? `Top ${100 - ai.rankData.percentile}%`
+                                {ai.rankData?.position !== undefined
+                                    ? `#${ai.rankData.position}`
                                     : getRankLabel()}
                             </div>
                             {ai.rankData?.totalStudents && (
@@ -485,11 +485,12 @@ export function AIAnalysis() {
                         ))}
                     </div>
                 </motion.div>
-            </div>
+            </div >
 
             {/* ============ 7-DAY TREND ============ */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
+            < motion.div
+                initial={{ opacity: 0, y: 20 }
+                }
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 whileHover={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)' }}
@@ -595,33 +596,35 @@ export function AIAnalysis() {
                 </div>
 
                 {/* AI Performance Insight */}
-                {ai.summary && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1 }}
-                        style={{
-                            marginTop: 16,
-                            padding: '12px 14px',
-                            background: 'linear-gradient(135deg, rgba(138, 117, 186, 0.08), rgba(99, 102, 241, 0.08))',
-                            borderRadius: 12,
-                            border: '1px solid rgba(138, 117, 186, 0.15)',
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 10
-                        }}
-                    >
-                        <Lightbulb size={16} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 2 }} />
-                        <div style={{ fontSize: 12, color: 'var(--color-text)', lineHeight: 1.5 }}>
-                            <strong style={{ color: 'var(--color-primary)' }}>AI Insight:</strong>{' '}
-                            {ai.summary.length > 150 ? ai.summary.slice(0, 150) + '...' : ai.summary}
-                        </div>
-                    </motion.div>
-                )}
-            </motion.div>
+                {
+                    ai.summary && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1 }}
+                            style={{
+                                marginTop: 16,
+                                padding: '12px 14px',
+                                background: 'linear-gradient(135deg, rgba(138, 117, 186, 0.08), rgba(99, 102, 241, 0.08))',
+                                borderRadius: 12,
+                                border: '1px solid rgba(138, 117, 186, 0.15)',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 10
+                            }}
+                        >
+                            <Lightbulb size={16} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 2 }} />
+                            <div style={{ fontSize: 12, color: 'var(--color-text)', lineHeight: 1.5 }}>
+                                <strong style={{ color: 'var(--color-primary)' }}>AI Insight:</strong>{' '}
+                                {ai.summary.length > 150 ? ai.summary.slice(0, 150) + '...' : ai.summary}
+                            </div>
+                        </motion.div>
+                    )
+                }
+            </motion.div >
 
             {/* ============ STRENGTHS & WEAKNESSES ============ */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
+            < div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -689,10 +692,10 @@ export function AIAnalysis() {
                         )}
                     </div>
                 </motion.div>
-            </div>
+            </div >
 
             {/* ============ LEARNING INSIGHTS ============ */}
-            <motion.div
+            < motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
@@ -740,12 +743,12 @@ export function AIAnalysis() {
                         </motion.div>
                     ))}
                 </div>
-            </motion.div>
+            </motion.div >
 
             <style>{`
                 @keyframes spin { to { transform: rotate(360deg); } }
                 .animate-spin { animation: spin 1s linear infinite; }
             `}</style>
-        </motion.div>
+        </motion.div >
     );
 }
