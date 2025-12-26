@@ -187,6 +187,15 @@
         height: 32px;
         font-size: var(--font-size-xs);
     }
+
+    /* CRITICAL: Add bottom padding so quiz pills don't hide behind bottom nav */
+    .quiz-page {
+        padding-bottom: 120px;
+    }
+
+    .quiz-pills {
+        margin-bottom: 20px;
+    }
 }
 
 /* Access Error Screen - Premium/Enrollment Prompt */
