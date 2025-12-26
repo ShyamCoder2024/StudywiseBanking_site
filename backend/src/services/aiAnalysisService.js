@@ -99,33 +99,46 @@ export async function generateStudentAnalysis(userId) {
         // Calculate REAL percentile rank by comparing with all students
         const calculatePercentileRank = async () => {
             try {
-                // Get all students' average scores
+                // Get all students' average scores using aggregation
                 const allStudentScores = await Attempt.aggregate([
-                    { $group: { _id: '$user', avgScore: { $avg: '$score' }, count: { $sum: 1 } } },
-                    { $match: { count: { $gte: 1 } } } // Only students with at least 1 attempt
+                    {
+                        $group: {
+                            _id: '$user',
+                            avgScore: { $avg: '$score' },
+                            count: { $sum: 1 }
+                        }
+                    }
                 ]);
 
-                if (allStudentScores.length <= 1) {
-                    return { percentile: 100, totalStudents: 1 }; // Only student = top 100%
+                // Filter to only students with at least 1 attempt
+                const validStudents = allStudentScores.filter(s => s.count >= 1);
+
+                console.log(`[AI Analysis] Total students with attempts: ${validStudents.length}`);
+
+                if (validStudents.length <= 1) {
+                    return { percentile: 100, totalStudents: validStudents.length || 1 };
                 }
 
-                // Sort by average score
-                const sortedScores = allStudentScores.map(s => s.avgScore).sort((a, b) => a - b);
+                // Sort by average score (ascending)
+                const sortedScores = validStudents.map(s => s.avgScore).sort((a, b) => a - b);
 
                 // Find current student's average score
                 const studentAvgScore = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+                console.log(`[AI Analysis] Student avg score: ${studentAvgScore}`);
 
                 // Calculate percentile (what % of students score lower than this student)
                 const lowerCount = sortedScores.filter(s => s < studentAvgScore).length;
                 const percentile = Math.round((lowerCount / sortedScores.length) * 100);
 
+                console.log(`[AI Analysis] Rank data calculated - percentile: ${percentile}, totalStudents: ${validStudents.length}`);
+
                 return {
                     percentile: Math.min(100, Math.max(0, percentile)),
-                    totalStudents: allStudentScores.length,
+                    totalStudents: validStudents.length,
                     studentAvg: Math.round(studentAvgScore)
                 };
             } catch (err) {
-                console.error('Percentile calculation error:', err);
+                console.error('[AI Analysis] Percentile calculation error:', err);
                 return null;
             }
         };
