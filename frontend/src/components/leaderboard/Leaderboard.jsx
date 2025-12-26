@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Trophy, Crown, Timer, Users } from 'lucide-react';
 import { AvatarDisplay } from '../ui/AvatarDisplay';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import './Leaderboard.css';
 
 export function Leaderboard({ limit }) {
@@ -14,18 +15,11 @@ export function Leaderboard({ limit }) {
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch('/api/student/leaderboard', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // Use the configured api service (has correct base URL for production)
+                const res = await api.get('/student/leaderboard');
 
-                const data = await res.json();
-
-                if (data.success && data.data?.leaderboard) {
-                    const leaderboardArray = data.data.leaderboard;
+                if (res.data.success && res.data.data?.leaderboard) {
+                    const leaderboardArray = res.data.data.leaderboard;
                     if (leaderboardArray.length > 0) {
                         // Transform backend data to match our format
                         const students = leaderboardArray.map((student, index) => ({
