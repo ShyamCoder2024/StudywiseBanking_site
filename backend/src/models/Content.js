@@ -44,6 +44,7 @@ const topicSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Subject',
         required: true,
+        index: true, // Index for frequent lookups by subject
     },
 }, { timestamps: true });
 
@@ -138,6 +139,10 @@ const quizSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
+// Indexes for Quiz model - critical for performance
+quizSchema.index({ isPublished: 1, createdAt: -1 }); // Published quizzes sorted by date
+quizSchema.index({ topic: 1, isPublished: 1 }); // Quizzes by topic
+
 quizSchema.virtual('questionCount', {
     ref: 'Question',
     localField: '_id',
@@ -156,6 +161,7 @@ const questionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Quiz',
         required: true,
+        index: true, // Index for questions by quiz lookup
     },
     type: {
         type: String,
@@ -246,6 +252,11 @@ const attemptSchema = new mongoose.Schema({
         },
     },
 }, { timestamps: true });
+
+// Indexes for Attempt model - critical for leaderboard and user history
+attemptSchema.index({ user: 1, createdAt: -1 }); // User's attempts sorted by date
+attemptSchema.index({ quiz: 1, score: -1 }); // Quiz results sorted by score
+attemptSchema.index({ user: 1, quiz: 1 }); // Check if user attempted specific quiz
 
 export const Attempt = mongoose.model('Attempt', attemptSchema);
 

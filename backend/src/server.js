@@ -72,4 +72,35 @@ connectDB().then(() => {
     });
 });
 
+// ============================================
+// ENTERPRISE STABILITY: Global Error Handlers
+// ============================================
+
+// Handle unhandled promise rejections (prevents silent crashes)
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('⚠️ Unhandled Rejection at:', promise);
+    console.error('Reason:', reason);
+    // In production, log to monitoring service
+    // Don't crash the server - just log and continue
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('💥 Uncaught Exception:', error.message);
+    console.error('Stack:', error.stack);
+    // Graceful shutdown - give time for pending requests
+    setTimeout(() => {
+        process.exit(1);
+    }, 1000);
+});
+
+// Handle SIGTERM (graceful shutdown for cloud platforms)
+process.on('SIGTERM', () => {
+    console.log('🛑 SIGTERM received. Shutting down gracefully...');
+    mongoose.connection.close(false, () => {
+        console.log('MongoDB connection closed.');
+        process.exit(0);
+    });
+});
+
 export default app;
