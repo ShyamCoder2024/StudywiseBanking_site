@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import './LoadingFallback.css';
 
-export function LoadingFallback({ timeout = 10000 }) {
+export function LoadingFallback({ timeout = 8000 }) {
     const [showSlowWarning, setShowSlowWarning] = useState(false);
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
-        // Show warning after 5 seconds
+        // Show warning after 3 seconds (reduced from 5)
         const warningTimer = setTimeout(() => {
             setShowSlowWarning(true);
-        }, 5000);
+        }, 3000);
 
         // Show error after timeout
         const errorTimer = setTimeout(() => {
@@ -26,11 +25,7 @@ export function LoadingFallback({ timeout = 10000 }) {
     if (showError) {
         return (
             <div className="loading-fallback error">
-                <motion.div
-                    className="loading-content"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                >
+                <div className="loading-content">
                     <div className="error-icon">⚠️</div>
                     <h2>Loading is taking longer than expected</h2>
                     <p>This might be due to:</p>
@@ -47,18 +42,14 @@ export function LoadingFallback({ timeout = 10000 }) {
                             Go to Homepage
                         </button>
                     </div>
-                </motion.div>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="loading-fallback">
-            <motion.div
-                className="loading-content"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-            >
+            <div className="loading-content">
                 <div className="loading-spinner">
                     <div className="spinner"></div>
                 </div>
@@ -66,19 +57,15 @@ export function LoadingFallback({ timeout = 10000 }) {
                 <h2>Loading...</h2>
 
                 {showSlowWarning && (
-                    <motion.p
-                        className="slow-warning"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
+                    <p className="slow-warning">
                         This is taking longer than usual. Please wait...
-                    </motion.p>
+                    </p>
                 )}
 
                 <div className="loading-progress">
                     <div className="progress-bar"></div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 }

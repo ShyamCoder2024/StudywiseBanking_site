@@ -3,13 +3,13 @@ import axios from 'axios';
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 // Retry configuration for failed requests
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 1000; // Start with 1 second
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 500; // Start with 0.5 second for faster recovery
 
 // Simple in-memory cache for GET requests
 const apiCache = new Map();
 const pendingRequests = new Map(); // Prevent duplicate requests
-const CACHE_TTL = 60 * 1000; // 1 minute cache (reduced for fresher data)
+const CACHE_TTL = 3 * 60 * 1000; // 3 minute cache for faster loads
 
 // Exponential backoff retry function
 const retryRequest = async (config, retryCount = 0) => {
@@ -39,7 +39,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 8000, // 8 seconds - fail fast, retry will handle it
+    timeout: 5000, // 5 seconds - fail faster, retry will handle it
 });
 
 // Request interceptor to add auth token and implement caching/deduplication

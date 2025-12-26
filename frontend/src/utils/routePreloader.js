@@ -39,24 +39,22 @@ export function handleHoverPreload(routeName) {
 
 // Preload critical routes after initial page load
 export function preloadCriticalRoutes(userRole = 'student') {
-    // Wait for initial render to complete
+    // Start preloading immediately for fast subsequent navigation
+    const preload = () => {
+        if (userRole === 'admin') {
+            preloadRoutes(['admin', 'adminStudents', 'adminCourses', 'adminQuizzes']);
+        } else {
+            // Preload ALL student routes for instant navigation
+            preloadRoutes(['dashboard', 'subjects', 'tests', 'courses', 'leaderboard', 'performance', 'profile']);
+        }
+    };
+
+    // Use requestIdleCallback with short timeout, or execute immediately
     if (typeof requestIdleCallback !== 'undefined') {
-        requestIdleCallback(() => {
-            if (userRole === 'admin') {
-                preloadRoutes(['admin', 'adminStudents', 'adminCourses', 'adminQuizzes']);
-            } else {
-                preloadRoutes(['dashboard', 'subjects', 'tests', 'courses']);
-            }
-        }, { timeout: 2000 });
+        requestIdleCallback(preload, { timeout: 500 }); // Reduced from 2000ms
     } else {
-        // Fallback for browsers without requestIdleCallback
-        setTimeout(() => {
-            if (userRole === 'admin') {
-                preloadRoutes(['admin', 'adminStudents', 'adminCourses', 'adminQuizzes']);
-            } else {
-                preloadRoutes(['dashboard', 'subjects', 'tests', 'courses']);
-            }
-        }, 1500);
+        // Fallback: execute after a very short delay
+        setTimeout(preload, 100); // Reduced from 1500ms
     }
 }
 
