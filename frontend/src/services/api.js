@@ -38,7 +38,6 @@ const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
-        'Accept-Encoding': 'gzip, deflate, br', // Request compressed responses
     },
     timeout: 8000, // 8 seconds - fail fast, retry will handle it
 });
