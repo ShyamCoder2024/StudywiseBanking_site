@@ -122,7 +122,7 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
         const quiz = await Quiz.findById(req.params.id);
         if (!quiz) throw new NotFoundError('Quiz');
 
-        const { answers } = req.body;
+        const { answers, startTime } = req.body;
         const questions = await Question.find({ quiz: req.params.id });
 
         // Calculate score
@@ -158,6 +158,11 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
         const maxMarks = questions.length * marksPerCorrect;
         const score = maxMarks > 0 ? Math.round((totalMarks / maxMarks) * 100) : 0;
 
+        // Use actual start time from frontend, or fallback to quiz duration estimate
+        const actualStartTime = startTime
+            ? new Date(startTime)
+            : new Date(Date.now() - quiz.duration * 60 * 1000);
+
         // Create attempt with new marking details
         const attempt = await Attempt.create({
             user: req.user._id,
@@ -171,7 +176,7 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
             totalMarks: parseFloat(totalMarks.toFixed(2)),
             maxMarks,
             negativeMarks: parseFloat((wrongAnswers * negativePerWrong).toFixed(2)),
-            startedAt: new Date(Date.now() - quiz.duration * 60 * 1000),
+            startedAt: actualStartTime,
             submittedAt: new Date(),
             aiAnalysis: { status: 'pending' },
         });

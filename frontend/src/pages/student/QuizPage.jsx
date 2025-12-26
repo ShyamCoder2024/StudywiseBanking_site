@@ -13,6 +13,7 @@ export function QuizPage() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState({});
     const [timeLeft, setTimeLeft] = useState(0);
+    const [startTime, setStartTime] = useState(null); // Track actual quiz start time
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
@@ -58,6 +59,7 @@ export function QuizPage() {
                 setQuiz(response.data.data.quiz);
                 setQuestions(response.data.data.questions);
                 setTimeLeft(response.data.data.quiz.duration * 60);
+                setStartTime(new Date().toISOString()); // Record actual start time
             }
         } catch (error) {
             console.error('Failed to fetch quiz:', error);
@@ -160,7 +162,11 @@ export function QuizPage() {
 
         setSubmitting(true);
         try {
-            const response = await api.post(`/quizzes/${quizId}/submit`, { answers });
+            // Send answers and startTime for accurate time tracking
+            const response = await api.post(`/quizzes/${quizId}/submit`, {
+                answers,
+                startTime // Send the actual start time to backend
+            });
             if (response.data.success) {
                 navigate(`/result/${response.data.data.attemptId}`);
             }

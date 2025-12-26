@@ -209,7 +209,7 @@ export function ResultPage() {
                                 >
                                     {result.timeTaken}
                                 </motion.span>
-                                <span className="stat-label">Time</span>
+                                <span className="stat-label">Time Taken</span>
                             </motion.div>
                         </motion.div>
 
