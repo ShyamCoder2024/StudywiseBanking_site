@@ -188,7 +188,7 @@ export default function CoursesPage() {
                     </div>
                 )}
 
-                {/* Compact Enrollment CTA Card */}
+                {/* Compact Enrollment CTA Card - Always show for enrolling in additional courses */}
                 <motion.div
                     className="enroll-cta-card"
                     initial={{ opacity: 0, y: 20 }}

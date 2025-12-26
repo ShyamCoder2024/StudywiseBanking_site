@@ -117,8 +117,8 @@ export function CourseDetailPage() {
                             </div>
                         )}
 
-                        {/* Enroll Button */}
-                        {!course.isPaid && (
+                        {/* Enroll Button - Show only if NOT enrolled in THIS specific course */}
+                        {!course.isEnrolled && (
                             <motion.button
                                 className="cdp-enroll"
                                 onClick={() => setShowEnrollModal(true)}
