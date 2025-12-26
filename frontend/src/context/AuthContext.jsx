@@ -26,8 +26,17 @@ const MOCK_ADMIN = {
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(() => {
         // Initialize from localStorage SYNCHRONOUSLY to prevent flash
-        const storedUser = localStorage.getItem('user');
-        return storedUser ? JSON.parse(storedUser) : null;
+        try {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                return JSON.parse(storedUser);
+            }
+        } catch (e) {
+            // Corrupted data - clear it to prevent crashes
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+        }
+        return null;
     });
 
     const [token, setToken] = useState(() => {
