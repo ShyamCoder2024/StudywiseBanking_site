@@ -96,6 +96,59 @@ export async function generateStudentAnalysis(userId) {
             (recentPerformanceBonus) // Bonus for recent good performance
         ));
 
+        // Calculate REAL percentile rank by comparing with all students
+        const calculatePercentileRank = async () => {
+            try {
+                // Get all students' average scores
+                const allStudentScores = await Attempt.aggregate([
+                    { $group: { _id: '$user', avgScore: { $avg: '$score' }, count: { $sum: 1 } } },
+                    { $match: { count: { $gte: 1 } } } // Only students with at least 1 attempt
+                ]);
+
+                if (allStudentScores.length <= 1) {
+                    return { percentile: 100, totalStudents: 1 }; // Only student = top 100%
+                }
+
+                // Sort by average score
+                const sortedScores = allStudentScores.map(s => s.avgScore).sort((a, b) => a - b);
+
+                // Find current student's average score
+                const studentAvgScore = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+
+                // Calculate percentile (what % of students score lower than this student)
+                const lowerCount = sortedScores.filter(s => s < studentAvgScore).length;
+                const percentile = Math.round((lowerCount / sortedScores.length) * 100);
+
+                return {
+                    percentile: Math.min(100, Math.max(0, percentile)),
+                    totalStudents: allStudentScores.length,
+                    studentAvg: Math.round(studentAvgScore)
+                };
+            } catch (err) {
+                console.error('Percentile calculation error:', err);
+                return null;
+            }
+        };
+
+        // Calculate weekly score change
+        const calculateWeeklyChange = (trend) => {
+            if (!trend || trend.length < 3) return null;
+
+            // Get scores from this week (last 3 days with activity)
+            const recentScores = trend.filter(d => d.score > 0).slice(-3);
+            // Get scores from earlier in the trend
+            const olderScores = trend.filter(d => d.score > 0).slice(0, Math.max(1, trend.filter(d => d.score > 0).length - 3));
+
+            if (recentScores.length === 0 || olderScores.length === 0) return null;
+
+            const recentAvg = recentScores.reduce((a, b) => a + b.score, 0) / recentScores.length;
+            const olderAvg = olderScores.reduce((a, b) => a + b.score, 0) / olderScores.length;
+
+            return Math.round(recentAvg - olderAvg);
+        };
+
+        const rankData = await calculatePercentileRank();
+
         // Calculate AI-recommended Study Plan based on performance
         const calculateStudyPlan = () => {
             const weakSubjectCount = Object.values(subjectPerformance).filter(s => (s.correct / s.total) * 100 < 60).length;
@@ -288,6 +341,9 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 totalAttempts: attempts.length,
                 totalQuestions,
                 totalCorrect,
+                // Real ranking and weekly data
+                rankData,
+                weeklyChange: calculateWeeklyChange(performanceTrend),
                 aiGenerated: true
             };
         } catch (aiError) {
@@ -309,6 +365,9 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 totalAttempts: attempts.length,
                 totalQuestions,
                 totalCorrect,
+                // Real ranking and weekly data
+                rankData,
+                weeklyChange: calculateWeeklyChange(performanceTrend),
                 aiGenerated: false
             };
         }

@@ -383,17 +383,29 @@ export function AIAnalysis() {
                         >
                             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Rank</div>
                             <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
-                                <Crown size={18} color="#F59E0B" fill="#F59E0B" /> {getRankLabel()}
+                                <Crown size={18} color="#F59E0B" fill="#F59E0B" />
+                                {ai.rankData?.percentile !== undefined
+                                    ? `Top ${100 - ai.rankData.percentile}%`
+                                    : getRankLabel()}
                             </div>
+                            {ai.rankData?.totalStudents && (
+                                <div style={{ fontSize: 9, color: 'var(--color-text-muted)', textAlign: 'center', marginTop: 2 }}>
+                                    of {ai.rankData.totalStudents} students
+                                </div>
+                            )}
                         </motion.div>
                         <motion.div
                             whileHover={{ scale: 1.05, y: -2 }}
                             style={{ padding: 'clamp(14px, 3vw, 18px)', background: 'var(--color-bg)', borderRadius: 16, border: '1px solid var(--color-border)' }}
                         >
                             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>This Week</div>
-                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: actualWeeklyTrend !== null && actualWeeklyTrend >= 0 ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
-                                <TrendingUp size={18} style={{ transform: actualWeeklyTrend !== null && actualWeeklyTrend < 0 ? 'rotate(180deg)' : 'none' }} />
-                                {actualWeeklyTrend !== null ? `${actualWeeklyTrend >= 0 ? '+' : ''}${actualWeeklyTrend}%` : 'N/A'}
+                            <div style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 800, color: (ai.weeklyChange ?? actualWeeklyTrend ?? 0) >= 0 ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                                <TrendingUp size={18} style={{ transform: (ai.weeklyChange ?? actualWeeklyTrend ?? 0) < 0 ? 'rotate(180deg)' : 'none' }} />
+                                {ai.weeklyChange !== undefined && ai.weeklyChange !== null
+                                    ? `${ai.weeklyChange >= 0 ? '+' : ''}${ai.weeklyChange}%`
+                                    : actualWeeklyTrend !== null
+                                        ? `${actualWeeklyTrend >= 0 ? '+' : ''}${actualWeeklyTrend}%`
+                                        : 'N/A'}
                             </div>
                         </motion.div>
                     </div>
