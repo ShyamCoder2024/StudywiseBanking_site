@@ -1,5 +1,6 @@
 import express from 'express';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { cacheMiddleware, CACHE_DURATIONS } from '../middleware/cacheMiddleware.js';
 import { Subject, Topic, Quiz, Question, Attempt } from '../models/Content.js';
 import User from '../models/User.js';
 import Task from '../models/Task.js';
@@ -15,22 +16,22 @@ router.use(protect);
 router.use(adminOnly);
 
 // ============ Dashboard ============
-
-router.get('/dashboard', async (req, res, next) => {
+// CACHED: Admin dashboard cached for 30 seconds
+router.get('/dashboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }), async (req, res, next) => {
     try {
-        const [totalStudents, totalSubjects, totalQuizzes, totalAttempts] = await Promise.all([
+        // Use Promise.all with lean() for faster queries
+        const [totalStudents, totalSubjects, totalQuizzes, totalAttempts, recentAttempts] = await Promise.all([
             User.countDocuments({ role: 'student' }),
             Subject.countDocuments(),
             Quiz.countDocuments(),
             Attempt.countDocuments(),
+            Attempt.find()
+                .populate('user', 'firstName lastName')
+                .populate('quiz', 'title')
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .lean()
         ]);
-
-        const recentAttempts = await Attempt.find()
-            .populate('user', 'firstName lastName')
-            .populate('quiz', 'title')
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .lean();
 
         res.json({
             success: true,
@@ -54,13 +55,13 @@ router.get('/dashboard', async (req, res, next) => {
 });
 
 // ============ Subjects CRUD ============
-
-router.get('/subjects', async (req, res, next) => {
+// CACHED: Subjects list cached for 1 minute
+router.get('/subjects', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM }), async (req, res, next) => {
     try {
-        const subjects = await Subject.find().populate('topicCount');
+        const subjects = await Subject.find().populate('topicCount').lean();
         res.json({
             success: true,
-            data: subjects.map((s) => ({ ...s.toObject(), topicCount: s.topicCount || 0 })),
+            data: subjects.map((s) => ({ ...s, topicCount: s.topicCount || 0 })),
         });
     } catch (error) { next(error); }
 });
