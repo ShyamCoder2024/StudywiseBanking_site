@@ -16,13 +16,21 @@ export default function CoursesPage() {
         fetchCourses();
     }, []);
 
-    const fetchCourses = async () => {
+    const fetchCourses = async (retryCount = 0) => {
         try {
             const res = await api.get('/student/video-courses');
-            setCourses(res.data.data || []);
+            if (res.data?.data) {
+                setCourses(res.data.data);
+            }
+            setLoading(false);
         } catch (error) {
             console.error('Failed to fetch courses:', error);
-        } finally {
+            // Retry up to 2 times with 1 second delay
+            if (retryCount < 2) {
+                setTimeout(() => fetchCourses(retryCount + 1), 1000);
+                return; // Don't set loading false yet - keep showing loading spinner
+            }
+            // Only set loading false after max retries exhausted
             setLoading(false);
         }
     };
