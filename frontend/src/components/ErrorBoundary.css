@@ -50,8 +50,15 @@
 .error-content p {
     font-size: 16px;
     color: #666;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
     line-height: 1.5;
+}
+
+.maintenance-subtitle {
+    font-size: 14px;
+    color: #8a75ba;
+    font-weight: 500;
+    margin-bottom: 32px !important;
 }
 
 .error-details {

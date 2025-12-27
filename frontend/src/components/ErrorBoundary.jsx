@@ -59,12 +59,12 @@ class ErrorBoundary extends Component {
                 return (
                     <div className="error-boundary-critical">
                         <div className="error-content">
-                            <div className="error-icon">⚠️</div>
-                            <h1>Critical Error</h1>
-                            <p>The application encountered multiple errors. Please contact support.</p>
+                            <div className="error-icon">🛠️</div>
+                            <h1>Under Maintenance</h1>
+                            <p>We're fixing things. Please try again shortly! 🙏</p>
                             <div className="error-actions">
-                                <button onClick={() => window.location.href = '/'} className="btn-primary">
-                                    Go to Homepage
+                                <button onClick={() => window.location.reload()} className="btn-primary">
+                                    Refresh Page
                                 </button>
                             </div>
                         </div>
@@ -75,32 +75,18 @@ class ErrorBoundary extends Component {
             return (
                 <div className="error-boundary-container">
                     <div className="error-content">
-                        <div className="error-icon">😕</div>
-                        <h1>Oops! Something went wrong</h1>
-                        <p>We're sorry for the inconvenience. The application encountered an unexpected error.</p>
-
-                        {process.env.NODE_ENV === 'development' && error && (
-                            <details className="error-details">
-                                <summary>Error Details (Development Only)</summary>
-                                <pre>{error.toString()}</pre>
-                                {this.state.errorInfo && (
-                                    <pre>{this.state.errorInfo.componentStack}</pre>
-                                )}
-                            </details>
-                        )}
+                        <div className="error-icon">😊</div>
+                        <h1>Under Maintenance</h1>
+                        <p>We're making improvements. Please refresh after a moment!</p>
 
                         <div className="error-actions">
                             <button onClick={this.handleReset} className="btn-primary">
-                                Try Again
+                                Refresh
                             </button>
                             <button onClick={this.handleGoHome} className="btn-secondary">
-                                Go to Homepage
+                                Go Home
                             </button>
                         </div>
-
-                        <p className="error-support">
-                            If this problem persists, please contact support with error code: <code>{Date.now()}</code>
-                        </p>
                     </div>
                 </div>
             );
