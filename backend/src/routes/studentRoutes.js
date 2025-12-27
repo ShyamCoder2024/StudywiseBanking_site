@@ -18,7 +18,8 @@ router.use(protect);
 // @route   GET /api/student/dashboard
 // @desc    Get student dashboard data with comprehensive metrics
 // @access  Private (Student)
-router.get('/dashboard', async (req, res, next) => {
+// CACHED: Dashboard data cached for 30 seconds per user
+router.get('/dashboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, perUser: true }), async (req, res, next) => {
     try {
         const userId = req.user._id;
 
@@ -135,7 +136,8 @@ router.get('/dashboard', async (req, res, next) => {
 // @route   GET /api/student/ai-analysis
 // @desc    Get AI-powered personalized performance analysis (Gemini)
 // @access  Private
-router.get('/ai-analysis', async (req, res, next) => {
+// CACHED: AI analysis is expensive (calls Gemini API) - cache for 5 minutes per user
+router.get('/ai-analysis', cacheMiddleware({ duration: CACHE_DURATIONS.LONG, perUser: true }), async (req, res, next) => {
     try {
         const userId = req.user._id;
 
@@ -688,9 +690,10 @@ router.get('/settings/:key', async (req, res, next) => {
 // @route   GET /api/student/enrollment
 // @desc    Get current user's enrollment status
 // @access  Private
-router.get('/enrollment', async (req, res, next) => {
+// CACHED: Enrollment status cached for 1 minute per user
+router.get('/enrollment', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM, perUser: true }), async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user._id).select('enrollment').lean();
         res.json({
             success: true,
             data: {

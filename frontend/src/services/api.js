@@ -39,7 +39,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 5000, // 5 seconds - fail faster, retry will handle it
+    timeout: 15000, // 15 seconds - allows AI endpoints (Gemini) time to respond
 });
 
 // Request interceptor to add auth token and implement caching/deduplication

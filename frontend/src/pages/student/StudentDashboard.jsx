@@ -65,15 +65,16 @@ export function StudentDashboard() {
         // Fetch all data with individual error handling
         const fetchAllData = async () => {
             try {
-                // Use Promise.allSettled to handle failures gracefully
+                // OPTIMIZED: Fetch critical data first (fast endpoints)
+                // AI Analysis is deferred to load AFTER page renders
                 const results = await Promise.allSettled([
                     fetchDashboardData(isMounted),
                     fetchTodos(isMounted),
                     fetchNewQuizzes(isMounted),
                     fetchExamSettings(isMounted),
                     fetchEnrollment(isMounted),
-                    fetchVideoCourses(isMounted),
-                    fetchAiAnalysis(isMounted)
+                    fetchVideoCourses(isMounted)
+                    // AI Analysis removed from initial load - loads separately below
                 ]);
 
                 // Log any failures for debugging
@@ -87,6 +88,9 @@ export function StudentDashboard() {
             } finally {
                 if (isMounted) {
                     setLoading(false);
+                    // DEFERRED: Load AI Analysis AFTER page renders (non-blocking)
+                    // This allows the dashboard to appear instantly
+                    fetchAiAnalysis(isMounted);
                 }
             }
         };

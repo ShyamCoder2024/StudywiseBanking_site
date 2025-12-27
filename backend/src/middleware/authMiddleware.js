@@ -36,12 +36,17 @@ export const protect = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, JWT_SECRET);
-        const user = await User.findById(decoded.id);
+        // OPTIMIZED: Use lean() and select only fields needed for auth
+        const user = await User.findById(decoded.id)
+            .select('firstName lastName email role xpPoints streakCount avatar enrollment targetExam')
+            .lean();
 
         if (!user) {
             throw new AuthError('User not found');
         }
 
+        // Add _id back since lean() returns plain object
+        user._id = decoded.id;
         req.user = user;
         next();
     } catch (error) {
