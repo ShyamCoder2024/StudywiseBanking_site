@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Crown, Timer, Users } from 'lucide-react';
+import { Trophy, Crown, Timer, Users, RefreshCw } from 'lucide-react';
 import { AvatarDisplay } from '../ui/AvatarDisplay';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
@@ -10,39 +10,69 @@ export function Leaderboard({ limit }) {
     const { user } = useAuth();
     const [leaderboardData, setLeaderboardData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     // Fetch leaderboard from backend - REAL STUDENTS ONLY
-    useEffect(() => {
-        const fetchLeaderboard = async () => {
-            try {
-                // Use the configured api service (has correct base URL for production)
-                const res = await api.get('/student/leaderboard');
+    const fetchLeaderboard = useCallback(async (isRetry = false) => {
+        try {
+            if (!isRetry) setLoading(true);
+            setError(null);
 
-                if (res.data.success && res.data.data?.leaderboard) {
-                    const leaderboardArray = res.data.data.leaderboard;
-                    if (leaderboardArray.length > 0) {
-                        // Transform backend data to match our format
-                        const students = leaderboardArray.map((student, index) => ({
-                            id: student._id,
-                            name: student.name || 'Student',
-                            score: student.xpPoints || 0,
-                            accuracy: student.avgScore || 0,
-                            testsCompleted: student.testsCompleted || 0,
-                            avatar: student.avatar,
-                            isCurrentUser: student.isCurrentUser,
-                            rank: student.rank || (index + 1)
-                        }));
-                        setLeaderboardData(students);
-                    }
+            // Use the configured api service (has correct base URL for production)
+            const res = await api.get('/student/leaderboard');
+
+            if (res.data.success && res.data.data?.leaderboard) {
+                const leaderboardArray = res.data.data.leaderboard;
+                if (leaderboardArray.length > 0) {
+                    // Transform backend data to match our format
+                    const students = leaderboardArray.map((student, index) => ({
+                        id: student._id,
+                        name: student.name || 'Student',
+                        score: student.xpPoints || 0,
+                        accuracy: student.avgScore || 0,
+                        testsCompleted: student.testsCompleted || 0,
+                        avatar: student.avatar,
+                        isCurrentUser: student.isCurrentUser,
+                        rank: student.rank || (index + 1)
+                    }));
+                    setLeaderboardData(students);
+                    setRetryCount(0); // Reset retry count on success
+                } else {
+                    // No students in leaderboard - that's okay, not an error
+                    setLeaderboardData([]);
                 }
-            } catch (error) {
-                console.error('Failed to fetch leaderboard:', error);
-            } finally {
-                setLoading(false);
+            } else {
+                // API returned success: false
+                throw new Error('Failed to fetch leaderboard data');
             }
-        };
+        } catch (err) {
+            console.error('Failed to fetch leaderboard:', err);
+            setError(err.message || 'Failed to load leaderboard');
+
+            // Auto-retry up to 2 times with increasing delay
+            if (retryCount < 2) {
+                const delay = 1000 * (retryCount + 1);
+                console.log(`📊 Leaderboard auto-retry in ${delay}ms...`);
+                setTimeout(() => {
+                    setRetryCount(prev => prev + 1);
+                    fetchLeaderboard(true);
+                }, delay);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [retryCount]);
+
+    useEffect(() => {
         fetchLeaderboard();
     }, []);
+
+    // Manual retry handler
+    const handleRetry = () => {
+        setRetryCount(0);
+        fetchLeaderboard();
+    };
 
     const listData = limit ? leaderboardData.slice(3, limit) : leaderboardData.slice(3, 50);
 
@@ -50,14 +80,59 @@ export function Leaderboard({ limit }) {
     const getTopStudent = (index) => leaderboardData[index] || null;
 
     // Loading state
-    if (loading) {
+    if (loading && leaderboardData.length === 0) {
         return (
             <div className="leaderboard-container">
                 <div className="leaderboard-header">
                     <h3><Trophy className="text-yellow-500" /> Top Performers</h3>
                 </div>
                 <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                    <div className="leaderboard-loading-spinner" style={{
+                        width: '24px',
+                        height: '24px',
+                        border: '3px solid rgba(99, 102, 241, 0.2)',
+                        borderTop: '3px solid #6366f1',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 12px'
+                    }} />
                     Loading leaderboard...
+                </div>
+            </div>
+        );
+    }
+
+    // Error state with retry button
+    if (error && leaderboardData.length === 0) {
+        return (
+            <div className="leaderboard-container">
+                <div className="leaderboard-header">
+                    <h3><Trophy className="text-yellow-500" /> Top Performers</h3>
+                </div>
+                <div style={{ padding: '30px 20px', textAlign: 'center' }}>
+                    <p style={{ color: 'var(--color-text-secondary)', margin: '0 0 12px', fontSize: '0.9rem' }}>
+                        {retryCount >= 2 ? 'Unable to load leaderboard' : 'Connecting...'}
+                    </p>
+                    {retryCount >= 2 && (
+                        <button
+                            onClick={handleRetry}
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '8px 16px',
+                                background: 'var(--color-primary, #6366f1)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '0.85rem'
+                            }}
+                        >
+                            <RefreshCw size={14} />
+                            Retry
+                        </button>
+                    )}
                 </div>
             </div>
         );

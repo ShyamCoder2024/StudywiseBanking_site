@@ -8,31 +8,7 @@ const RETRY_DELAY_MS = 500; // Start with 0.5 second for faster recovery
 
 // Simple in-memory cache for GET requests
 const apiCache = new Map();
-const pendingRequests = new Map(); // Prevent duplicate requests
 const CACHE_TTL = 3 * 60 * 1000; // 3 minute cache for faster loads
-
-// Exponential backoff retry function
-const retryRequest = async (config, retryCount = 0) => {
-    try {
-        return await axios.request(config);
-    } catch (error) {
-        // Don't retry on 4xx errors (client error, won't change)
-        if (error.response && error.response.status >= 400 && error.response.status < 500) {
-            throw error;
-        }
-
-        // Retry on network errors, 5xx errors, or timeouts
-        if (retryCount < MAX_RETRIES) {
-            const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
-            console.log(`🔄 Retrying request (attempt ${retryCount + 1}/${MAX_RETRIES}) after ${delay}ms...`);
-
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return retryRequest(config, retryCount + 1);
-        }
-
-        throw error;
-    }
-};
 
 const api = axios.create({
     baseURL: API_URL,
@@ -42,7 +18,7 @@ const api = axios.create({
     timeout: 15000, // 15 seconds - allows AI endpoints (Gemini) time to respond
 });
 
-// Request interceptor to add auth token and implement caching/deduplication
+// Request interceptor to add auth token and implement caching
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -50,12 +26,13 @@ api.interceptors.request.use(
             config.headers.Authorization = `Bearer ${token}`;
         }
 
-        // Check cache for GET requests
+        // Check cache for GET requests (stale-while-revalidate pattern)
         if (config.method === 'get') {
             const cacheKey = `${config.baseURL}${config.url}`;
             const cached = apiCache.get(cacheKey);
+
             if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-                // Return cached response
+                // Return cached response immediately
                 config.adapter = () => Promise.resolve({
                     data: cached.data,
                     status: 200,
@@ -63,14 +40,9 @@ api.interceptors.request.use(
                     headers: { 'x-cache': 'HIT' },
                     config
                 });
-                return config;
             }
-
-            // Deduplicate in-flight requests
-            if (pendingRequests.has(cacheKey)) {
-                config.adapter = () => pendingRequests.get(cacheKey);
-                return config;
-            }
+            // Note: We no longer deduplicate requests - this was causing issues
+            // Each request goes through normally, cache handles efficiency
         }
 
         return config;
@@ -99,7 +71,29 @@ api.interceptors.response.use(
 
         return response;
     },
-    (error) => {
+    async (error) => {
+        const config = error.config;
+
+        // Initialize retry count
+        if (config && !config._retryCount) {
+            config._retryCount = 0;
+        }
+
+        // Don't retry on 4xx errors (client error, won't change)
+        const is4xxError = error.response && error.response.status >= 400 && error.response.status < 500;
+
+        // Retry on network errors, 5xx errors, or timeouts
+        if (config && !is4xxError && config._retryCount < MAX_RETRIES) {
+            config._retryCount += 1;
+            const delay = RETRY_DELAY_MS * Math.pow(2, config._retryCount - 1);
+            console.log(`🔄 Retrying request (attempt ${config._retryCount}/${MAX_RETRIES}) after ${delay}ms...`);
+
+            await new Promise(resolve => setTimeout(resolve, delay));
+
+            // Retry with the same config (which already has auth token from interceptor)
+            return api.request(config);
+        }
+
         console.error('API Error:', {
             url: error.config?.url,
             method: error.config?.method,
@@ -162,11 +156,5 @@ api.interceptors.response.use(
         return Promise.reject(networkError);
     }
 );
-
-// Integrate retry logic into axios instance - PROPER IMPLEMENTATION
-const originalRequest = api.request.bind(api);
-api.request = async function (config) {
-    return retryRequest(config);
-};
 
 export default api;
