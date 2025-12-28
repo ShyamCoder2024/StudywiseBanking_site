@@ -324,3 +324,253 @@ select:-webkit-autofill:focus {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+/* ============================================
+   ENHANCED PWA MOBILE EXPERIENCE
+   Native App-Like Feel
+   ============================================ */
+
+/* Smooth Touch Feedback - All Interactive Elements */
+button,
+a,
+.clickable,
+.bento-tile,
+.card,
+[role="button"],
+input[type="submit"],
+input[type="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Native-like Active States */
+button:active,
+.btn:active,
+.bento-tile:active,
+.card:active:not(.no-active),
+.clickable:active {
+  transform: scale(0.98) !important;
+  opacity: 0.9;
+  transition: transform 0.1s ease, opacity 0.1s ease !important;
+}
+
+/* Smooth Focus States for Accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* iOS Standalone Mode Specific Optimizations */
+@media (display-mode: standalone) {
+
+  /* Disable text selection for app-like feel */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* But allow selection in input fields */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Hide address bar artifacts */
+  html {
+    height: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Momentum Scrolling for iOS */
+.scroll-container,
+.page-container,
+.dashboard-container,
+.modal-content,
+[style*="overflow: auto"],
+[style*="overflow-y: auto"],
+[style*="overflow: scroll"],
+[style*="overflow-y: scroll"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Pull-to-Refresh Prevention (except where explicitly wanted) */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Enhanced Loading Skeleton Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton,
+.skeleton-item,
+.loading-skeleton {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+:root.dark .skeleton,
+:root.dark .skeleton-item,
+:root.dark .loading-skeleton {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+}
+
+/* Pulse animation for loading states */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Smooth Page Transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.1s ease-in, transform 0.1s ease-in;
+}
+
+/* Native-like Input Focus Animation */
+input,
+textarea,
+select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  transform: scale(1.005);
+}
+
+/* Ripple Effect Base */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.ripple:active::after {
+  opacity: 1;
+  transform: scale(2);
+  transition: transform 0s, opacity 0s;
+}
+
+/* Bottom Navigation Safe Area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-navbar {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Smooth Image Loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"] {
+  opacity: 0;
+}
+
+img[loading="lazy"].loaded,
+img:not([loading="lazy"]) {
+  opacity: 1;
+}
+
+/* Disable long-press context menu on mobile */
+@media (hover: none) and (pointer: coarse) {
+
+  img,
+  a,
+  button,
+  .bento-tile,
+  .card {
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Smooth Color Transitions for Theme Switching */
+body,
+.card,
+.bento-tile,
+.bottom-navbar,
+.navbar {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Keyboard appears - adjust viewport */
+@media (max-height: 500px) and (max-width: 768px) {
+  .bottom-navbar {
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
+}

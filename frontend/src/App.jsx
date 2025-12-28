@@ -103,14 +103,14 @@ function PublicRoute({ children }) {
   return children;
 }
 
-// Page Transition - Ultra-fast for snappy navigation
+// Page Transition - Ultra-fast for native app feel
 const PageTransition = ({ children }) => (
   <Suspense fallback={<LoadingFallback />}>
     <motion.div
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -4 }}
-      transition={{ duration: 0.08, ease: 'easeOut' }}
+      exit={{ opacity: 0, y: -3 }}
+      transition={{ duration: 0.06, ease: 'easeOut' }}
       style={{ width: '100%', height: '100%' }}
     >
       {children}

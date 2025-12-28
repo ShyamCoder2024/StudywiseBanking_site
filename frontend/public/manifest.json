@@ -1,9 +1,14 @@
 {
     "name": "StudyWise Banking",
     "short_name": "StudyWise",
-    "description": "Ace your banking exams with AI-powered learning",
-    "start_url": "/",
+    "description": "Ace your banking exams with AI-powered learning, practice tests, and personalized insights",
+    "start_url": "/dashboard",
+    "id": "/",
     "display": "standalone",
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ],
     "background_color": "#0f0f11",
     "theme_color": "#8A75BA",
     "orientation": "portrait-primary",
@@ -12,7 +17,7 @@
             "src": "/logo_new.jpg",
             "sizes": "192x192",
             "type": "image/jpeg",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
             "src": "/logo_new.jpg",
@@ -21,11 +26,54 @@
             "purpose": "any maskable"
         }
     ],
+    "shortcuts": [
+        {
+            "name": "Take a Test",
+            "short_name": "Tests",
+            "description": "Start a practice test",
+            "url": "/tests",
+            "icons": [
+                {
+                    "src": "/logo_new.jpg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "View Courses",
+            "short_name": "Courses",
+            "description": "Browse your courses",
+            "url": "/courses",
+            "icons": [
+                {
+                    "src": "/logo_new.jpg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "AI Analysis",
+            "short_name": "AI Coach",
+            "description": "Get AI-powered insights",
+            "url": "/analysis",
+            "icons": [
+                {
+                    "src": "/logo_new.jpg",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
     "categories": [
         "education",
         "productivity"
     ],
     "lang": "en",
+    "dir": "ltr",
     "scope": "/",
-    "prefer_related_applications": false
+    "prefer_related_applications": false,
+    "handle_links": "preferred",
+    "launch_handler": {
+        "client_mode": "navigate-existing"
+    }
 }
