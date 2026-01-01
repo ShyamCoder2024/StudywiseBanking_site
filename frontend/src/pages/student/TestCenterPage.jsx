@@ -33,6 +33,7 @@ export function TestCenterPage() {
     const [completedQuizzes, setCompletedQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('active');
+    const [selectedSubject, setSelectedSubject] = useState('All');
 
     useEffect(() => {
         fetchQuizzes();
@@ -46,8 +47,16 @@ export function TestCenterPage() {
             const timestamp = new Date().getTime();
             const response = await api.get(`/student/quizzes/all?_t=${timestamp}`);
             if (response.data.success) {
-                setActiveQuizzes(response.data.data.active || []);
-                setCompletedQuizzes(response.data.data.completed || []);
+                // Sort by most recent first (using createdAt or completedAt)
+                const sortByRecent = (quizzes) => {
+                    return [...quizzes].sort((a, b) => {
+                        const dateA = new Date(a.completedAt || a.createdAt || 0);
+                        const dateB = new Date(b.completedAt || b.createdAt || 0);
+                        return dateB - dateA; // Most recent first
+                    });
+                };
+                setActiveQuizzes(sortByRecent(response.data.data.active || []));
+                setCompletedQuizzes(sortByRecent(response.data.data.completed || []));
             }
         } catch (error) {
             console.error('Failed to fetch quizzes:', error);
@@ -73,6 +82,15 @@ export function TestCenterPage() {
         }
     };
 
+    // Get unique subjects from current tab's quizzes
+    const currentQuizzes = activeTab === 'active' ? activeQuizzes : completedQuizzes;
+    const uniqueSubjects = ['All', ...new Set(currentQuizzes.map(q => q.subjectName).filter(Boolean))];
+
+    // Filter quizzes by selected subject
+    const filteredQuizzes = selectedSubject === 'All'
+        ? currentQuizzes
+        : currentQuizzes.filter(q => q.subjectName === selectedSubject);
+
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -95,7 +113,13 @@ export function TestCenterPage() {
         );
     }
 
-    const displayQuizzes = activeTab === 'active' ? activeQuizzes : completedQuizzes;
+    // Reset subject filter when switching tabs
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setSelectedSubject('All');
+    };
+
+    const displayQuizzes = filteredQuizzes;
 
     return (
         <div className="test-center-page">
@@ -130,7 +154,7 @@ export function TestCenterPage() {
             <div className="test-center-tabs">
                 <button
                     className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('active')}
+                    onClick={() => handleTabChange('active')}
                 >
                     <Play size={18} />
                     Active Tests
@@ -140,7 +164,7 @@ export function TestCenterPage() {
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'completed' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('completed')}
+                    onClick={() => handleTabChange('completed')}
                 >
                     <CheckCircle2 size={18} />
                     Completed
@@ -149,6 +173,29 @@ export function TestCenterPage() {
                     )}
                 </button>
             </div>
+
+            {/* Subject Filter Pills - Only show if more than 1 subject */}
+            {uniqueSubjects.length > 2 && (
+                <div className="subject-filter-container">
+                    <div className="subject-filter-scroll">
+                        {uniqueSubjects.map((subject) => (
+                            <button
+                                key={subject}
+                                className={`subject-filter-pill ${selectedSubject === subject ? 'active' : ''}`}
+                                onClick={() => setSelectedSubject(subject)}
+                            >
+                                {subject === 'All' && <BookOpen size={14} />}
+                                {subject}
+                                {subject !== 'All' && (
+                                    <span className="subject-count">
+                                        {currentQuizzes.filter(q => q.subjectName === subject).length}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Quiz Grid */}
             <div className="test-center-container">

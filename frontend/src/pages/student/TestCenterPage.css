@@ -665,3 +665,121 @@ html.dark .test-center-loading .spinner {
         margin: 0;
     }
 }
+
+/* Subject Filter Pills */
+.subject-filter-container {
+    padding: 0 20px;
+    margin-bottom: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subject-filter-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.subject-filter-scroll::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.subject-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: white;
+    border: 1.5px solid var(--tc-border);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tc-text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.subject-filter-pill:hover {
+    border-color: var(--tc-primary);
+    color: var(--tc-primary);
+}
+
+.subject-filter-pill.active {
+    background: var(--tc-primary);
+    border-color: var(--tc-primary);
+    color: white;
+}
+
+.subject-filter-pill svg {
+    flex-shrink: 0;
+}
+
+.subject-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: rgba(138, 117, 186, 0.15);
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tc-primary);
+}
+
+.subject-filter-pill.active .subject-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+/* Dark mode for subject filter */
+html.dark .subject-filter-pill {
+    background: #1f1f1f;
+    border-color: #333;
+    color: #9ca3af;
+}
+
+html.dark .subject-filter-pill:hover {
+    border-color: var(--tc-primary);
+    color: var(--tc-primary);
+}
+
+html.dark .subject-filter-pill.active {
+    background: var(--tc-primary);
+    border-color: var(--tc-primary);
+    color: white;
+}
+
+html.dark .subject-count {
+    background: rgba(138, 117, 186, 0.2);
+    color: #a78bfa;
+}
+
+/* Mobile optimization for subject filter */
+@media (max-width: 768px) {
+    .subject-filter-container {
+        padding: 0 16px;
+        margin-bottom: 16px;
+    }
+
+    .subject-filter-pill {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .subject-count {
+        min-width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+}
