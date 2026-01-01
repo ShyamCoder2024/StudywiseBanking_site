@@ -141,6 +141,20 @@ export default function CoursesPage() {
                         >
                             {/* Thumbnail */}
                             <div className="course-thumbnail">
+                                {/* DEBUG: Show thumbnail status */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    background: course.thumbnail ? 'green' : 'red',
+                                    color: 'white',
+                                    padding: '2px 6px',
+                                    fontSize: '10px',
+                                    zIndex: 100
+                                }}>
+                                    {course.thumbnail ? 'HAS THUMB' : 'NO THUMB'}
+                                </div>
+
                                 {course.thumbnail ? (
                                     <img
                                         src={course.thumbnail}
