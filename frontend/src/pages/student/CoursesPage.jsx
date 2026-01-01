@@ -34,6 +34,11 @@ export default function CoursesPage() {
             setHasError(false);
             const res = await api.get('/student/video-courses');
             if (res.data?.data) {
+                // DEBUG: Log thumbnail data to understand the issue
+                console.log('=== COURSE DATA RECEIVED ===');
+                res.data.data.forEach((c, i) => {
+                    console.log(`Course ${i + 1} (${c.title}): thumbnail = ${c.thumbnail ? 'YES (length: ' + c.thumbnail.length + ')' : 'NO'}`);
+                });
                 setCourses(res.data.data);
             }
             setLoading(false);
