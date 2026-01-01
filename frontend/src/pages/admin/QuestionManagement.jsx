@@ -750,53 +750,113 @@ export function QuestionManagement() {
                                         backgroundColor: BRAND.bg,
                                         border: `1px solid ${BRAND.border}`
                                     }}>
-                                        <label style={{
-                                            display: 'block',
-                                            fontSize: '14px',
-                                            fontWeight: '600',
-                                            color: BRAND.text,
-                                            marginBottom: '12px'
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                            <label style={{
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                color: BRAND.text
+                                            }}>
+                                                Options (2-10 options)
+                                            </label>
+                                            <span style={{ fontSize: '12px', color: BRAND.textMuted }}>
+                                                {formData.options.length} options
+                                            </span>
+                                        </div>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: formData.options.length >= 5 ? '1fr' : '1fr 1fr',
+                                            gap: '12px'
                                         }}>
-                                            Options (Enter at least 2)
-                                        </label>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                             {formData.options.map((opt, i) => (
-                                                <div key={i} style={{ position: 'relative' }}>
-                                                    <span style={{
-                                                        position: 'absolute',
-                                                        left: '12px',
-                                                        top: '50%',
-                                                        transform: 'translateY(-50%)',
-                                                        fontSize: '12px',
-                                                        fontWeight: '700',
-                                                        color: BRAND.textMuted
-                                                    }}>
-                                                        {String.fromCharCode(65 + i)}
-                                                    </span>
-                                                    <input
-                                                        type="text"
-                                                        value={opt}
-                                                        onChange={(e) => {
-                                                            const newOpts = [...formData.options];
-                                                            newOpts[i] = e.target.value;
-                                                            setFormData({ ...formData, options: newOpts });
-                                                        }}
-                                                        placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '12px 12px 12px 32px',
-                                                            borderRadius: '8px',
-                                                            border: `1px solid ${BRAND.border}`,
-                                                            fontSize: '14px',
-                                                            outline: 'none',
-                                                            boxSizing: 'border-box',
-                                                            backgroundColor: BRAND.card,
-                                                            color: BRAND.text
-                                                        }}
-                                                    />
+                                                <div key={i} style={{ position: 'relative', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                    <div style={{ flex: 1, position: 'relative' }}>
+                                                        <span style={{
+                                                            position: 'absolute',
+                                                            left: '12px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            fontSize: '12px',
+                                                            fontWeight: '700',
+                                                            color: BRAND.textMuted
+                                                        }}>
+                                                            {String.fromCharCode(65 + i)}
+                                                        </span>
+                                                        <input
+                                                            type="text"
+                                                            value={opt}
+                                                            onChange={(e) => {
+                                                                const newOpts = [...formData.options];
+                                                                newOpts[i] = e.target.value;
+                                                                setFormData({ ...formData, options: newOpts });
+                                                            }}
+                                                            placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                                                            style={{
+                                                                width: '100%',
+                                                                padding: '12px 12px 12px 32px',
+                                                                borderRadius: '8px',
+                                                                border: `1px solid ${BRAND.border}`,
+                                                                fontSize: '14px',
+                                                                outline: 'none',
+                                                                boxSizing: 'border-box',
+                                                                backgroundColor: BRAND.card,
+                                                                color: BRAND.text
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    {formData.options.length > 2 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newOpts = formData.options.filter((_, idx) => idx !== i);
+                                                                setFormData({ ...formData, options: newOpts });
+                                                            }}
+                                                            style={{
+                                                                padding: '8px',
+                                                                borderRadius: '6px',
+                                                                border: 'none',
+                                                                backgroundColor: BRAND.warningLight,
+                                                                color: BRAND.warning,
+                                                                cursor: 'pointer',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center'
+                                                            }}
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
+
+                                        {/* Add Option Button */}
+                                        {formData.options.length < 10 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFormData({ ...formData, options: [...formData.options, ''] });
+                                                }}
+                                                style={{
+                                                    marginTop: '12px',
+                                                    padding: '10px 16px',
+                                                    borderRadius: '8px',
+                                                    border: `1px dashed ${BRAND.border}`,
+                                                    backgroundColor: 'transparent',
+                                                    color: BRAND.primary,
+                                                    fontSize: '14px',
+                                                    fontWeight: '600',
+                                                    cursor: 'pointer',
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                <Plus size={16} />
+                                                Add Option ({formData.options.length}/10)
+                                            </button>
+                                        )}
 
                                         {/* Correct Answer Selection */}
                                         <div style={{ marginTop: '16px' }}>
