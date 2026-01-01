@@ -34,17 +34,11 @@ export default function CoursesPage() {
             setHasError(false);
             const res = await api.get('/student/video-courses');
             if (res.data?.data) {
-                // DEBUG: Log thumbnail data to understand the issue
-                console.log('=== COURSE DATA RECEIVED ===');
-                res.data.data.forEach((c, i) => {
-                    console.log(`Course ${i + 1} (${c.title}): thumbnail = ${c.thumbnail ? 'YES (length: ' + c.thumbnail.length + ')' : 'NO'}`);
-                });
                 setCourses(res.data.data);
             }
             setLoading(false);
         } catch (error) {
             console.error('Failed to fetch courses:', error);
-            // OPTIMIZED: Faster retry with 300ms delay
             if (retryCount < 2) {
                 setTimeout(() => fetchCourses(retryCount + 1), 300);
                 return;
@@ -141,32 +135,11 @@ export default function CoursesPage() {
                         >
                             {/* Thumbnail */}
                             <div className="course-thumbnail">
-                                {/* DEBUG: Show thumbnail URL preview */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    background: course.thumbnail ? 'green' : 'red',
-                                    color: 'white',
-                                    padding: '2px 6px',
-                                    fontSize: '8px',
-                                    zIndex: 100,
-                                    maxWidth: '180px',
-                                    overflow: 'hidden'
-                                }}>
-                                    {course.thumbnail ? `${course.thumbnail.substring(0, 25)}...` : 'NO THUMB'}
-                                </div>
-
                                 {course.thumbnail ? (
                                     <img
                                         src={course.thumbnail}
                                         alt={course.title}
-                                        loading="eager"
-                                        onError={(e) => {
-                                            console.error('IMG LOAD FAILED:', course.title);
-                                            // Show placeholder on error
-                                            e.target.style.display = 'none';
-                                        }}
+                                        loading="lazy"
                                     />
                                 ) : (
                                     <div className="thumbnail-placeholder">

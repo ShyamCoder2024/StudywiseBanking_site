@@ -2,16 +2,13 @@ import axios from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-// OPTIMIZED: Retry configuration for faster recovery
+// Retry configuration for faster recovery
 const MAX_RETRIES = 2;
-const RETRY_DELAY_MS = 300; // Reduced from 500ms for faster recovery
+const RETRY_DELAY_MS = 300;
 
-// OPTIMIZED: In-memory cache with longer TTL for instant perceived loading
+// In-memory cache for instant perceived loading
 const apiCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache for instant loads
-
-// CLEAR CACHE ON IMPORT - forces fresh data
-apiCache.clear();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 const api = axios.create({
     baseURL: API_URL,
