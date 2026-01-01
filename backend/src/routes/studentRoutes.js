@@ -748,7 +748,14 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE 
                     thumbnail: 1,
                     subject: 1,
                     batchName: 1,
-                    description: { $substrCP: ['$description', 0, 100] },
+                    // FIXED: Handle null description safely
+                    description: {
+                        $cond: {
+                            if: { $ifNull: ['$description', false] },
+                            then: { $substrCP: ['$description', 0, 100] },
+                            else: ''
+                        }
+                    },
                     lectureCount: { $size: { $ifNull: ['$lectures', []] } },
                     pricing: 1,
                     status: 1,
