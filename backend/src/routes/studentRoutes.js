@@ -735,17 +735,21 @@ router.get('/courses', async (req, res, next) => {
 // ============ Video Courses (Private YouTube) ============
 
 // Get all published video courses
-// CACHED: Course list cached for 5 minutes (courses rarely change)
-router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE }), async (req, res, next) => {
+// TEMPORARILY NO CACHE - debugging thumbnail issue
+router.get('/video-courses', async (req, res, next) => {
     try {
-        // OPTIMIZED: Use find with projection - simpler and reliable
-        // Note: We still fetch lectures but only for counting, not for full data
+        // Fetch all course data including thumbnail
         const courses = await Course.find({ isPublished: true })
             .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
             .sort({ displayOrder: 1, createdAt: -1 })
             .lean();
 
-        // Pre-calculate all derived data
+        // Debug: Log first course thumbnail
+        if (courses.length > 0) {
+            console.log('First course thumbnail:', courses[0].thumbnail ? 'EXISTS (length: ' + courses[0].thumbnail.length + ')' : 'MISSING');
+        }
+
+        // Transform data for frontend
         const coursesForStudent = courses.map(course => {
             // Calculate discount percentage
             let discountPercent = 0;
@@ -758,7 +762,7 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE 
             return {
                 _id: course._id,
                 title: course.title,
-                thumbnail: course.thumbnail || '',
+                thumbnail: course.thumbnail,  // Return directly without fallback
                 subject: course.subject,
                 batchName: course.batchName,
                 description: (course.description || '').substring(0, 100),
