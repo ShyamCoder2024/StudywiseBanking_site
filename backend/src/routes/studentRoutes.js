@@ -738,33 +738,14 @@ router.get('/courses', async (req, res, next) => {
 // CACHED: Course list cached for 5 minutes (courses rarely change)
 router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE }), async (req, res, next) => {
     try {
-        // OPTIMIZED: Use aggregation to calculate lecture count without fetching full array
-        const courses = await Course.aggregate([
-            { $match: { isPublished: true } },
-            { $sort: { displayOrder: 1, createdAt: -1 } },
-            {
-                $project: {
-                    title: 1,
-                    thumbnail: 1,
-                    subject: 1,
-                    batchName: 1,
-                    // FIXED: Handle null description safely
-                    description: {
-                        $cond: {
-                            if: { $ifNull: ['$description', false] },
-                            then: { $substrCP: ['$description', 0, 100] },
-                            else: ''
-                        }
-                    },
-                    lectureCount: { $size: { $ifNull: ['$lectures', []] } },
-                    pricing: 1,
-                    status: 1,
-                    displayOrder: 1
-                }
-            }
-        ]);
+        // OPTIMIZED: Use find with projection - simpler and reliable
+        // Note: We still fetch lectures but only for counting, not for full data
+        const courses = await Course.find({ isPublished: true })
+            .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
+            .sort({ displayOrder: 1, createdAt: -1 })
+            .lean();
 
-        // OPTIMIZED: Pre-calculate all derived data
+        // Pre-calculate all derived data
         const coursesForStudent = courses.map(course => {
             // Calculate discount percentage
             let discountPercent = 0;
@@ -780,8 +761,8 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE 
                 thumbnail: course.thumbnail || '',
                 subject: course.subject,
                 batchName: course.batchName,
-                description: course.description || '',
-                lectureCount: course.lectureCount,
+                description: (course.description || '').substring(0, 100),
+                lectureCount: course.lectures?.length || 0,
                 pricing: {
                     originalPrice,
                     currentPrice,
