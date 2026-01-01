@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './ContentPages.css';
 
@@ -40,7 +41,7 @@ export function TopicsPage() {
     if (loading) {
         return (
             <div className="loading-overlay">
-                <div className="spinner"></div>
+                <Loader />
             </div>
         );
     }

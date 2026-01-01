@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Plus, X, Clock, BarChart3, Edit2, Trash2, FileText, Check } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
 const BRAND = {
@@ -189,8 +190,7 @@ export function QuizManagement() {
                 }}>
                     {loading ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px' }}>
-                            <div style={{ width: 40, height: 40, border: `4px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            <Loader />
                         </div>
                     ) : (
                         <div style={{ overflowX: 'auto' }}>

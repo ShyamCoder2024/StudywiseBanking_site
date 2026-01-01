@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Loader } from '../../components/ui/Loader';
 import { CheckCircle, Play, Eye, Clock, FileQuestion } from 'lucide-react';
 import api from '../../services/api';
 import './ContentPages.css';
@@ -44,7 +45,7 @@ export function QuizListPage() {
     if (loading) {
         return (
             <div className="loading-overlay">
-                <div className="spinner"></div>
+                <Loader />
             </div>
         );
     }

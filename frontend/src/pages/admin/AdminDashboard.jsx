@@ -3,6 +3,7 @@ import { Plus, MoreVertical, CheckCircle2, Clock, FileText, Users, BookOpen, Lis
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
 const BRAND = {
@@ -114,19 +115,7 @@ export function AdminDashboard() {
         return (
             <AdminLayout>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{
-                            width: '48px',
-                            height: '48px',
-                            border: `4px solid ${BRAND.border}`,
-                            borderTopColor: BRAND.primary,
-                            borderRadius: '50%',
-                            animation: 'spin 1s linear infinite',
-                            margin: '0 auto 16px'
-                        }} />
-                        <p style={{ color: BRAND.textSecondary, fontSize: '14px' }}>Loading dashboard...</p>
-                    </div>
-                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    <Loader />
                 </div>
             </AdminLayout>
         );

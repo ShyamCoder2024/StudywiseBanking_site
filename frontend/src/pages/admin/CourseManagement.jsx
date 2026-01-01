@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Video, BookOpen, X, Save, ChevronDown, ChevronUp, Link as LinkIcon, Clock, Upload, Image, DollarSign, ArrowUpDown, Tag } from 'lucide-react';
 import api from '../../services/api';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
 const BRAND = {
@@ -238,11 +239,7 @@ export function CourseManagement() {
         return (
             <AdminLayout>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{ width: '48px', height: '48px', border: `4px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
-                        <p style={{ color: BRAND.textSecondary }}>Loading courses...</p>
-                    </div>
-                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    <Loader />
                 </div>
             </AdminLayout>
         );

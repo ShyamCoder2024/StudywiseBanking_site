@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Input';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './AdminLayout.css';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -105,7 +106,7 @@ export function SubjectManagement() {
             <div className="admin-content">
                 {loading ? (
                     <div className="loading-overlay">
-                        <div className="spinner"></div>
+                        <Loader />
                     </div>
                 ) : (
                     <div className="table-wrapper">

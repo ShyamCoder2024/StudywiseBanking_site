@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
     BookOpen, ArrowRight, BrainCircuit, Calculator,
-    Globe2, Languages, TrendingUp, MoreHorizontal, Loader2
+    Globe2, Languages, TrendingUp, MoreHorizontal
 } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './SubjectsPage.css';
 
@@ -86,7 +87,7 @@ export function SubjectsPage() {
     if (loading) {
         return (
             <div className="subjects-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-                <Loader2 size={40} className="animate-spin" style={{ color: 'var(--color-primary)' }} />
+                <Loader />
             </div>
         );
     }

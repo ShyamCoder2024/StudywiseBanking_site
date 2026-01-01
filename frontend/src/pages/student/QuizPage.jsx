@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Textarea } from '../../components/ui/Input';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './QuizPage.css';
 
@@ -192,7 +193,7 @@ export function QuizPage() {
     if (loading) {
         return (
             <div className="loading-overlay">
-                <div className="spinner"></div>
+                <Loader />
             </div>
         );
     }

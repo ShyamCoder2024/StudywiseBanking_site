@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { ArrowLeft, Award, Users, AlertCircle, CheckCircle, Clock, Trophy } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
 const BRAND = {
@@ -59,8 +60,7 @@ export function QuizAnalytics() {
         return (
             <AdminLayout>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
-                    <div style={{ width: 40, height: 40, border: `3px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    <Loader />
                 </div>
             </AdminLayout>
         );

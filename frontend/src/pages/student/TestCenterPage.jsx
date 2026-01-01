@@ -6,6 +6,7 @@ import {
     ArrowRight, Zap, BookOpen, Target, TrendingUp,
     AlertCircle, ChevronRight
 } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './TestCenterPage.css';
 
@@ -88,8 +89,8 @@ export function TestCenterPage() {
     if (loading) {
         return (
             <div className="test-center-loading">
-                <div className="spinner"></div>
-                <p>Loading Tests...</p>
+                <Loader />
+                <p style={{ marginTop: '20px', color: 'var(--color-text-secondary)' }}>Loading Tests...</p>
             </div>
         );
     }

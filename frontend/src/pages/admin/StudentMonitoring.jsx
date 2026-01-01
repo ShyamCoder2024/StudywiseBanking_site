@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Search, Mail, Phone, Calendar, Award, BookOpen, Clock, X, User, Eye, CreditCard, Tag, Plus, Check } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors - Exact from index.css
 const BRAND = {
@@ -405,8 +406,7 @@ export function StudentMonitoring() {
                 }}>
                     {loading ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px' }}>
-                            <div style={{ width: 40, height: 40, border: `4px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            <Loader />
                         </div>
                     ) : (
                         <div style={{ overflowX: 'auto' }}>

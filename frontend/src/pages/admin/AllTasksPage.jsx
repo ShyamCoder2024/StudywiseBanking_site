@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { ArrowLeft, Trash2, ListTodo, Plus, Send, X } from 'lucide-react';
+import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
 const BRAND = {
@@ -181,8 +182,7 @@ export function AllTasksPage() {
                 <div style={{ backgroundColor: BRAND.card, borderRadius: BRAND.radius, border: `1px solid ${BRAND.border}`, boxShadow: BRAND.shadowCard }}>
                     {loading ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px' }}>
-                            <div style={{ width: 32, height: 32, border: `3px solid ${BRAND.border}`, borderTopColor: BRAND.primary, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            <Loader />
                         </div>
                     ) : tasks.length > 0 ? (
                         <div style={{ padding: '16px' }}>

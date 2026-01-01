@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Loader } from '../../components/ui/Loader';
 import { CheckCircle, XCircle, SkipForward, Clock, Sparkles, ArrowRight, Brain, Eye } from 'lucide-react';
 import api from '../../services/api';
 import './ResultPage.css';
@@ -51,7 +52,7 @@ export function ResultPage() {
     if (loading) {
         return (
             <div className="loading-overlay">
-                <div className="spinner"></div>
+                <Loader />
             </div>
         );
     }

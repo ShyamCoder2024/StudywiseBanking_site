@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Input';
+import { Loader } from '../../components/ui/Loader';
 import api from '../../services/api';
 import './AdminLayout.css';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -90,7 +91,11 @@ export function TopicManagement() {
             </header>
 
             <div className="admin-content">
-                {loading ? <div className="loading-overlay"><div className="spinner"></div></div> : (
+                {loading ? (
+                    <div className="loading-overlay">
+                        <Loader />
+                    </div>
+                ) : (
                     <div className="table-wrapper">
                         <table className="table">
                             <thead><tr><th>Name</th><th>Description</th><th>Quizzes</th><th>Actions</th></tr></thead>
