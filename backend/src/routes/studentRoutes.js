@@ -735,18 +735,21 @@ router.get('/courses', async (req, res, next) => {
 // ============ Video Courses (Private YouTube) ============
 
 // Get all published video courses
-// TEMPORARILY NO CACHE - debugging thumbnail issue
+// DEBUG: Removed .select() to ensure ALL fields including thumbnail are returned
 router.get('/video-courses', async (req, res, next) => {
     try {
-        // Fetch all course data including thumbnail
+        // Fetch ALL course data (no .select() to ensure thumbnail is included)
         const courses = await Course.find({ isPublished: true })
-            .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
             .sort({ displayOrder: 1, createdAt: -1 })
             .lean();
 
-        // Debug: Log first course thumbnail
+        // Debug: Log thumbnail data
+        console.log('=== VIDEO-COURSES API CALLED ===');
+        console.log('Total courses found:', courses.length);
         if (courses.length > 0) {
-            console.log('First course thumbnail:', courses[0].thumbnail ? 'EXISTS (length: ' + courses[0].thumbnail.length + ')' : 'MISSING');
+            courses.forEach((c, i) => {
+                console.log(`Course ${i + 1}: thumbnail = ${c.thumbnail ? 'YES (length: ' + c.thumbnail.length + ')' : 'NO/EMPTY'}`);
+            });
         }
 
         // Transform data for frontend
@@ -762,7 +765,7 @@ router.get('/video-courses', async (req, res, next) => {
             return {
                 _id: course._id,
                 title: course.title,
-                thumbnail: course.thumbnail,  // Return directly without fallback
+                thumbnail: course.thumbnail,  // Return directly - should have value now
                 subject: course.subject,
                 batchName: course.batchName,
                 description: (course.description || '').substring(0, 100),
