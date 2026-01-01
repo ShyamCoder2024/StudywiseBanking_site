@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { AvatarDisplay } from '../components/ui/AvatarDisplay';
+import { SunMoonToggle } from '../components/ui/SunMoonToggle';
 import {
     CheckCircle2, Target, Pencil, Lock, Bell, LogOut,
     ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin, CreditCard, BookOpenCheck, Moon, Sun
@@ -13,6 +14,7 @@ import {
 import { CARTOON_AVATARS } from '../utils/avatars';
 import api from '../services/api';
 import './ProfilePage.css';
+import '../components/ui/SunMoonToggle.css';
 
 const AVATARS = CARTOON_AVATARS;
 
@@ -275,31 +277,14 @@ export function ProfilePage() {
                                 </div>
                                 <ChevronRight size={16} className="menu-arrow" />
                             </div>
-                            <div className="menu-item" onClick={toggleTheme}>
+                            <div className="menu-item">
                                 <div className="menu-icon blue">{isDark ? <Moon size={16} /> : <Sun size={16} />}</div>
                                 <div className="menu-text">
                                     <h4>Appearance</h4>
                                     <p>{isDark ? 'Dark Mode' : 'Light Mode'}</p>
                                 </div>
-                                <div className="theme-toggle-inline" style={{
-                                    width: '44px',
-                                    height: '24px',
-                                    backgroundColor: isDark ? '#3b82f6' : '#d1d5db',
-                                    borderRadius: '12px',
-                                    position: 'relative',
-                                    cursor: 'pointer'
-                                }}>
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '3px',
-                                        left: isDark ? '23px' : '3px',
-                                        width: '18px',
-                                        height: '18px',
-                                        backgroundColor: '#fff',
-                                        borderRadius: '50%',
-                                        transition: 'left 0.3s ease',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                                    }} />
+                                <div onClick={(e) => { e.stopPropagation(); toggleTheme(); }}>
+                                    <SunMoonToggle isDark={isDark} onToggle={toggleTheme} />
                                 </div>
                             </div>
                             <div className="menu-item">
