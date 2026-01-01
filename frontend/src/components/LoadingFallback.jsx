@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Loader } from './ui/Loader';
 import './LoadingFallback.css';
 
 export function LoadingFallback({ timeout = 8000 }) {
@@ -50,21 +51,14 @@ export function LoadingFallback({ timeout = 8000 }) {
     return (
         <div className="loading-fallback">
             <div className="loading-content">
-                <div className="loading-spinner">
-                    <div className="spinner"></div>
-                </div>
-
-                <h2>Loading...</h2>
+                {/* New Animated Loader */}
+                <Loader />
 
                 {showSlowWarning && (
                     <p className="slow-warning">
                         This is taking longer than usual. Please wait...
                     </p>
                 )}
-
-                <div className="loading-progress">
-                    <div className="progress-bar"></div>
-                </div>
             </div>
         </div>
     );
