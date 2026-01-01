@@ -141,7 +141,7 @@ export default function CoursesPage() {
                         >
                             {/* Thumbnail */}
                             <div className="course-thumbnail">
-                                {/* DEBUG: Show thumbnail status */}
+                                {/* DEBUG: Show thumbnail URL preview */}
                                 <div style={{
                                     position: 'absolute',
                                     top: 0,
@@ -149,17 +149,24 @@ export default function CoursesPage() {
                                     background: course.thumbnail ? 'green' : 'red',
                                     color: 'white',
                                     padding: '2px 6px',
-                                    fontSize: '10px',
-                                    zIndex: 100
+                                    fontSize: '8px',
+                                    zIndex: 100,
+                                    maxWidth: '180px',
+                                    overflow: 'hidden'
                                 }}>
-                                    {course.thumbnail ? 'HAS THUMB' : 'NO THUMB'}
+                                    {course.thumbnail ? `${course.thumbnail.substring(0, 25)}...` : 'NO THUMB'}
                                 </div>
 
                                 {course.thumbnail ? (
                                     <img
                                         src={course.thumbnail}
                                         alt={course.title}
-                                        loading="lazy"
+                                        loading="eager"
+                                        onError={(e) => {
+                                            console.error('IMG LOAD FAILED:', course.title);
+                                            // Show placeholder on error
+                                            e.target.style.display = 'none';
+                                        }}
                                     />
                                 ) : (
                                     <div className="thumbnail-placeholder">
