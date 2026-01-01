@@ -191,9 +191,23 @@
     }
 
     .quiz-question-text {
-        font-size: var(--font-size-sm);
-        line-height: 1.6;
+        font-size: 15px;
+        line-height: 1.8;
         overflow-wrap: break-word;
+        margin-bottom: var(--space-3);
+    }
+
+    .quiz-options {
+        gap: var(--space-3);
+    }
+
+    .quiz-option {
+        padding: 16px;
+        font-size: 14px;
+    }
+
+    .quiz-navigation {
+        gap: var(--space-2);
     }
 
     .quiz-pill {
@@ -209,6 +223,21 @@
 
     .quiz-pills {
         margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quiz-question-text {
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .quiz-navigation {
+        flex-direction: column;
+    }
+
+    .quiz-navigation button {
+        width: 100%;
     }
 }
 
