@@ -77,11 +77,12 @@
 
 .quiz-question-text {
     font-size: var(--font-size-md);
-    line-height: var(--line-height-relaxed);
+    line-height: 2.0;
     margin-bottom: var(--space-3);
     color: var(--color-text);
     white-space: pre-wrap;
     word-break: break-word;
+    letter-spacing: 0.01em;
 }
 
 .quiz-options {
