@@ -61,10 +61,13 @@ router.get('/quizzes/:id/start', protect, async (req, res, next) => {
             }
         }
 
-        // RE-ATTEMPT PREVENTION: Check if user has already completed this quiz
+        // RE-ATTEMPT PREVENTION: Check if user has already SUBMITTED this quiz
+        // Only check for attempts with submittedAt (completed attempts)
+        // This ensures in-progress attempts don't block starting a quiz
         const existingAttempt = await Attempt.findOne({
             user: req.user._id,
-            quiz: req.params.id
+            quiz: req.params.id,
+            submittedAt: { $exists: true, $ne: null }  // Only submitted/completed attempts
         });
 
         if (existingAttempt) {

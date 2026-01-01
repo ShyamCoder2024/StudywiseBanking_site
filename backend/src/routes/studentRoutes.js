@@ -284,10 +284,13 @@ router.get('/quizzes/all', async (req, res, next) => {
 
         // Get user's SUBMITTED attempts only (not in-progress ones)
         // An attempt is considered complete only if submittedAt exists
+        // Only fetch the fields we need for performance
         const attempts = await Attempt.find({
             user: req.user._id,
             submittedAt: { $exists: true, $ne: null }  // Only completed/submitted attempts
-        }).lean();
+        })
+            .select('quiz score submittedAt')  // Only fetch needed fields
+            .lean();
 
         // Create a map of quiz ID to completed attempt
         const completedAttemptMap = {};

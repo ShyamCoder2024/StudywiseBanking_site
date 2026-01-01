@@ -35,18 +35,15 @@ export function TestCenterPage() {
 
     useEffect(() => {
         fetchQuizzes();
-
-        // Auto-refresh quizzes every 30 seconds for real-time updates
-        const interval = setInterval(() => {
-            fetchQuizzes();
-        }, 30000); // 30 seconds
-
-        return () => clearInterval(interval);
+        // Removed auto-refresh - backend filtering is reliable
+        // Users can manually refresh the page if needed
     }, []);
 
     const fetchQuizzes = async () => {
         try {
-            const response = await api.get('/student/quizzes/all');
+            // Add cache-busting timestamp to ensure fresh data
+            const timestamp = new Date().getTime();
+            const response = await api.get(`/student/quizzes/all?_t=${timestamp}`);
             if (response.data.success) {
                 setActiveQuizzes(response.data.data.active || []);
                 setCompletedQuizzes(response.data.data.completed || []);
