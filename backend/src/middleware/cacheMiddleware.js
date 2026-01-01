@@ -122,10 +122,11 @@ export const getCacheStats = () => {
 
 // Pre-configured cache durations
 export const CACHE_DURATIONS = {
-    SHORT: 30 * 1000,      // 30 seconds - frequently changing data
-    MEDIUM: 60 * 1000,     // 1 minute - semi-static data
-    LONG: 5 * 60 * 1000,   // 5 minutes - rarely changing data
-    VERY_LONG: 10 * 60 * 1000  // 10 minutes - static data
+    SHORT: 30 * 1000,       // 30 seconds - frequently changing data
+    MEDIUM: 60 * 1000,      // 1 minute - semi-static data
+    LONG: 5 * 60 * 1000,    // 5 minutes - rarely changing data
+    VERY_LONG: 10 * 60 * 1000, // 10 minutes - static data
+    COURSE: 5 * 60 * 1000   // 5 minutes - course data (changes infrequently)
 };
 
 export default cacheMiddleware;

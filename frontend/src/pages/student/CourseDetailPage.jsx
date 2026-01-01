@@ -5,6 +5,46 @@ import { ArrowLeft, Lock, BookOpen, Clock, CheckCircle, X, Play, ChevronDown, Ch
 import api from '../../services/api';
 import './CourseDetailPage.css';
 
+// Skeleton components for instant loading feedback
+const DetailSkeleton = () => (
+    <div className="cdp">
+        <div className="cdp-header">
+            <button className="cdp-back" disabled>
+                <ArrowLeft size={16} />
+                <span>Back</span>
+            </button>
+        </div>
+        <div className="cdp-grid">
+            <div className="cdp-left">
+                <div className="cdp-thumb skeleton-shine" style={{ aspectRatio: '16/9' }} />
+                <div className="cdp-info">
+                    <div className="skeleton-line skeleton-short skeleton-shine" style={{ width: '80px', height: '24px', borderRadius: '12px' }} />
+                    <div className="skeleton-line skeleton-full skeleton-shine" style={{ height: '28px', marginTop: '12px' }} />
+                    <div className="skeleton-line skeleton-medium skeleton-shine" style={{ height: '16px', marginTop: '8px' }} />
+                </div>
+            </div>
+            <div className="cdp-right">
+                <div className="cdp-lectures-card">
+                    <div className="cdp-lectures-header">
+                        <BookOpen size={16} />
+                        <span>Lectures</span>
+                    </div>
+                    <div className="cdp-lectures-list">
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <div key={i} className="cdp-lec" style={{ opacity: 0.5 }}>
+                                <div className="cdp-lec-num skeleton-shine" />
+                                <div className="cdp-lec-content">
+                                    <div className="skeleton-line skeleton-full skeleton-shine" style={{ height: '14px' }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 export function CourseDetailPage() {
     const { courseId } = useParams();
     const navigate = useNavigate();
@@ -29,19 +69,9 @@ export function CourseDetailPage() {
         else if (lecture.youtubeLink) window.open(lecture.youtubeLink, '_blank');
     };
 
+    // OPTIMIZED: Show skeleton instead of animated spinner
     if (loading) {
-        return (
-            <div className="cdp">
-                <div className="cdp-loader">
-                    <motion.div
-                        className="cdp-spin"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    <p>Loading course...</p>
-                </div>
-            </div>
-        );
+        return <DetailSkeleton />;
     }
 
     if (!course) {
@@ -64,9 +94,9 @@ export function CourseDetailPage() {
             {/* Back Button */}
             <motion.div
                 className="cdp-header"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15 }}
             >
                 <button className="cdp-back" onClick={() => navigate('/courses')}>
                     <ArrowLeft size={16} />
@@ -79,14 +109,14 @@ export function CourseDetailPage() {
                 {/* LEFT: Thumbnail + Description */}
                 <motion.div
                     className="cdp-left"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
                 >
                     {/* Thumbnail */}
                     <div className="cdp-thumb">
                         {course.thumbnail ? (
-                            <img src={course.thumbnail} alt={course.title} />
+                            <img src={course.thumbnail} alt={course.title} loading="eager" />
                         ) : (
                             <div className="cdp-thumb-empty"><BookOpen size={40} /></div>
                         )}
@@ -122,8 +152,8 @@ export function CourseDetailPage() {
                             <motion.button
                                 className="cdp-enroll"
                                 onClick={() => setShowEnrollModal(true)}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.99 }}
                             >
                                 <Lock size={14} />
                                 Enroll to Unlock All Lectures
@@ -135,9 +165,9 @@ export function CourseDetailPage() {
                 {/* RIGHT: Lectures */}
                 <motion.div
                     className="cdp-right"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2, delay: 0.05 }}
                 >
                     <div className="cdp-lectures-card">
                         <div className="cdp-lectures-header">
@@ -146,16 +176,13 @@ export function CourseDetailPage() {
                             <span className="cdp-count">({course.lectureCount})</span>
                         </div>
 
+                        {/* OPTIMIZED: No animation delays on lecture items */}
                         <div className="cdp-lectures-list">
-                            {course.lectures?.map((lec, i) => (
-                                <motion.div
+                            {course.lectures?.map((lec) => (
+                                <div
                                     key={lec._id}
                                     className={`cdp-lec ${lec.isLocked ? 'locked' : ''}`}
                                     onClick={() => handleLectureClick(lec)}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.05 * i }}
-                                    whileHover={{ backgroundColor: 'var(--color-bg)' }}
                                 >
                                     <div className="cdp-lec-num">
                                         {lec.isLocked ? <Lock size={12} /> : String(lec.lectureNumber).padStart(2, '0')}
@@ -166,20 +193,17 @@ export function CourseDetailPage() {
                                             <span className="cdp-lec-dur"><Clock size={10} /> {lec.duration}</span>
                                         )}
                                     </div>
-                                    <motion.div
-                                        className="cdp-lec-icon"
-                                        whileHover={{ scale: 1.1 }}
-                                    >
+                                    <div className="cdp-lec-icon">
                                         {lec.isLocked ? <Lock size={12} /> : <Play size={12} />}
-                                    </motion.div>
-                                </motion.div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </div>
                 </motion.div>
             </div>
 
-            {/* Enroll Modal */}
+            {/* Enroll Modal - OPTIMIZED: Faster animations */}
             <AnimatePresence>
                 {showEnrollModal && (
                     <motion.div
@@ -187,13 +211,15 @@ export function CourseDetailPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                         onClick={() => setShowEnrollModal(false)}
                     >
                         <motion.div
                             className="cdp-modal"
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
                             onClick={e => e.stopPropagation()}
                         >
                             <button className="cdp-modal-close" onClick={() => setShowEnrollModal(false)}>
@@ -214,8 +240,8 @@ export function CourseDetailPage() {
                                     const whatsappUrl = `https://wa.me/919518329260?text=${message}`;
                                     window.open(whatsappUrl, '_blank');
                                 }}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.99 }}
                             >
                                 📱 Contact on WhatsApp to Enroll
                             </motion.button>
@@ -228,3 +254,4 @@ export function CourseDetailPage() {
 }
 
 export default CourseDetailPage;
+

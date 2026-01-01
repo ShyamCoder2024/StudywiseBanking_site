@@ -32,6 +32,46 @@
     font-weight: 500;
 }
 
+/* ==============================================
+   SKELETON LOADER STYLES - Instant Loading Feedback
+   ============================================== */
+.skeleton-shine {
+    background: linear-gradient(90deg,
+            var(--color-border) 25%,
+            var(--color-bg) 50%,
+            var(--color-border) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-line {
+    border-radius: 6px;
+    height: 14px;
+    margin-bottom: 8px;
+}
+
+.skeleton-short {
+    width: 60px;
+}
+
+.skeleton-medium {
+    width: 65%;
+}
+
+.skeleton-full {
+    width: 100%;
+}
+
 /* Header with Back Button */
 .cdp-header {
     padding: 12px 20px;
@@ -326,8 +366,8 @@
 .cdp-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.75);
+    /* OPTIMIZED: Removed backdrop-filter: blur() for better mobile GPU performance */
     display: flex;
     align-items: center;
     justify-content: center;

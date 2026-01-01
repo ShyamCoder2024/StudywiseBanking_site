@@ -735,20 +735,36 @@ router.get('/courses', async (req, res, next) => {
 // ============ Video Courses (Private YouTube) ============
 
 // Get all published video courses
-// CACHED: Course list cached for 1 minute
-router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM }), async (req, res, next) => {
+// CACHED: Course list cached for 5 minutes (courses rarely change)
+router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE }), async (req, res, next) => {
     try {
-        const courses = await Course.find({ isPublished: true })
-            .select('title thumbnail subject batchName description lectures pricing status displayOrder createdAt')
-            .sort({ displayOrder: 1, createdAt: -1 })  // Sort by displayOrder first
-            .lean();
+        // OPTIMIZED: Use aggregation to calculate lecture count without fetching full array
+        const courses = await Course.aggregate([
+            { $match: { isPublished: true } },
+            { $sort: { displayOrder: 1, createdAt: -1 } },
+            {
+                $project: {
+                    title: 1,
+                    thumbnail: 1,
+                    subject: 1,
+                    batchName: 1,
+                    description: { $substrCP: ['$description', 0, 100] },
+                    lectureCount: { $size: { $ifNull: ['$lectures', []] } },
+                    pricing: 1,
+                    status: 1,
+                    displayOrder: 1
+                }
+            }
+        ]);
 
-        // Return courses with all display info
+        // OPTIMIZED: Pre-calculate all derived data
         const coursesForStudent = courses.map(course => {
             // Calculate discount percentage
             let discountPercent = 0;
-            if (course.pricing?.originalPrice && course.pricing?.currentPrice && course.pricing.originalPrice > course.pricing.currentPrice) {
-                discountPercent = Math.round(((course.pricing.originalPrice - course.pricing.currentPrice) / course.pricing.originalPrice) * 100);
+            const originalPrice = course.pricing?.originalPrice || 0;
+            const currentPrice = course.pricing?.currentPrice || 0;
+            if (originalPrice > currentPrice && originalPrice > 0) {
+                discountPercent = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
             }
 
             return {
@@ -757,17 +773,15 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM 
                 thumbnail: course.thumbnail || '',
                 subject: course.subject,
                 batchName: course.batchName,
-                description: course.description?.substring(0, 100) || '',
-                lectureCount: course.lectures?.length || 0,
-                // Pricing info
+                description: course.description || '',
+                lectureCount: course.lectureCount,
                 pricing: {
-                    originalPrice: course.pricing?.originalPrice || 0,
-                    currentPrice: course.pricing?.currentPrice || 0,
+                    originalPrice,
+                    currentPrice,
                     showPriceDrop: course.pricing?.showPriceDrop || false,
                     priceDropLabel: course.pricing?.priceDropLabel || '🔥 Price Drop',
                     discountPercent
                 },
-                // Status info
                 status: course.status || 'ongoing',
                 displayOrder: course.displayOrder || 0
             };
@@ -778,22 +792,28 @@ router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.MEDIUM 
 });
 
 // Get single course with lectures (enrollment check for SPECIFIC course)
-router.get('/video-courses/:id', async (req, res, next) => {
+// CACHED: Per-user cache for 5 minutes (enrollment status varies per user)
+router.get('/video-courses/:id', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE, perUser: true }), async (req, res, next) => {
     try {
-        const course = await Course.findById(req.params.id);
+        // OPTIMIZED: Run both queries in parallel with .lean() for faster response
+        const [course, user] = await Promise.all([
+            Course.findById(req.params.id).select('title thumbnail subject batchName description lectures isPublished').lean(),
+            User.findById(req.user._id).select('enrollment').lean()
+        ]);
+
         if (!course || !course.isPublished) {
             return res.status(404).json({ success: false, message: 'Course not found' });
         }
 
         // Check if user is enrolled in THIS specific course
-        const user = await User.findById(req.user._id);
         const isPaidUser = user?.enrollment?.isPaid || false;
         const enrolledCourseIds = user?.enrollment?.courses?.map(c => c.courseId) || [];
 
         // User must be paid AND enrolled in this specific course
         const isEnrolledInThisCourse = isPaidUser && enrolledCourseIds.includes(course._id.toString());
 
-        // Return course with/without links based on SPECIFIC course enrollment
+        // OPTIMIZED: Build response efficiently
+        const lectures = course.lectures || [];
         const courseData = {
             _id: course._id,
             title: course.title,
@@ -801,10 +821,10 @@ router.get('/video-courses/:id', async (req, res, next) => {
             subject: course.subject,
             batchName: course.batchName,
             description: course.description,
-            lectureCount: course.lectures?.length || 0,
+            lectureCount: lectures.length,
             isPaid: isPaidUser,
             isEnrolled: isEnrolledInThisCourse,
-            lectures: course.lectures.map(lecture => ({
+            lectures: lectures.map(lecture => ({
                 _id: lecture._id,
                 lectureNumber: lecture.lectureNumber,
                 title: lecture.title,

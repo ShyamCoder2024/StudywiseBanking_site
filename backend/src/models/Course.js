@@ -91,6 +91,12 @@ const CourseSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// ============ PERFORMANCE INDEXES ============
+// Compound index for listing published courses sorted by display order
+CourseSchema.index({ isPublished: 1, displayOrder: 1, createdAt: -1 });
+// Index for individual course lookups
+CourseSchema.index({ _id: 1, isPublished: 1 });
+
 // Virtual for lecture count
 CourseSchema.virtual('lectureCount').get(function () {
     return this.lectures ? this.lectures.length : 0;
