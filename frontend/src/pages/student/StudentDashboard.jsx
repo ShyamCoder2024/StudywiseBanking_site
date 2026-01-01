@@ -111,36 +111,45 @@ export function StudentDashboard() {
         };
     }, []);
 
-    // Optimized countdown - calculate once on mount/data change, no interval needed
+    // Live countdown timer - updates every second
     useEffect(() => {
-        let targetDate = null;
+        const calculateCountdown = () => {
+            let targetDate = null;
 
-        // Priority 1: Use examDateTime from admin settings
-        if (examSettings?.examDateTime) {
-            targetDate = new Date(examSettings.examDateTime);
-        }
-        // Priority 2: Use quiz expiry date
-        else if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
-            targetDate = new Date(newQuizzes[0].expiresAt);
-        }
-        // Default: 14 days from now as placeholder
-        else {
-            targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 14);
-        }
+            // Priority 1: Use examDateTime from admin settings
+            if (examSettings?.examDateTime) {
+                targetDate = new Date(examSettings.examDateTime);
+            }
+            // Priority 2: Use quiz expiry date (only if there are actual active quizzes)
+            else if (newQuizzes.length > 0 && newQuizzes[0].expiresAt) {
+                targetDate = new Date(newQuizzes[0].expiresAt);
+            }
+            // Default: 14 days from now as placeholder
+            else {
+                targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + 14);
+            }
 
-        const now = new Date();
-        const diff = Math.max(0, targetDate - now);
+            const now = new Date();
+            const diff = Math.max(0, targetDate - now);
 
-        setCountdown({
-            days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-            minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-            seconds: Math.floor((diff % (1000 * 60)) / 1000)
-        });
+            return {
+                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+                seconds: Math.floor((diff % (1000 * 60)) / 1000)
+            };
+        };
 
-        // REMOVED: setInterval that updated every second causing constant re-renders
-        // Use CSS animations for visual countdown effect instead
+        // Set initial countdown
+        setCountdown(calculateCountdown());
+
+        // Update every second for live countdown
+        const interval = setInterval(() => {
+            setCountdown(calculateCountdown());
+        }, 1000);
+
+        return () => clearInterval(interval);
     }, [examSettings, newQuizzes]);
 
     // Fetch real dashboard data from backend

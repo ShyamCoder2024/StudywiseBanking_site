@@ -174,8 +174,8 @@ export function TestCenterPage() {
                 </button>
             </div>
 
-            {/* Subject Filter Pills - Only show if more than 1 subject */}
-            {uniqueSubjects.length > 2 && (
+            {/* Subject Filter Pills - Show when at least 1 subject exists */}
+            {uniqueSubjects.length >= 2 && (
                 <div className="subject-filter-container">
                     <div className="subject-filter-scroll">
                         {uniqueSubjects.map((subject) => (
