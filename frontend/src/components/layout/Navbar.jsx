@@ -9,7 +9,7 @@ import './Navbar.css';
 // Premium Animated Sun/Moon Toggle
 function SunMoonToggle({ isDark, onToggle }) {
     return (
-        <label className="theme-switch" onClick={onToggle}>
+        <label className="theme-switch">
             {/* Sun Icon */}
             <span className="theme-sun">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@ function SunMoonToggle({ isDark, onToggle }) {
                 type="checkbox"
                 className="theme-input"
                 checked={isDark}
-                onChange={() => { }}
+                onChange={onToggle}
                 aria-label="Toggle dark mode"
             />
             <span className={`theme-slider ${isDark ? 'dark' : ''}`} />
@@ -85,10 +85,8 @@ export function Navbar() {
                         </>
                     )}
 
-                    {/* Premium Sun/Moon Toggle - Hidden on mobile (shown in profile instead) */}
-                    <div className="hide-on-mobile">
-                        <SunMoonToggle isDark={isDark} onToggle={toggleTheme} />
-                    </div>
+                    {/* Premium Sun/Moon Toggle - Visible on all screens */}
+                    <SunMoonToggle isDark={isDark} onToggle={toggleTheme} />
 
                     {/* Profile */}
                     {isAuthenticated && (
