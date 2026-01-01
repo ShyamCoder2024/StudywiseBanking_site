@@ -758,14 +758,23 @@ router.put('/manage-courses/:id', async (req, res, next) => {
     try {
         const { title, thumbnail, subject, batchName, description, pricing, status, displayOrder } = req.body;
 
+        // Build update object only with fields that are defined
+        // This prevents undefined values from overwriting existing data (especially thumbnail)
         const updateData = {
-            title,
-            thumbnail,
-            subject,
-            batchName,
-            description,
             updatedAt: new Date()
         };
+
+        // Core fields - only update if provided
+        if (title !== undefined) updateData.title = title;
+        if (subject !== undefined) updateData.subject = subject;
+        if (batchName !== undefined) updateData.batchName = batchName;
+        if (description !== undefined) updateData.description = description;
+
+        // CRITICAL: Only update thumbnail if it's explicitly provided with a value
+        // This prevents overwriting existing thumbnails when admin edits other fields
+        if (thumbnail !== undefined && thumbnail !== null) {
+            updateData.thumbnail = thumbnail;
+        }
 
         // Handle pricing update
         if (pricing) {

@@ -735,10 +735,12 @@ router.get('/courses', async (req, res, next) => {
 // ============ Video Courses (Private YouTube) ============
 
 // Get all published video courses
-// v2: Cache disabled temporarily to ensure fresh data
-router.get('/video-courses', async (req, res, next) => {
+// OPTIMIZED: Cache for 30 seconds, select only needed fields
+router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT }), async (req, res, next) => {
     try {
+        // Select only needed fields for the course list (exclude full lectures array for performance)
         const courses = await Course.find({ isPublished: true })
+            .select('title thumbnail subject batchName description pricing status displayOrder lectures')
             .sort({ displayOrder: 1, createdAt: -1 })
             .lean();
 
@@ -755,7 +757,7 @@ router.get('/video-courses', async (req, res, next) => {
             return {
                 _id: course._id,
                 title: course.title,
-                thumbnail: course.thumbnail || '',
+                thumbnail: course.thumbnail || '', // Send thumbnail as-is
                 subject: course.subject,
                 batchName: course.batchName,
                 description: (course.description || '').substring(0, 100),

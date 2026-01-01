@@ -115,11 +115,23 @@ export function CourseDetailPage() {
                 >
                     {/* Thumbnail */}
                     <div className="cdp-thumb">
-                        {course.thumbnail ? (
-                            <img src={course.thumbnail} alt={course.title} loading="eager" />
-                        ) : (
-                            <div className="cdp-thumb-empty"><BookOpen size={40} /></div>
-                        )}
+                        {course.thumbnail && course.thumbnail.length > 0 ? (
+                            <img
+                                src={course.thumbnail}
+                                alt={course.title}
+                                loading="eager"
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling && (e.target.nextSibling.style.display = 'flex');
+                                }}
+                            />
+                        ) : null}
+                        <div
+                            className="cdp-thumb-empty"
+                            style={{ display: course.thumbnail && course.thumbnail.length > 0 ? 'none' : 'flex' }}
+                        >
+                            <BookOpen size={40} />
+                        </div>
                     </div>
 
                     {/* Course Info */}

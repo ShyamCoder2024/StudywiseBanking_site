@@ -135,17 +135,26 @@ export default function CoursesPage() {
                         >
                             {/* Thumbnail */}
                             <div className="course-thumbnail">
-                                {course.thumbnail ? (
+                                {course.thumbnail && course.thumbnail.length > 0 ? (
                                     <img
                                         src={course.thumbnail}
                                         alt={course.title}
-                                        loading="lazy"
+                                        loading="eager"
+                                        decoding="async"
+                                        onError={(e) => {
+                                            // On error, hide the img and show placeholder
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling && (e.target.nextSibling.style.display = 'flex');
+                                        }}
                                     />
-                                ) : (
-                                    <div className="thumbnail-placeholder">
-                                        <Video size={48} />
-                                    </div>
-                                )}
+                                ) : null}
+                                {/* Placeholder - shown when no thumbnail or image fails to load */}
+                                <div
+                                    className="thumbnail-placeholder"
+                                    style={{ display: course.thumbnail && course.thumbnail.length > 0 ? 'none' : 'flex' }}
+                                >
+                                    <Video size={48} />
+                                </div>
                                 <div className="thumbnail-overlay">
                                     <div className="play-button">
                                         <Play size={24} fill="white" />
