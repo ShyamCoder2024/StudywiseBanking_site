@@ -453,7 +453,9 @@ export function QuestionManagement() {
                                         fontWeight: '500',
                                         color: BRAND.text,
                                         marginBottom: '16px',
-                                        marginLeft: '48px'
+                                        marginLeft: '48px',
+                                        whiteSpace: 'pre-wrap',
+                                        lineHeight: '1.6'
                                     }}>
                                         {q.text}
                                     </p>
@@ -720,8 +722,8 @@ export function QuestionManagement() {
                                     <textarea
                                         value={formData.text}
                                         onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-                                        placeholder="Type your question here..."
-                                        rows={3}
+                                        placeholder="Type your question here...&#10;&#10;Tip: Press Enter to add line breaks for better formatting"
+                                        rows={6}
                                         style={{
                                             width: '100%',
                                             padding: '14px 16px',
@@ -733,7 +735,9 @@ export function QuestionManagement() {
                                             boxSizing: 'border-box',
                                             fontFamily: 'inherit',
                                             color: BRAND.text,
-                                            backgroundColor: BRAND.card
+                                            backgroundColor: BRAND.card,
+                                            whiteSpace: 'pre-wrap',
+                                            lineHeight: '1.6'
                                         }}
                                     />
                                 </div>
@@ -844,8 +848,8 @@ export function QuestionManagement() {
                                         <textarea
                                             value={formData.topperAnswer}
                                             onChange={(e) => setFormData({ ...formData, topperAnswer: e.target.value })}
-                                            placeholder="Enter the ideal answer for grading reference..."
-                                            rows={5}
+                                            placeholder="Enter the ideal answer for grading reference...&#10;&#10;You can use multiple lines for better formatting"
+                                            rows={6}
                                             style={{
                                                 width: '100%',
                                                 padding: '14px 16px',
@@ -855,7 +859,11 @@ export function QuestionManagement() {
                                                 outline: 'none',
                                                 resize: 'vertical',
                                                 boxSizing: 'border-box',
-                                                fontFamily: 'inherit'
+                                                fontFamily: 'inherit',
+                                                color: BRAND.text,
+                                                backgroundColor: BRAND.card,
+                                                whiteSpace: 'pre-wrap',
+                                                lineHeight: '1.6'
                                             }}
                                         />
                                     </div>
