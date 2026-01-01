@@ -1,8 +1,8 @@
 // Service Worker for StudyWise Banking PWA
 // Enhanced for native app-like experience
-const CACHE_NAME = 'studywise-v2';
-const STATIC_CACHE = 'studywise-static-v2';
-const DYNAMIC_CACHE = 'studywise-dynamic-v2';
+const CACHE_NAME = 'studywise-v3';
+const STATIC_CACHE = 'studywise-static-v3';
+const DYNAMIC_CACHE = 'studywise-dynamic-v3';
 
 // Static assets to precache (critical for instant loading)
 const STATIC_ASSETS = [
