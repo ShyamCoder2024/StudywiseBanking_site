@@ -738,8 +738,8 @@ router.get('/courses', async (req, res, next) => {
 // CACHED: Course list cached for 5 minutes (courses rarely change)
 router.get('/video-courses', cacheMiddleware({ duration: CACHE_DURATIONS.COURSE }), async (req, res, next) => {
     try {
+        // Note: Not using .select() as it causes issues with thumbnail field
         const courses = await Course.find({ isPublished: true })
-            .select('title thumbnail subject batchName description lectures pricing status displayOrder')
             .sort({ displayOrder: 1, createdAt: -1 })
             .lean();
 
