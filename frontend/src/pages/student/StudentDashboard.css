@@ -867,9 +867,10 @@
 }
 
 .stat-num {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
     letter-spacing: -1px;
+    color: var(--color-text);
 }
 
 /* 5. Video Tile (New) */
@@ -2431,4 +2432,16 @@ a:focus-visible {
 }
 
 /* Bottom Nav - REMOVED */
+
+/* Mobile Stats Number - Ensure readability */
+@media (max-width: 600px) {
+    .stats-tile-1 .stat-num {
+        font-size: 2rem;
+    }
+
+    .stats-tile-1 .stat-lbl {
+        font-size: 0.75rem;
+    }
+}
+
 /* Previously at max-width: 768px this would show the bottom nav */
