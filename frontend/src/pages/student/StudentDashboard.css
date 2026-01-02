@@ -22,7 +22,8 @@
 
     .bento-dashboard {
         padding-top: 20px;
-        /* Bottom padding handled by global styles/index.css */
+        padding-bottom: 90px;
+        /* Clear bottom navbar properly */
     }
 }
 
@@ -1634,8 +1635,6 @@
         display: flex !important;
         flex-direction: column;
         gap: 16px;
-        padding-bottom: 20px;
-        /* Breathing space above bottom navbar */
     }
 
     .bento-tile {
