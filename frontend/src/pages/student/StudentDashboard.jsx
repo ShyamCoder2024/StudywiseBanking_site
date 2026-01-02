@@ -605,24 +605,35 @@ export function StudentDashboard() {
                                             </div>
                                         </div>
 
-                                        {/* Course Info */}
+                                        {/* Course Info - Use REAL enrollment data */}
                                         <div className="course-info-premium">
                                             <div className="course-stat-row">
-                                                <span className="course-stat-big">{videoCourses.length || enrollment.courses?.length || 0}</span>
+                                                <span className="course-stat-big">{enrollment.courses?.length || 0}</span>
                                                 <span className="course-stat-label">Enrolled</span>
                                             </div>
                                             <div className="course-stat-row">
-                                                <span className="course-stat-big">{videoCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0)}</span>
+                                                <span className="course-stat-big">
+                                                    {/* Calculate lectures from only enrolled courses */}
+                                                    {(() => {
+                                                        const enrolledCourseIds = enrollment.courses?.map(c => c.courseId) || [];
+                                                        const enrolledCourses = videoCourses.filter(vc =>
+                                                            enrolledCourseIds.includes(vc._id)
+                                                        );
+                                                        return enrolledCourses.reduce((sum, c) => sum + (c.lectureCount || 0), 0);
+                                                    })()}
+                                                </span>
                                                 <span className="course-stat-label">Lectures</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Recent Course Name */}
-                                    {videoCourses.length > 0 && (
+                                    {enrollment.courses?.length > 0 && (
                                         <div className="course-recent">
                                             <span className="recent-label">Recently:</span>
-                                            <span className="recent-name">{videoCourses[0]?.title?.slice(0, 25) || 'Your Course'}...</span>
+                                            <span className="recent-name">
+                                                {enrollment.courses[0]?.courseName?.slice(0, 22) || 'Your Course'}...
+                                            </span>
                                         </div>
                                     )}
 
