@@ -199,6 +199,51 @@ body {
   }
 }
 
+/* ============================================
+   UNIVERSAL MOBILE BOTTOM NAVBAR CLEARANCE
+   This applies to ALL pages automatically
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* Universal page containers - bottom padding to clear fixed navbar */
+  .page,
+  .dashboard-page,
+  .bento-dashboard,
+  .dashboard-container,
+  .test-center-page,
+  .subjects-page,
+  .courses-page,
+  .profile-page,
+  .about-page-container,
+  .content-page,
+  .quiz-page,
+  .result-page,
+  .leaderboard-page,
+  .ai-analysis-page,
+  .tasks-page,
+  .performance-page,
+  main,
+  [class*="-page"],
+  [class*="Page"] {
+    padding-bottom: 100px !important;
+  }
+
+  /* Scrollable content containers */
+  .container,
+  .content-grid,
+  .bento-grid,
+  .quiz-grid,
+  .course-grid,
+  .subject-grid,
+  .topics-grid,
+  .quiz-list-container,
+  .course-list,
+  .subject-list,
+  .topic-list {
+    padding-bottom: 20px;
+  }
+}
+
 a {
   color: var(--color-primary);
   text-decoration: none;
