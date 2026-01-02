@@ -424,7 +424,8 @@ const getTodayResetTime = () => {
 router.get('/global-tasks', async (req, res, next) => {
     try {
         const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 });
-        const userId = req.user._id;
+        // Ensure userId is a string for reliable comparison
+        const userIdStr = req.user._id.toString();
         const resetTime = getTodayResetTime();
 
         // Add a 'completed' flag for this user - only if completed after today's reset
@@ -432,7 +433,7 @@ router.get('/global-tasks', async (req, res, next) => {
             const taskObj = t.toObject();
             const userCompletion = taskObj.completedBy?.find(
                 c => {
-                    const isUser = c.userId?.toString() === userId.toString();
+                    const isUser = c.userId?.toString() === userIdStr;
                     const isAfterReset = new Date(c.completedAt) >= resetTime;
                     return isUser && isAfterReset;
                 }
@@ -443,7 +444,7 @@ router.get('/global-tasks', async (req, res, next) => {
             };
         });
 
-        // Calculate progress
+        // Calculate progress for THIS user only
         const completedCount = tasksWithStatus.filter(t => t.isCompleted).length;
         const totalCount = tasksWithStatus.length;
         const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -465,12 +466,13 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         const task = await GlobalTask.findById(req.params.id);
         if (!task) return res.status(404).json({ success: false, message: 'Task not found' });
 
-        const userId = req.user._id;
+        // Ensure userId is a string for reliable comparison
+        const userIdStr = req.user._id.toString();
         const resetTime = getTodayResetTime();
 
         // Check if user completed after today's reset
         const existingCompletionIndex = task.completedBy.findIndex(
-            c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+            c => c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime
         );
 
         const isCompleted = existingCompletionIndex !== -1;
@@ -478,15 +480,18 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         if (isCompleted) {
             // Remove ALL completions for this user for today (fixes duplicate bug)
             task.completedBy = task.completedBy.filter(c =>
-                !(c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime)
+                !(c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime)
             );
         } else {
-            // Add new completion
+            // Add new completion - ensure userId is stored as ObjectId
             task.completedBy.push({
-                userId: userId,
+                userId: req.user._id,
                 completedAt: new Date()
             });
         }
+
+        // CRITICAL: Mark array as modified so Mongoose detects the change
+        task.markModified('completedBy');
         await task.save();
 
         // Calculate updated progress for all tasks (so frontend can verify)
@@ -494,7 +499,7 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         let completedCount = 0;
         allTasks.forEach(t => {
             const userCompletion = t.completedBy?.find(
-                c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+                c => c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime
             );
             if (userCompletion) completedCount++;
         });
