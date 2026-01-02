@@ -23,7 +23,7 @@
     .bento-dashboard {
         padding-top: 20px;
         /* Reduced - no navbar on mobile */
-        padding-bottom: 100px;
+        padding-bottom: 16px;
         /* Space for bottom nav */
     }
 }

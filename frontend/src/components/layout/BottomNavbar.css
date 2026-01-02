@@ -110,32 +110,21 @@
    ============================================ */
 @media (max-width: 768px) {
 
-    /* Define bottom navbar height as CSS variable for consistent use */
+    /* Minimal bottom navbar height - just what's needed */
     :root {
-        --bottom-nav-height: 86px;
-        /* Base height + safe area will be added */
+        --bottom-nav-height: 70px;
     }
 
     .bottom-navbar {
         display: grid;
     }
 
-    /* Add padding to body to account for bottom nav - using CSS variable */
+    /* Minimal body padding - just enough to clear the fixed navbar */
     body {
         padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
     }
 
-    /* Ensure all main page containers have proper bottom spacing */
-    .page,
-    .dashboard-container,
-    .bento-dashboard,
-    .test-center-page,
-    .courses-page,
-    .subjects-page,
-    .profile-page,
-    .content-page {
-        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 20px) !important;
-    }
+    /* Removed excessive page container padding to eliminate the large gap */
 }
 
 /* ============================================

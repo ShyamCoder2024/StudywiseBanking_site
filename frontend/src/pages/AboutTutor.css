@@ -375,7 +375,7 @@
 @media (max-width: 768px) {
     .about-page-container {
         padding: 12px;
-        padding-bottom: 100px;
+        padding-bottom: 16px;
     }
 
     .about-hero {

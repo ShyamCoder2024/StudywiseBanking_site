@@ -4,7 +4,7 @@
     min-height: 100vh;
     background: var(--color-bg);
     padding: 24px;
-    padding-bottom: 100px;
+    padding-bottom: 16px;
 }
 
 .profile-wrapper {
@@ -594,7 +594,7 @@
 @media (max-width: 768px) {
     .profile-page {
         padding: 16px;
-        padding-bottom: 100px;
+        padding-bottom: 16px;
     }
 
     .profile-banner {
@@ -663,7 +663,7 @@
 @media (max-width: 480px) {
     .profile-page {
         padding: 12px;
-        padding-bottom: 100px;
+        padding-bottom: 16px;
     }
 
     .profile-banner {
