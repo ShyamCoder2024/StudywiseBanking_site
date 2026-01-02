@@ -243,14 +243,19 @@ export function ProfilePage() {
                                 <div className="enrolled-courses">
                                     <h4 className="enrolled-label">
                                         <BookOpenCheck size={14} />
-                                        Enrolled Courses
+                                        Enrolled Courses ({enrollment.courses.length})
                                     </h4>
-                                    {enrollment.courses.map((course, idx) => (
-                                        <div key={idx} className="enrolled-course-item">
-                                            <span className="course-name">{course.courseName || course.name}</span>
-                                            <span className="course-batch">{course.batch}</span>
-                                        </div>
-                                    ))}
+                                    <div className="enrolled-courses-list">
+                                        {enrollment.courses.map((course, idx) => (
+                                            <div key={idx} className="enrolled-course-item">
+                                                <span className="course-name">{course.courseName || course.name || 'Course'}</span>
+                                                {course.batch && <span className="course-batch">{course.batch}</span>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {enrollment.courses.length > 3 && (
+                                        <p className="courses-count">Scroll to see all {enrollment.courses.length} courses</p>
+                                    )}
                                 </div>
                             ) : enrollment.isPaid ? (
                                 <p className="enrollment-hint">You have premium access. Explore courses to enroll.</p>

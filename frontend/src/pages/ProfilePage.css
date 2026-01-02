@@ -689,29 +689,27 @@
 }
 
 /* ============================================
-   ENROLLMENT STATUS SECTION
+   ENROLLMENT STATUS SECTION - Mobile First
    ============================================ */
 .enrollment-status-card {
     background: var(--color-bg);
     border-radius: 12px;
-    padding: 24px;
+    padding: 16px;
     border: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
-    min-height: 140px;
 }
 
 .enrollment-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
-    border-radius: 30px;
+    padding: 10px 20px;
+    border-radius: 24px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     margin-bottom: 16px;
 }
 
@@ -728,7 +726,6 @@
 }
 
 .enrolled-courses {
-    margin-top: 12px;
     width: 100%;
     text-align: left;
 }
@@ -737,19 +734,29 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* Course List - Scrollable on mobile if too many */
+.enrolled-courses-list {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .enrolled-course-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
     background: var(--color-card);
     border: 1px solid var(--color-border);
     border-radius: 10px;
@@ -762,25 +769,80 @@
 
 .course-name {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--color-text);
+    line-height: 1.4;
+    flex: 1;
+    word-break: break-word;
 }
 
 .course-batch {
-    font-size: 0.8rem;
-    padding: 4px 10px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
     background: rgba(139, 92, 246, 0.1);
     color: var(--primary);
-    border-radius: 16px;
-    font-weight: 500;
+    border-radius: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-align: center;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .enrollment-hint {
     color: var(--color-text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin: 0;
     line-height: 1.6;
     max-width: 280px;
+}
+
+/* Total Courses Count */
+.courses-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+/* ============================================
+   TABLET & DESKTOP ENROLLMENT STYLES
+   ============================================ */
+@media (min-width: 769px) {
+    .enrollment-status-card {
+        padding: 24px;
+    }
+
+    .enrollment-badge {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+    }
+
+    .enrolled-label {
+        font-size: 0.8rem;
+    }
+
+    .enrolled-course-item {
+        padding: 14px 16px;
+    }
+
+    .course-name {
+        font-size: 0.9rem;
+    }
+
+    .course-batch {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+        max-width: 100px;
+    }
+
+    .enrolled-courses-list {
+        max-height: 320px;
+    }
 }
 
 /* Dark Mode */
