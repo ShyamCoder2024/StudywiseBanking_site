@@ -1785,10 +1785,7 @@
     transform: scale(0.98);
 }
 
-/* Streak Glow Animation */
-.pill-item:first-child {
-    animation: pulseGlow 3s ease-in-out infinite;
-}
+/* Streak Pill - Clean Design (pulseGlow animation removed as it caused annoying rectangular shadow) */
 
 /* Enhanced Bento Tile Hover */
 .bento-tile {
