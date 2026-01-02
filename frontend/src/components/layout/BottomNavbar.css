@@ -110,16 +110,16 @@
    ============================================ */
 @media (max-width: 768px) {
 
-    /* Bottom navbar height - ~60px for the nav + safe area */
+    /* Bottom navbar height + proper gap */
     :root {
-        --bottom-nav-height: 60px;
+        --bottom-nav-height: 85px;
     }
 
     .bottom-navbar {
         display: grid;
     }
 
-    /* Body padding to push content above fixed navbar - just enough clearance */
+    /* Body padding to push content above fixed navbar with proper gap */
     body {
         padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
     }
