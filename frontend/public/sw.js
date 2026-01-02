@@ -1,8 +1,11 @@
 // Service Worker for StudyWise Banking PWA
-// Enhanced for native app-like experience
-const CACHE_NAME = 'studywise-v3';
-const STATIC_CACHE = 'studywise-static-v3';
-const DYNAMIC_CACHE = 'studywise-dynamic-v3';
+// Enhanced for native app-like experience with aggressive caching
+// VERSION: v4 - Enhanced precaching and update handling
+
+const CACHE_VERSION = 'v4';
+const STATIC_CACHE = `studywise-static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `studywise-dynamic-${CACHE_VERSION}`;
+const API_CACHE = `studywise-api-${CACHE_VERSION}`;
 
 // Static assets to precache (critical for instant loading)
 const STATIC_ASSETS = [
@@ -12,32 +15,78 @@ const STATIC_ASSETS = [
     '/manifest.json'
 ];
 
-// Assets to cache on-the-fly
-const CACHE_FIRST_URLS = [
-    /\.(js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp)$/,
+// URL patterns for cache-first strategy (static assets)
+const CACHE_FIRST_PATTERNS = [
+    /\.js$/,
+    /\.css$/,
+    /\.woff2?$/,
+    /\.ttf$/,
+    /\.eot$/,
+    /\.svg$/,
+    /\.png$/,
+    /\.jpg$/,
+    /\.jpeg$/,
+    /\.gif$/,
+    /\.webp$/,
     /fonts\.googleapis\.com/,
     /fonts\.gstatic\.com/
 ];
 
+// API endpoints to cache with stale-while-revalidate (short TTL)
+const API_CACHE_PATTERNS = [
+    /\/api\/student\/subjects/,
+    /\/api\/student\/video-courses/,
+    /\/api\/student\/enrollment/,
+    /\/api\/student\/settings/
+];
+
 // Install event - precache static assets
 self.addEventListener('install', (event) => {
+    console.log('[SW] Installing new service worker...');
     event.waitUntil(
         caches.open(STATIC_CACHE)
-            .then((cache) => cache.addAll(STATIC_ASSETS))
-            .then(() => self.skipWaiting())
+            .then((cache) => {
+                console.log('[SW] Precaching static assets');
+                return cache.addAll(STATIC_ASSETS);
+            })
+            .then(() => {
+                console.log('[SW] Skip waiting to activate immediately');
+                return self.skipWaiting();
+            })
     );
 });
 
-// Activate event - clean old caches
+// Activate event - clean old caches and claim clients
 self.addEventListener('activate', (event) => {
+    console.log('[SW] Activating new service worker...');
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames
-                    .filter((name) => name !== STATIC_CACHE && name !== DYNAMIC_CACHE)
-                    .map((name) => caches.delete(name))
+                    .filter((name) => {
+                        // Delete old version caches
+                        return name.startsWith('studywise-') &&
+                            !name.endsWith(CACHE_VERSION);
+                    })
+                    .map((name) => {
+                        console.log('[SW] Deleting old cache:', name);
+                        return caches.delete(name);
+                    })
             );
-        }).then(() => self.clients.claim())
+        }).then(() => {
+            console.log('[SW] Claiming all clients');
+            return self.clients.claim();
+        }).then(() => {
+            // Notify all clients about the update
+            return self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'SW_UPDATED',
+                        version: CACHE_VERSION
+                    });
+                });
+            });
+        })
     );
 });
 
@@ -49,24 +98,52 @@ self.addEventListener('fetch', (event) => {
     // Skip non-GET requests
     if (request.method !== 'GET') return;
 
-    // Skip API requests - always fetch from network (real-time data)
-    if (url.pathname.startsWith('/api/') || request.url.includes('/api/')) {
-        return;
-    }
-
     // Skip chrome-extension and other non-http(s) requests
     if (!request.url.startsWith('http')) return;
 
-    // Strategy: Stale-While-Revalidate for static assets (faster perceived loading)
-    const isCacheFirst = CACHE_FIRST_URLS.some(pattern =>
-        pattern instanceof RegExp ? pattern.test(request.url) : request.url.includes(pattern)
-    );
+    // Strategy for API requests - Network first with short cache fallback
+    if (url.pathname.startsWith('/api/') || request.url.includes('/api/')) {
+        // Check if this API should be cached
+        const shouldCache = API_CACHE_PATTERNS.some(pattern => pattern.test(request.url));
+
+        if (shouldCache) {
+            event.respondWith(
+                fetch(request)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            const clone = response.clone();
+                            caches.open(API_CACHE).then((cache) => {
+                                cache.put(request, clone);
+                            });
+                        }
+                        return response;
+                    })
+                    .catch(() => caches.match(request))
+            );
+        }
+        return;
+    }
+
+    // Strategy for static assets - Cache First, Network Fallback
+    const isCacheFirst = CACHE_FIRST_PATTERNS.some(pattern => pattern.test(request.url));
 
     if (isCacheFirst) {
-        // Cache First, then update cache in background
         event.respondWith(
             caches.match(request).then((cachedResponse) => {
-                const fetchPromise = fetch(request).then((networkResponse) => {
+                if (cachedResponse) {
+                    // Return cached immediately, update cache in background
+                    fetch(request).then((networkResponse) => {
+                        if (networkResponse.status === 200) {
+                            caches.open(DYNAMIC_CACHE).then((cache) => {
+                                cache.put(request, networkResponse);
+                            });
+                        }
+                    }).catch(() => { });
+                    return cachedResponse;
+                }
+
+                // Not in cache, fetch from network and cache
+                return fetch(request).then((networkResponse) => {
                     if (networkResponse.status === 200) {
                         const clone = networkResponse.clone();
                         caches.open(DYNAMIC_CACHE).then((cache) => {
@@ -74,20 +151,17 @@ self.addEventListener('fetch', (event) => {
                         });
                     }
                     return networkResponse;
-                }).catch(() => cachedResponse);
-
-                return cachedResponse || fetchPromise;
+                });
             })
         );
         return;
     }
 
-    // Navigation requests - Network first with fast offline fallback
+    // Navigation requests - Network first with offline fallback
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    // Cache successful navigation responses
                     if (response.status === 200) {
                         const clone = response.clone();
                         caches.open(DYNAMIC_CACHE).then((cache) => {
@@ -97,7 +171,6 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 })
                 .catch(() => {
-                    // Fallback to cached version or shell
                     return caches.match(request)
                         .then((cachedResponse) => cachedResponse || caches.match('/'));
                 })
@@ -121,17 +194,22 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// Background sync for offline actions (future enhancement)
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'background-sync') {
-        event.waitUntil(
-            // Handle background sync when implemented
-            Promise.resolve()
-        );
+// Message handler for skip waiting
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        console.log('[SW] Skip waiting requested');
+        self.skipWaiting();
     }
 });
 
-// Push notifications (future enhancement)
+// Background sync for offline actions
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'background-sync') {
+        event.waitUntil(Promise.resolve());
+    }
+});
+
+// Push notifications
 self.addEventListener('push', (event) => {
     if (event.data) {
         const data = event.data.json();
@@ -153,7 +231,6 @@ self.addEventListener('notificationclick', (event) => {
     const url = event.notification.data?.url || '/';
     event.waitUntil(
         clients.matchAll({ type: 'window' }).then((windowClients) => {
-            // Focus existing window or open new one
             for (const client of windowClients) {
                 if (client.url === url && 'focus' in client) {
                     return client.focus();

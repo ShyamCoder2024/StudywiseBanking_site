@@ -7,8 +7,9 @@ const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 300;
 
 // In-memory cache for instant perceived loading
+// TTL synced with backend cache (30 seconds) to prevent stale data
 const apiCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 30 * 1000; // 30 seconds - matches backend cache
 
 const api = axios.create({
     baseURL: API_URL,
