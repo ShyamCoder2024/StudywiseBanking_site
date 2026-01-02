@@ -75,13 +75,20 @@
     margin-bottom: 6px;
 }
 
+/* Name + Badge wrapper - keeps them together */
+.name-with-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .profile-name-line h1 {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-text);
     margin: 0;
-    white-space: nowrap;
 }
+
 
 /* Instagram-style Verified Blue Tick Badge */
 .verified-badge {
@@ -602,13 +609,27 @@
         padding: 16px 20px 24px;
     }
 
+    /* Mobile: Stack name+badge and age vertically */
     .profile-name-line {
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
+        gap: 8px;
     }
 
+    /* Name and badge together */
     .profile-name-line h1 {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         font-size: 1.3rem;
     }
+
+    /* Age badge below name on mobile */
+    .badge-age {
+        margin-top: 4px;
+    }
+
 
     .profile-meta {
         justify-content: center;
