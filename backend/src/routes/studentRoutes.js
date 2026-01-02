@@ -396,30 +396,29 @@ router.patch('/notifications/:id/read', async (req, res, next) => {
 // ============ Global Tasks ============
 
 // Helper: Get today's 5AM reset time in IST (Indian Standard Time)
-// IST is UTC + 5:30
-// 5:00 AM IST = Previous Day 23:30 UTC
+// IST is UTC + 5:30, so 5:00 AM IST = 23:30 UTC of the PREVIOUS day
 const getTodayResetTime = () => {
     const now = new Date();
 
-    // Shift current time to IST frame (UTC + 5.5 hours)
-    // We work with "Virtual IST" time by adding the offset to UTC timestamp
-    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-    const virtualISTTime = new Date(now.getTime() + IST_OFFSET_MS);
+    // Calculate what 23:30 UTC today would be
+    const todayAt2330UTC = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23, 30, 0, 0
+    ));
 
-    // Create a reset target at 5:00 AM in this Virtual IST frame
-    const resetTargetVirtual = new Date(virtualISTTime);
-    resetTargetVirtual.setUTCHours(5, 0, 0, 0);
+    // 23:30 UTC = 05:00 IST (next day in IST terms)
+    // So if current UTC time is BEFORE 23:30 UTC, the last 5 AM IST reset 
+    // was YESTERDAY at 23:30 UTC
+    // If current UTC time is AFTER 23:30 UTC, the reset was TODAY at 23:30 UTC
 
-    // If currently before 5 AM IST, the relevant reset was yesterday
-    if (virtualISTTime < resetTargetVirtual) {
-        resetTargetVirtual.setUTCDate(resetTargetVirtual.getUTCDate() - 1);
+    if (now.getTime() < todayAt2330UTC.getTime()) {
+        // Before today's 23:30 UTC, so the last reset was yesterday at 23:30 UTC
+        todayAt2330UTC.setUTCDate(todayAt2330UTC.getUTCDate() - 1);
     }
 
-    // Convert back from Virtual IST to Real UTC
-    // Real = Virtual - Offset
-    const resetTimeReal = new Date(resetTargetVirtual.getTime() - IST_OFFSET_MS);
-
-    return resetTimeReal;
+    return todayAt2330UTC;
 };
 
 router.get('/global-tasks', async (req, res, next) => {
