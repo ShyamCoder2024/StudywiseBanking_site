@@ -241,24 +241,23 @@ router.post('/quizzes/:id/publish', async (req, res, next) => {
             });
         }
 
-        // Set publish date and expiry (7 days from now)
+        // Set publish date - NO EXPIRY (quizzes stay forever)
         const now = new Date();
-        const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-        // Now update to published with expiry
+        // Now update to published (no expiry date - quizzes persist forever)
         const quiz = await Quiz.findByIdAndUpdate(
             req.params.id,
             {
                 isPublished: true,
                 publishedAt: now,
-                expiresAt: expiresAt,
-                isExpired: false,
+                // REMOVED: expiresAt - quizzes no longer expire
+                // REMOVED: isExpired - always false
                 viewedBy: [] // Reset viewed list on publish
             },
             { new: true }
         );
 
-        console.log('Quiz updated, isPublished:', quiz.isPublished, 'expiresAt:', quiz.expiresAt);
+        console.log('Quiz published successfully:', quiz.title);
 
         // Notify all students (non-blocking - don't let notification failure block publish)
         try {

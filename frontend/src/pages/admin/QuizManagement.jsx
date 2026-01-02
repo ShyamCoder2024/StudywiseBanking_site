@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, X, Clock, BarChart3, Edit2, Trash2, FileText, Check } from 'lucide-react';
+import { Plus, X, Clock, BarChart3, Edit2, Trash2, FileText, Check, Filter, CheckCircle } from 'lucide-react';
 import { Loader } from '../../components/ui/Loader';
 
 // DRD Brand Colors
@@ -35,6 +35,12 @@ export function QuizManagement() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingQuiz, setEditingQuiz] = useState(null);
+
+    // Filter state
+    const [filterSubject, setFilterSubject] = useState('');
+    const [filterTopic, setFilterTopic] = useState('');
+    const [filterTopics, setFilterTopics] = useState([]);
+
     const [formData, setFormData] = useState({
         title: '',
         subjectId: '',
@@ -68,6 +74,26 @@ export function QuizManagement() {
             setTopics(res.data.data?.topics || []);
         } catch { setTopics([]); }
     };
+
+    // Fetch topics for filter dropdown
+    const fetchFilterTopics = async (subjectId) => {
+        if (!subjectId) { setFilterTopics([]); setFilterTopic(''); return; }
+        try {
+            const res = await api.get(`/admin/subjects/${subjectId}/topics`);
+            setFilterTopics(res.data.data?.topics || []);
+        } catch { setFilterTopics([]); }
+    };
+
+    // Filter quizzes based on selected subject and topic
+    const filteredQuizzes = quizzes.filter(quiz => {
+        if (filterSubject && quiz.subject?._id !== filterSubject && quiz.subjectId !== filterSubject) {
+            return false;
+        }
+        if (filterTopic && quiz.topic?._id !== filterTopic && quiz.topicId !== filterTopic) {
+            return false;
+        }
+        return true;
+    });
 
     const openModal = (quiz = null) => {
         if (quiz) {
@@ -180,6 +206,96 @@ export function QuizManagement() {
                     </button>
                 </div>
 
+                {/* Filter Section */}
+                <div style={{
+                    backgroundColor: BRAND.card,
+                    padding: '16px 20px',
+                    borderRadius: BRAND.radius,
+                    border: `1px solid ${BRAND.border}`,
+                    boxShadow: BRAND.shadowCard,
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    gap: '16px'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: BRAND.textSecondary }}>
+                        <Filter size={18} />
+                        <span style={{ fontSize: '14px', fontWeight: '600' }}>Filters:</span>
+                    </div>
+
+                    {/* Subject Filter */}
+                    <select
+                        value={filterSubject}
+                        onChange={(e) => {
+                            setFilterSubject(e.target.value);
+                            setFilterTopic('');
+                            fetchFilterTopics(e.target.value);
+                        }}
+                        style={{
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            border: `1px solid ${BRAND.border}`,
+                            fontSize: '13px',
+                            backgroundColor: BRAND.card,
+                            color: BRAND.text,
+                            minWidth: '160px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <option value="">All Subjects</option>
+                        {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
+                    </select>
+
+                    {/* Topic Filter */}
+                    <select
+                        value={filterTopic}
+                        onChange={(e) => setFilterTopic(e.target.value)}
+                        disabled={!filterSubject}
+                        style={{
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            border: `1px solid ${BRAND.border}`,
+                            fontSize: '13px',
+                            backgroundColor: filterSubject ? BRAND.card : BRAND.bg,
+                            color: BRAND.text,
+                            minWidth: '160px',
+                            cursor: filterSubject ? 'pointer' : 'not-allowed',
+                            opacity: filterSubject ? 1 : 0.6
+                        }}
+                    >
+                        <option value="">All Topics</option>
+                        {filterTopics.map(t => <option key={t._id} value={t._id}>{t.name}</option>)}
+                    </select>
+
+                    {/* Clear Filters */}
+                    {(filterSubject || filterTopic) && (
+                        <button
+                            onClick={() => {
+                                setFilterSubject('');
+                                setFilterTopic('');
+                                setFilterTopics([]);
+                            }}
+                            style={{
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                backgroundColor: BRAND.warningLight,
+                                color: BRAND.warning,
+                                fontSize: '13px',
+                                fontWeight: '500',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Clear Filters
+                        </button>
+                    )}
+
+                    {/* Results Count */}
+                    <div style={{ marginLeft: 'auto', fontSize: '13px', color: BRAND.textMuted }}>
+                        Showing <strong style={{ color: BRAND.text }}>{filteredQuizzes.length}</strong> of {quizzes.length} quizzes
+                    </div>
+                </div>
+
                 {/* Quizzes Table */}
                 <div style={{
                     backgroundColor: BRAND.card,
@@ -204,11 +320,41 @@ export function QuizManagement() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {quizzes.map((quiz) => (
+                                    {filteredQuizzes.map((quiz) => (
                                         <tr key={quiz._id} style={{ borderBottom: `1px solid ${BRAND.border}` }}>
                                             <td style={{ padding: '16px 20px' }}>
                                                 <div style={{ fontWeight: '600', color: BRAND.text, marginBottom: '4px' }}>{quiz.title}</div>
                                                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                                    {/* Published/Draft Badge */}
+                                                    {quiz.isPublished ? (
+                                                        <span style={{
+                                                            padding: '2px 8px',
+                                                            borderRadius: '4px',
+                                                            fontSize: '10px',
+                                                            fontWeight: '700',
+                                                            backgroundColor: '#D1FAE5',
+                                                            color: '#065F46',
+                                                            textTransform: 'uppercase',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '3px'
+                                                        }}>
+                                                            <CheckCircle size={10} />
+                                                            Published
+                                                        </span>
+                                                    ) : (
+                                                        <span style={{
+                                                            padding: '2px 8px',
+                                                            borderRadius: '4px',
+                                                            fontSize: '10px',
+                                                            fontWeight: '700',
+                                                            backgroundColor: '#F3F4F6',
+                                                            color: '#6B7280',
+                                                            textTransform: 'uppercase'
+                                                        }}>
+                                                            Draft
+                                                        </span>
+                                                    )}
                                                     {quiz.isMockTest && (
                                                         <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: '700', backgroundColor: '#FEF3C7', color: '#92400E', textTransform: 'uppercase' }}>Mock Test</span>
                                                     )}
@@ -267,6 +413,15 @@ export function QuizManagement() {
                                             </td>
                                         </tr>
                                     ))}
+                                    {filteredQuizzes.length === 0 && quizzes.length > 0 && (
+                                        <tr>
+                                            <td colSpan="4" style={{ padding: '60px 20px', textAlign: 'center', color: BRAND.textMuted }}>
+                                                <Filter size={40} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                                                <p style={{ margin: 0, fontWeight: '500' }}>No quizzes match your filters</p>
+                                                <p style={{ margin: '4px 0 0', fontSize: '13px' }}>Try adjusting your subject or topic filter</p>
+                                            </td>
+                                        </tr>
+                                    )}
                                     {quizzes.length === 0 && (
                                         <tr>
                                             <td colSpan="4" style={{ padding: '60px 20px', textAlign: 'center', color: BRAND.textMuted }}>
