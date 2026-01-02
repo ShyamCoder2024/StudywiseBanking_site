@@ -294,7 +294,7 @@ export function StudentDashboard() {
             const updatedTodos = todos.map(t => t._id === id ? { ...t, isCompleted: !t.isCompleted } : t);
             setTodos(updatedTodos);
 
-            // Also update progress bar state optimistically
+            // Optimistic progress update
             const completedCount = updatedTodos.filter(t => t.isCompleted).length;
             const totalCount = updatedTodos.length;
             setTaskProgress({
@@ -303,10 +303,14 @@ export function StudentDashboard() {
                 percent: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
             });
 
-            await api.patch(`/student/global-tasks/${id}/toggle`);
+            // Call API and sync with server's authoritative progress
+            const response = await api.patch(`/student/global-tasks/${id}/toggle`);
+            if (response.data.progress) {
+                setTaskProgress(response.data.progress);
+            }
         } catch (error) {
-            console.error(error);
-            fetchTodos(); // Revert on error - this will also restore correct progress
+            console.error('Task toggle failed:', error);
+            fetchTodos(); // Revert on error
         }
     };
 

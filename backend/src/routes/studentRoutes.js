@@ -393,14 +393,11 @@ router.patch('/notifications/:id/read', async (req, res, next) => {
     } catch (error) { next(error); }
 });
 
-// ============ Global Tasks ============
 
-// Helper: Get today's 5AM reset time in IST (Indian Standard Time)
+// Helper: Get today's 5AM IST reset time
 // IST is UTC + 5:30, so 5:00 AM IST = 23:30 UTC of the PREVIOUS day
-const getTodayResetTime = () => {
+const getResetTimeForToday = () => {
     const now = new Date();
-
-    // Calculate what 23:30 UTC today would be
     const todayAt2330UTC = new Date(Date.UTC(
         now.getUTCFullYear(),
         now.getUTCMonth(),
@@ -408,121 +405,137 @@ const getTodayResetTime = () => {
         23, 30, 0, 0
     ));
 
-    // 23:30 UTC = 05:00 IST (next day in IST terms)
-    // So if current UTC time is BEFORE 23:30 UTC, the last 5 AM IST reset 
-    // was YESTERDAY at 23:30 UTC
-    // If current UTC time is AFTER 23:30 UTC, the reset was TODAY at 23:30 UTC
-
+    // If current UTC time is BEFORE 23:30 UTC, the last reset was yesterday at 23:30
     if (now.getTime() < todayAt2330UTC.getTime()) {
-        // Before today's 23:30 UTC, so the last reset was yesterday at 23:30 UTC
         todayAt2330UTC.setUTCDate(todayAt2330UTC.getUTCDate() - 1);
     }
-
     return todayAt2330UTC;
 };
 
+// @route   GET /api/student/global-tasks
+// @desc    Get all active tasks with PERSONALIZED completion status for this user
+// @access  Private
 router.get('/global-tasks', async (req, res, next) => {
     try {
-        const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 });
-        // Ensure userId is a string for reliable comparison
-        const userIdStr = req.user._id.toString();
-        const resetTime = getTodayResetTime();
+        // Get current user ID as string for comparison
+        const userId = req.user._id.toString();
+        const resetTime = getResetTimeForToday();
 
-        // Add a 'completed' flag for this user - only if completed after today's reset
-        const tasksWithStatus = tasks.map(t => {
-            const taskObj = t.toObject();
-            const userCompletion = taskObj.completedBy?.find(
-                c => {
-                    const isUser = c.userId?.toString() === userIdStr;
-                    const isAfterReset = new Date(c.completedAt) >= resetTime;
-                    return isUser && isAfterReset;
-                }
-            );
+        // Fetch all active tasks
+        const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+
+        // Map tasks with THIS USER's completion status only
+        const personalizedTasks = tasks.map(task => {
+            // Check if THIS user completed THIS task AFTER today's reset
+            const userCompleted = (task.completedBy || []).some(completion => {
+                const completionUserId = completion.userId?.toString();
+                const completionTime = new Date(completion.completedAt);
+                return completionUserId === userId && completionTime >= resetTime;
+            });
+
             return {
-                ...taskObj,
-                isCompleted: !!userCompletion
+                _id: task._id,
+                content: task.content,
+                tag: task.tag,
+                createdAt: task.createdAt,
+                isCompleted: userCompleted  // PERSONALIZED per user
             };
         });
 
-        // Calculate progress for THIS user only
-        const completedCount = tasksWithStatus.filter(t => t.isCompleted).length;
-        const totalCount = tasksWithStatus.length;
-        const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+        // Calculate THIS USER's personal progress
+        const completedCount = personalizedTasks.filter(t => t.isCompleted).length;
+        const totalCount = personalizedTasks.length;
 
         res.json({
             success: true,
-            data: tasksWithStatus,
+            data: personalizedTasks,
             progress: {
                 completed: completedCount,
                 total: totalCount,
-                percent: progressPercent
+                percent: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
             }
         });
-    } catch (error) { next(error); }
+    } catch (error) {
+        console.error('[GLOBAL-TASKS GET] Error:', error);
+        next(error);
+    }
 });
 
+// @route   PATCH /api/student/global-tasks/:id/toggle
+// @desc    Toggle task completion for THIS USER only (personalized)
+// @access  Private
 router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
     try {
-        const task = await GlobalTask.findById(req.params.id);
-        if (!task) return res.status(404).json({ success: false, message: 'Task not found' });
+        const taskId = req.params.id;
+        const userId = req.user._id;  // Keep as ObjectId for storage
+        const userIdStr = userId.toString();  // String for comparison
+        const resetTime = getResetTimeForToday();
 
-        // Ensure userId is a string for reliable comparison
-        const userIdStr = req.user._id.toString();
-        const resetTime = getTodayResetTime();
-
-        console.log('[TOGGLE DEBUG] User:', userIdStr);
-        console.log('[TOGGLE DEBUG] Task:', task._id, task.content);
-        console.log('[TOGGLE DEBUG] Current completedBy:', JSON.stringify(task.completedBy));
-
-        // Check if user completed after today's reset
-        const existingCompletionIndex = task.completedBy.findIndex(
-            c => c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime
-        );
-
-        const isCompleted = existingCompletionIndex !== -1;
-        console.log('[TOGGLE DEBUG] Is already completed?:', isCompleted);
-
-        if (isCompleted) {
-            // Remove ALL completions for this user for today (fixes duplicate bug)
-            task.completedBy = task.completedBy.filter(c =>
-                !(c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime)
-            );
-            console.log('[TOGGLE DEBUG] Removed completion, new array:', JSON.stringify(task.completedBy));
-        } else {
-            // Add new completion - ensure userId is stored as ObjectId
-            task.completedBy.push({
-                userId: req.user._id,
-                completedAt: new Date()
-            });
-            console.log('[TOGGLE DEBUG] Added completion, new array:', JSON.stringify(task.completedBy));
+        // Find the task
+        const task = await GlobalTask.findById(taskId);
+        if (!task) {
+            return res.status(404).json({ success: false, message: 'Task not found' });
         }
 
-        // CRITICAL: Mark array as modified so Mongoose detects the change
-        task.markModified('completedBy');
-        const savedTask = await task.save();
-        console.log('[TOGGLE DEBUG] Saved! DB completedBy now:', JSON.stringify(savedTask.completedBy));
+        // Initialize completedBy array if it doesn't exist
+        if (!task.completedBy) {
+            task.completedBy = [];
+        }
 
-        // Calculate updated progress for all tasks (so frontend can verify)
-        const allTasks = await GlobalTask.find({ isActive: true });
-        let completedCount = 0;
+        // Check if THIS user already completed today (after reset)
+        const existingIndex = task.completedBy.findIndex(c => {
+            const cUserId = c.userId?.toString();
+            const cTime = new Date(c.completedAt);
+            return cUserId === userIdStr && cTime >= resetTime;
+        });
+
+        const wasCompleted = existingIndex !== -1;
+        let newCompletedState;
+
+        if (wasCompleted) {
+            // UNCOMPLETE: Remove this user's completion for today
+            task.completedBy.splice(existingIndex, 1);
+            newCompletedState = false;
+        } else {
+            // COMPLETE: Add this user's completion
+            task.completedBy.push({
+                userId: userId,
+                completedAt: new Date()
+            });
+            newCompletedState = true;
+        }
+
+        // Save with explicit modification flag
+        task.markModified('completedBy');
+        await task.save();
+
+        // Calculate updated progress for THIS user
+        const allTasks = await GlobalTask.find({ isActive: true }).lean();
+        let userCompletedCount = 0;
+
         allTasks.forEach(t => {
-            const userCompletion = t.completedBy?.find(
-                c => c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime
-            );
-            if (userCompletion) completedCount++;
+            const hasUserCompletion = (t.completedBy || []).some(c => {
+                const cUserId = c.userId?.toString();
+                const cTime = new Date(c.completedAt);
+                return cUserId === userIdStr && cTime >= resetTime;
+            });
+            if (hasUserCompletion) userCompletedCount++;
         });
 
         res.json({
             success: true,
-            data: { isCompleted: !isCompleted },
+            data: {
+                taskId: taskId,
+                isCompleted: newCompletedState
+            },
             progress: {
-                completed: completedCount,
+                completed: userCompletedCount,
                 total: allTasks.length,
-                percent: allTasks.length > 0 ? Math.round((completedCount / allTasks.length) * 100) : 0
+                percent: allTasks.length > 0 ? Math.round((userCompletedCount / allTasks.length) * 100) : 0
             }
         });
     } catch (error) {
-        console.error('[TOGGLE DEBUG] ERROR:', error);
+        console.error('[GLOBAL-TASKS TOGGLE] Error:', error);
         next(error);
     }
 });

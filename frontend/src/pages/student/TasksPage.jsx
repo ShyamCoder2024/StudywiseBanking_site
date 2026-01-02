@@ -39,29 +39,30 @@ export default function TasksPage() {
     };
 
     const toggleTask = async (task) => {
-        console.log('[TOGGLE DEBUG] Toggle clicked for task:', task._id, task.content);
-
-        // Optimistic update
+        // Optimistic update for immediate UI feedback
         const updatedTasks = tasks.map(t =>
             t._id === task._id ? { ...t, isCompleted: !t.isCompleted } : t
         );
         setTasks(updatedTasks);
 
-        // Update progress
-        const completed = updatedTasks.filter(t => t.isCompleted).length;
+        // Optimistic progress update
+        const optimisticCompleted = updatedTasks.filter(t => t.isCompleted).length;
         setProgress({
-            completed,
+            completed: optimisticCompleted,
             total: updatedTasks.length,
-            percent: updatedTasks.length > 0 ? Math.round((completed / updatedTasks.length) * 100) : 0
+            percent: updatedTasks.length > 0 ? Math.round((optimisticCompleted / updatedTasks.length) * 100) : 0
         });
 
         try {
-            console.log('[TOGGLE DEBUG] Calling API:', `/student/global-tasks/${task._id}/toggle`);
             const response = await api.patch(`/student/global-tasks/${task._id}/toggle`);
-            console.log('[TOGGLE DEBUG] API Response:', response.data);
+
+            // Sync with server's authoritative progress
+            if (response.data.progress) {
+                setProgress(response.data.progress);
+            }
         } catch (error) {
-            // Revert on failure
-            console.error('[TOGGLE DEBUG] API Error:', error);
+            // Revert on failure by refetching from server
+            console.error('Task toggle failed:', error);
             fetchTasks();
         }
     };
