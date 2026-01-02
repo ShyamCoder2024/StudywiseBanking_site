@@ -1,8 +1,98 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Attempt, Quiz, Subject, Topic } from '../models/Content.js';
+import GlobalTask from '../models/GlobalTask.js';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+/**
+ * Calculate 7-day to-do list completion performance for a user
+ * Returns daily completion rates showing how well the user completed their tasks
+ */
+async function calculateTodoPerformance(userId) {
+    try {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const trend = [];
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+
+            // Get the reset time for that day (5 AM IST = 23:30 UTC previous day)
+            const dayResetStart = new Date(Date.UTC(
+                date.getUTCFullYear(),
+                date.getUTCMonth(),
+                date.getUTCDate() - 1,  // Previous day
+                23, 30, 0, 0
+            ));
+            const dayResetEnd = new Date(dayResetStart);
+            dayResetEnd.setUTCDate(dayResetEnd.getUTCDate() + 1);
+
+            // Get all tasks that were active on that day
+            const tasksOnDay = await GlobalTask.find({
+                isActive: true,
+                createdAt: { $lte: dayResetEnd }
+            }).lean();
+
+            // Count how many the user completed on that day
+            let completed = 0;
+            tasksOnDay.forEach(task => {
+                const userCompletion = (task.completedBy || []).find(c => {
+                    const cUserId = c.userId?.toString();
+                    const cTime = new Date(c.completedAt);
+                    return cUserId === userId.toString() &&
+                        cTime >= dayResetStart &&
+                        cTime < dayResetEnd;
+                });
+                if (userCompletion) completed++;
+            });
+
+            const totalTasks = tasksOnDay.length;
+            const completionRate = totalTasks > 0 ? Math.round((completed / totalTasks) * 100) : 0;
+
+            trend.push({
+                day: dayName,
+                date: dateStr,
+                completed: completed,
+                total: totalTasks,
+                rate: completionRate
+            });
+        }
+
+        // Calculate message based on recent performance
+        const avgRate = trend.filter(d => d.total > 0).reduce((sum, d) => sum + d.rate, 0) /
+            Math.max(1, trend.filter(d => d.total > 0).length);
+
+        let message = '';
+        if (avgRate >= 80) {
+            message = "Excellent consistency! You're completing most of your daily tasks. 🎯";
+        } else if (avgRate >= 60) {
+            message = "Good progress! Try to complete all tasks daily for better results. 💪";
+        } else if (avgRate >= 40) {
+            message = "You're making an effort. Focus on completing at least 80% daily. 📈";
+        } else if (avgRate > 0) {
+            message = "Your completion rate is low. Small daily wins lead to big results! 🌱";
+        } else {
+            message = "No tasks completed recently. Start with one task at a time! 🚀";
+        }
+
+        return {
+            trend,
+            averageRate: Math.round(avgRate),
+            message
+        };
+    } catch (error) {
+        console.error('[Todo Performance] Error:', error);
+        return {
+            trend: [],
+            averageRate: 0,
+            message: "Unable to calculate task performance."
+        };
+    }
+}
 
 /**
  * Generate personalized AI analysis for a student based on their quiz performance
@@ -238,6 +328,9 @@ export async function generateStudentAnalysis(userId) {
         };
         const performanceTrend = calculatePerformanceTrend();
 
+        // Calculate 7-day to-do list completion performance
+        const todoPerformance = await calculateTodoPerformance(userId);
+
         // Calculate Subject Strengths and Weaknesses
         const subjectStrengths = [];
         const subjectWeaknesses = [];
@@ -354,6 +447,8 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 // Real ranking and weekly data
                 rankData,
                 weeklyChange: calculateWeeklyChange(performanceTrend),
+                // 7-day to-do list performance
+                todoPerformance,
                 aiGenerated: true
             };
         } catch (aiError) {
@@ -378,6 +473,8 @@ Example tone: "Great progress in Quantitative Aptitude at 85%! For your IBPS pre
                 // Real ranking and weekly data
                 rankData,
                 weeklyChange: calculateWeeklyChange(performanceTrend),
+                // 7-day to-do list performance
+                todoPerformance,
                 aiGenerated: false
             };
         }
