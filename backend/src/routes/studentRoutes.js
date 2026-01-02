@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import express from 'express';
 import { protect, studentOnly } from '../middleware/authMiddleware.js';
 import { cacheMiddleware, CACHE_DURATIONS } from '../middleware/cacheMiddleware.js';
@@ -481,9 +482,12 @@ router.get('/global-tasks', async (req, res, next) => {
 router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
     try {
         const taskId = req.params.id;
-        const userId = req.user._id;  // Keep as ObjectId for storage
-        const userIdStr = userId.toString();  // String for comparison
+        // CRITICAL: req.user._id is a STRING from JWT, convert to ObjectId for storage
+        const userIdStr = req.user._id.toString();
+        const userIdObjectId = new mongoose.Types.ObjectId(req.user._id);
         const resetTime = getResetTimeForToday();
+
+        console.log('[TOGGLE] User:', userIdStr, 'Task:', taskId);
 
         // Find the task
         const task = await GlobalTask.findById(taskId);
@@ -496,11 +500,14 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
             task.completedBy = [];
         }
 
+        console.log('[TOGGLE] Current completedBy count:', task.completedBy.length);
+
         // Check if THIS user already completed today (after reset)
         const existingIndex = task.completedBy.findIndex(c => {
             const cUserId = c.userId?.toString();
             const cTime = new Date(c.completedAt);
-            return cUserId === userIdStr && cTime >= resetTime;
+            const isMatch = cUserId === userIdStr && cTime >= resetTime;
+            return isMatch;
         });
 
         const wasCompleted = existingIndex !== -1;
@@ -510,18 +517,22 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
             // UNCOMPLETE: Remove this user's completion for today
             task.completedBy.splice(existingIndex, 1);
             newCompletedState = false;
+            console.log('[TOGGLE] Removed completion for user:', userIdStr);
         } else {
-            // COMPLETE: Add this user's completion
+            // COMPLETE: Add this user's completion with proper ObjectId
             task.completedBy.push({
-                userId: userId,
+                userId: userIdObjectId,  // Store as ObjectId
                 completedAt: new Date()
             });
             newCompletedState = true;
+            console.log('[TOGGLE] Added completion for user:', userIdStr);
         }
 
         // Save with explicit modification flag
         task.markModified('completedBy');
         await task.save();
+
+        console.log('[TOGGLE] Saved. New completedBy count:', task.completedBy.length);
 
         // Calculate updated progress for THIS user
         const allTasks = await GlobalTask.find({ isActive: true }).lean();
@@ -536,6 +547,13 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
             if (hasUserCompletion) userCompletedCount++;
         });
 
+        // Set no-cache headers
+        res.set({
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json({
             success: true,
             data: {
@@ -546,7 +564,9 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
                 completed: userCompletedCount,
                 total: allTasks.length,
                 percent: allTasks.length > 0 ? Math.round((userCompletedCount / allTasks.length) * 100) : 0
-            }
+            },
+            _apiVersion: 'v2-personalized',
+            _userId: userIdStr.substring(0, 8) + '...'
         });
     } catch (error) {
         console.error('[GLOBAL-TASKS TOGGLE] Error:', error);
