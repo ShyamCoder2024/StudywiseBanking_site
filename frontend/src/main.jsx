@@ -136,9 +136,9 @@ function showUpdateNotification(registration) {
       }
     </style>
     <div id="sw-update-card">
-      <span class="update-icon">🚀</span>
-      <div class="update-title">New Version Available!</div>
-      <div class="update-desc">A new version of StudyWise is ready. Update now for the best experience.</div>
+      <span class="update-icon">✨</span>
+      <div class="update-title">New Features Available!</div>
+      <div class="update-desc">Premium members now get a verified blue tick on their profile! Plus, faster loading and smoother experience.</div>
       <div class="update-buttons">
         <button class="btn-update" id="sw-update-btn">Update Now</button>
         <button class="btn-later" id="sw-dismiss-btn">Later</button>
