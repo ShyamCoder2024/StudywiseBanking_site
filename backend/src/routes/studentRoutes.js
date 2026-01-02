@@ -395,17 +395,31 @@ router.patch('/notifications/:id/read', async (req, res, next) => {
 
 // ============ Global Tasks ============
 
-// Helper: Get today's 5AM reset time
+// Helper: Get today's 5AM reset time in IST (Indian Standard Time)
+// IST is UTC + 5:30
+// 5:00 AM IST = Previous Day 23:30 UTC
 const getTodayResetTime = () => {
     const now = new Date();
-    const reset = new Date(now);
-    reset.setHours(5, 0, 0, 0);
 
-    // If it's before 5 AM, use yesterday's 5 AM
-    if (now < reset) {
-        reset.setDate(reset.getDate() - 1);
+    // Shift current time to IST frame (UTC + 5.5 hours)
+    // We work with "Virtual IST" time by adding the offset to UTC timestamp
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    const virtualISTTime = new Date(now.getTime() + IST_OFFSET_MS);
+
+    // Create a reset target at 5:00 AM in this Virtual IST frame
+    const resetTargetVirtual = new Date(virtualISTTime);
+    resetTargetVirtual.setUTCHours(5, 0, 0, 0);
+
+    // If currently before 5 AM IST, the relevant reset was yesterday
+    if (virtualISTTime < resetTargetVirtual) {
+        resetTargetVirtual.setUTCDate(resetTargetVirtual.getUTCDate() - 1);
     }
-    return reset;
+
+    // Convert back from Virtual IST to Real UTC
+    // Real = Virtual - Offset
+    const resetTimeReal = new Date(resetTargetVirtual.getTime() - IST_OFFSET_MS);
+
+    return resetTimeReal;
 };
 
 router.get('/global-tasks', async (req, res, next) => {
@@ -418,7 +432,11 @@ router.get('/global-tasks', async (req, res, next) => {
         const tasksWithStatus = tasks.map(t => {
             const taskObj = t.toObject();
             const userCompletion = taskObj.completedBy?.find(
-                c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+                c => {
+                    const isUser = c.userId?.toString() === userId.toString();
+                    const isAfterReset = new Date(c.completedAt) >= resetTime;
+                    return isUser && isAfterReset;
+                }
             );
             return {
                 ...taskObj,
