@@ -42,57 +42,108 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Show a subtle update notification
+// Show a beautiful update notification (mobile-first design)
 function showUpdateNotification(registration) {
+  // Remove existing notification if any
+  const existing = document.getElementById('sw-update-notification');
+  if (existing) existing.remove();
+
   // Create update notification element
   const notification = document.createElement('div');
   notification.id = 'sw-update-notification';
   notification.innerHTML = `
-    <div style="
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #8A75BA 0%, #6B5B9A 100%);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(138, 117, 186, 0.4);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      animation: slideUp 0.3s ease-out;
-    ">
-      <span>🚀 New version available!</span>
-      <button id="sw-update-btn" style="
-        background: white;
-        color: #6B5B9A;
-        border: none;
-        padding: 6px 14px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 13px;
-      ">Update</button>
-      <button id="sw-dismiss-btn" style="
-        background: transparent;
+    <style>
+      @keyframes swSlideUp {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes swPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      #sw-update-card {
+        position: fixed;
+        bottom: 100px;
+        left: 16px;
+        right: 16px;
+        max-width: 360px;
+        margin: 0 auto;
+        background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+        border: 1px solid rgba(138, 117, 186, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(138, 117, 186, 0.2);
+        z-index: 99999;
+        animation: swSlideUp 0.4s ease-out;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      #sw-update-card .update-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        display: block;
+        text-align: center;
+      }
+      #sw-update-card .update-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      #sw-update-card .update-desc {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 20px;
+        line-height: 1.4;
+      }
+      #sw-update-card .update-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      #sw-update-card .btn-update {
+        background: linear-gradient(135deg, #8A75BA 0%, #6B5B9A 100%);
         color: white;
         border: none;
-        padding: 4px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
         cursor: pointer;
-        opacity: 0.8;
-        font-size: 16px;
-      ">✕</button>
-    </div>
-    <style>
-      @keyframes slideUp {
-        from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        transition: all 0.2s ease;
+        flex: 1;
+        max-width: 160px;
+      }
+      #sw-update-card .btn-update:active {
+        transform: scale(0.95);
+      }
+      #sw-update-card .btn-later {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex: 1;
+        max-width: 160px;
+      }
+      #sw-update-card .btn-later:active {
+        transform: scale(0.95);
       }
     </style>
+    <div id="sw-update-card">
+      <span class="update-icon">🚀</span>
+      <div class="update-title">New Version Available!</div>
+      <div class="update-desc">A new version of StudyWise is ready. Update now for the best experience.</div>
+      <div class="update-buttons">
+        <button class="btn-update" id="sw-update-btn">Update Now</button>
+        <button class="btn-later" id="sw-dismiss-btn">Later</button>
+      </div>
+    </div>
   `;
 
   document.body.appendChild(notification);
@@ -103,7 +154,6 @@ function showUpdateNotification(registration) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
     }
     notification.remove();
-    // Reload to get new version
     window.location.reload();
   });
 
@@ -112,12 +162,12 @@ function showUpdateNotification(registration) {
     notification.remove();
   });
 
-  // Auto-dismiss after 30 seconds
+  // Auto-dismiss after 60 seconds
   setTimeout(() => {
     if (document.getElementById('sw-update-notification')) {
       notification.remove();
     }
-  }, 30000);
+  }, 60000);
 }
 
 createRoot(document.getElementById('root')).render(
