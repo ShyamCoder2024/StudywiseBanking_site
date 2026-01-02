@@ -119,10 +119,7 @@
         display: grid;
     }
 
-    /* Body padding to push content above fixed navbar */
-    body {
-        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 20px) !important;
-    }
+    /* Body padding handled by global styles/index.css - no duplicate here */
 }
 
 /* ============================================
