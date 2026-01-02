@@ -490,7 +490,25 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         }
         await task.save();
 
-        res.json({ success: true, data: { isCompleted: !isCompleted } });
+        // Calculate updated progress for all tasks (so frontend can verify)
+        const allTasks = await GlobalTask.find({ isActive: true });
+        let completedCount = 0;
+        allTasks.forEach(t => {
+            const userCompletion = t.completedBy?.find(
+                c => c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime
+            );
+            if (userCompletion) completedCount++;
+        });
+
+        res.json({
+            success: true,
+            data: { isCompleted: !isCompleted },
+            progress: {
+                completed: completedCount,
+                total: allTasks.length,
+                percent: allTasks.length > 0 ? Math.round((completedCount / allTasks.length) * 100) : 0
+            }
+        });
     } catch (error) { next(error); }
 });
 
