@@ -477,8 +477,10 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         const isCompleted = existingCompletionIndex !== -1;
 
         if (isCompleted) {
-            // Remove completion
-            task.completedBy.splice(existingCompletionIndex, 1);
+            // Remove ALL completions for this user for today (fixes duplicate bug)
+            task.completedBy = task.completedBy.filter(c =>
+                !(c.userId?.toString() === userId.toString() && new Date(c.completedAt) >= resetTime)
+            );
         } else {
             // Add new completion
             task.completedBy.push({

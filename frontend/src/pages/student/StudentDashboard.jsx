@@ -684,7 +684,7 @@ export function StudentDashboard() {
                     >
                         <div className="tile-header">
                             <h3><ClipboardList size={20} /> Today's Plan</h3>
-                            <span className="badge">{todos.filter(t => !t.done).length}</span>
+                            <span className="badge">{todos.filter(t => !t.isCompleted).length}</span>
                         </div>
                         <div className="todo-list-bento">
                             {!todosLoaded ? (
