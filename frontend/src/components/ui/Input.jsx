@@ -1,9 +1,14 @@
 import './Input.css';
 
+// Generate unique ID for form fields without explicit name
+let inputIdCounter = 0;
+const generateId = (prefix = 'input') => `${prefix}-${++inputIdCounter}`;
+
 export function Input({
     label,
     type = 'text',
     name,
+    id,
     value,
     onChange,
     placeholder,
@@ -11,9 +16,28 @@ export function Input({
     helper,
     required = false,
     disabled = false,
+    autoComplete,
     className = '',
     ...props
 }) {
+    // Generate fallback id if not provided
+    const inputId = id || name || generateId('input');
+    const inputName = name || inputId;
+
+    // Auto-determine autocomplete based on type/name if not provided
+    const getAutoComplete = () => {
+        if (autoComplete) return autoComplete;
+        if (type === 'email') return 'email';
+        if (type === 'password') return 'current-password';
+        if (type === 'tel') return 'tel';
+        if (inputName?.includes('firstName')) return 'given-name';
+        if (inputName?.includes('lastName')) return 'family-name';
+        if (inputName?.includes('name')) return 'name';
+        if (inputName?.includes('city')) return 'address-level2';
+        if (inputName?.includes('age')) return 'off';
+        return 'off';
+    };
+
     const inputClasses = [
         'form-input',
         error && 'error',
@@ -23,20 +47,21 @@ export function Input({
     return (
         <div className="form-group">
             {label && (
-                <label htmlFor={name} className="form-label">
+                <label htmlFor={inputId} className="form-label">
                     {label}
                     {required && <span className="text-warning"> *</span>}
                 </label>
             )}
             <input
                 type={type}
-                id={name}
-                name={name}
+                id={inputId}
+                name={inputName}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
                 disabled={disabled}
                 required={required}
+                autoComplete={getAutoComplete()}
                 className={inputClasses}
                 {...props}
             />
