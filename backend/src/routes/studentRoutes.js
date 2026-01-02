@@ -421,6 +421,9 @@ router.get('/global-tasks', async (req, res, next) => {
         const userId = req.user._id.toString();
         const resetTime = getResetTimeForToday();
 
+        console.log('[GLOBAL-TASKS] User ID:', userId);
+        console.log('[GLOBAL-TASKS] Reset time:', resetTime.toISOString());
+
         // Fetch all active tasks
         const tasks = await GlobalTask.find({ isActive: true }).sort({ createdAt: -1 }).lean();
 
@@ -446,6 +449,15 @@ router.get('/global-tasks', async (req, res, next) => {
         const completedCount = personalizedTasks.filter(t => t.isCompleted).length;
         const totalCount = personalizedTasks.length;
 
+        console.log('[GLOBAL-TASKS] User', userId.substring(0, 8), '- Completed:', completedCount, '/', totalCount);
+
+        // Set no-cache headers to prevent stale data
+        res.set({
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json({
             success: true,
             data: personalizedTasks,
@@ -453,7 +465,9 @@ router.get('/global-tasks', async (req, res, next) => {
                 completed: completedCount,
                 total: totalCount,
                 percent: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
-            }
+            },
+            _apiVersion: 'v2-personalized',  // Version identifier to confirm deployment
+            _userId: userId.substring(0, 8) + '...'  // Debug: partial user ID
         });
     } catch (error) {
         console.error('[GLOBAL-TASKS GET] Error:', error);
