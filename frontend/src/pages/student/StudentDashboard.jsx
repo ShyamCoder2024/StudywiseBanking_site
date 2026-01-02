@@ -257,15 +257,20 @@ export function StudentDashboard() {
     };
 
     // Computed values: Use real data if available, otherwise mock
-    const hasRealData = dashboardData && dashboardData.totalAttempts > 0;
+    // CRITICAL FIX: XP and Streak should ALWAYS come from real dashboardData (even if 0)
+    // Only use mock data for accuracy/performance metrics if user has no quiz attempts
+    const hasRealData = dashboardData !== null;
+    const hasQuizAttempts = dashboardData && dashboardData.totalAttempts > 0;
 
     const stats = {
-        xpPoints: hasRealData ? dashboardData.xpPoints : MOCK_DASHBOARD_DATA.userStats.points,
-        streak: hasRealData ? dashboardData.streakCount : MOCK_DASHBOARD_DATA.userStats.streak,
-        accuracy: hasRealData ? dashboardData.accuracy : MOCK_DASHBOARD_DATA.userStats.accuracy,
+        // XP and Streak: Always use real values from backend (they come from User model, not attempts)
+        xpPoints: hasRealData ? (dashboardData.xpPoints ?? 0) : MOCK_DASHBOARD_DATA.userStats.points,
+        streak: hasRealData ? (dashboardData.streakCount ?? 0) : MOCK_DASHBOARD_DATA.userStats.streak,
+        // Accuracy: Use mock only if no quiz attempts (this metric requires attempts)
+        accuracy: hasQuizAttempts ? dashboardData.accuracy : MOCK_DASHBOARD_DATA.userStats.accuracy,
     };
 
-    const performanceData = hasRealData && dashboardData.performanceGraph?.length > 0
+    const performanceData = hasQuizAttempts && dashboardData.performanceGraph?.length > 0
         ? dashboardData.performanceGraph.map(p => p.score)
         : MOCK_DASHBOARD_DATA.performance;
 
