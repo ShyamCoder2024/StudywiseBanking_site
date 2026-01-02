@@ -1,10 +1,10 @@
 /* StudentDashboard.css - Final Polish */
 
 .bento-dashboard {
-    padding-bottom: 24px;
     padding-top: 24px;
     background: var(--color-bg);
     min-height: 100vh;
+    /* Bottom padding handled by global styles/index.css for mobile */
 }
 
 .dashboard-container {
@@ -192,7 +192,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     grid-auto-flow: dense;
-    padding-bottom: 40px;
+    /* Bottom padding removed - handled by global styles for mobile navbar clearance */
 }
 
 .bento-tile {
