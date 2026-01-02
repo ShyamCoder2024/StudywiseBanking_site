@@ -101,3 +101,38 @@
         transform: rotate(0deg);
     }
 }
+
+/* ============================================
+   MOBILE RESPONSIVE - Smaller toggle
+   ============================================ */
+@media (max-width: 768px) {
+    .theme-switch {
+        width: 50px;
+        height: 26px;
+    }
+
+    .theme-slider::before {
+        height: 22px;
+        width: 22px;
+    }
+
+    .theme-slider.dark::before {
+        transform: translateX(24px);
+    }
+
+    .theme-sun svg,
+    .theme-moon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .theme-sun svg {
+        top: 5px;
+        left: 28px;
+    }
+
+    .theme-moon svg {
+        top: 5px;
+        left: 4px;
+    }
+}
