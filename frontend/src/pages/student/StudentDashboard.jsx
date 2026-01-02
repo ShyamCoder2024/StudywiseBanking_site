@@ -196,12 +196,16 @@ export function StudentDashboard() {
 
     const fetchNewQuizzes = async (isMounted = true) => {
         try {
-            const res = await api.get('/student/quizzes/all');
-            if (isMounted) {
+            // Add cache-busting timestamp to ensure fresh data on every fetch
+            // This prevents stale cache from showing incorrect quiz counts
+            const timestamp = new Date().getTime();
+            const res = await api.get(`/student/quizzes/all?_t=${timestamp}`);
+            if (isMounted && res.data.success) {
+                // Backend already correctly categorizes active vs completed
+                // Active = published quizzes not yet submitted by this user
+                // No additional filtering needed - trust backend response
                 const activeQuizzes = res.data.data?.active || [];
-                // Filter quizzes that are not expired
-                const pendingQuizzes = activeQuizzes.filter(q => !q.isExpired);
-                setNewQuizzes(pendingQuizzes);
+                setNewQuizzes(activeQuizzes);
             }
         } catch (error) {
             console.error('Failed to fetch quizzes:', error);

@@ -118,6 +118,19 @@ const PageTransition = ({ children }) => (
   </Suspense>
 );
 
+// ScrollToTop - Ensures every page navigation starts from the top
+// This fixes the mobile UX issue where pages were opening from the middle
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Scroll to top instantly on route change
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  return null;
+}
+
 function AppContent() {
   const { isAdmin } = useAuth();
   const location = useLocation();
@@ -149,6 +162,7 @@ function AppContent() {
 
   return (
     <>
+      <ScrollToTop />
       {showNavbar && <Navbar />}
 
       <AnimatePresence mode="wait">

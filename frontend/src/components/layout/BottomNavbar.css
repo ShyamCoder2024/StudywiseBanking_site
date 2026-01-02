@@ -109,13 +109,32 @@
    MOBILE: Show bottom nav
    ============================================ */
 @media (max-width: 768px) {
+
+    /* Define bottom navbar height as CSS variable for consistent use */
+    :root {
+        --bottom-nav-height: 86px;
+        /* Base height + safe area will be added */
+    }
+
     .bottom-navbar {
         display: grid;
     }
 
-    /* Add padding to body to account for bottom nav - reduced for compact design */
+    /* Add padding to body to account for bottom nav - using CSS variable */
     body {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Ensure all main page containers have proper bottom spacing */
+    .page,
+    .dashboard-container,
+    .bento-dashboard,
+    .test-center-page,
+    .courses-page,
+    .subjects-page,
+    .profile-page,
+    .content-page {
+        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 20px) !important;
     }
 }
 

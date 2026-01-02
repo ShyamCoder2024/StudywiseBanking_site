@@ -345,3 +345,45 @@ body,
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+/* ============================================
+   MOBILE: Bottom Navigation Overlap Prevention
+   Universal fix for all student pages
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* Ensure the main content area has proper bottom spacing */
+  #root>div:not(.bottom-navbar),
+  main,
+  .page-content,
+  .quiz-grid,
+  .leaderboard-page,
+  .ai-analysis-page,
+  .tasks-page,
+  .performance-page {
+    padding-bottom: 100px !important;
+  }
+
+  /* Fix for specific page containers that scroll */
+  .test-center-container,
+  .course-list,
+  .subject-grid,
+  .topics-grid,
+  .quiz-list-container {
+    padding-bottom: 120px !important;
+  }
+
+  /* Ensure cards at the bottom aren't hidden */
+  .bento-grid,
+  .quiz-grid,
+  .course-grid,
+  .content-grid {
+    padding-bottom: 40px;
+  }
+
+  /* Fixed bottom elements should stay above the nav */
+  .bottom-fixed,
+  .floating-action-btn {
+    bottom: calc(86px + env(safe-area-inset-bottom, 0px) + 16px) !important;
+  }
+}
