@@ -110,9 +110,9 @@
    ============================================ */
 @media (max-width: 768px) {
 
-    /* Bottom navbar height + proper gap */
+    /* Bottom navbar height (86px) + proper gap (14px) */
     :root {
-        --bottom-nav-height: 85px;
+        --bottom-nav-height: 100px;
     }
 
     .bottom-navbar {
