@@ -88,14 +88,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #1d9bf0;
     flex-shrink: 0;
     animation: badge-pop 0.3s ease-out;
 }
 
-.verified-badge svg {
-    fill: #1d9bf0;
-    stroke: #1d9bf0;
+.verified-badge svg.instagram-badge {
+    width: 22px;
+    height: 22px;
 }
 
 @keyframes badge-pop {
@@ -113,6 +112,7 @@
         opacity: 1;
     }
 }
+
 
 .badge-age {
     background: var(--color-bg);
@@ -658,7 +658,7 @@
         font-size: 1.2rem;
     }
 
-    .verified-badge svg {
+    .verified-badge svg.instagram-badge {
         width: 18px;
         height: 18px;
     }
