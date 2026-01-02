@@ -9,7 +9,7 @@ import { AvatarDisplay } from '../components/ui/AvatarDisplay';
 import { SunMoonToggle } from '../components/ui/SunMoonToggle';
 import {
     CheckCircle2, Target, Pencil, Lock, Bell, LogOut,
-    ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin, CreditCard, BookOpenCheck, Moon, Sun
+    ChevronRight, ClipboardList, TrendingUp, Flame, X, MapPin, CreditCard, BookOpenCheck, Moon, Sun, BadgeCheck
 } from 'lucide-react';
 import { CARTOON_AVATARS } from '../utils/avatars';
 import api from '../services/api';
@@ -169,6 +169,12 @@ export function ProfilePage() {
                         <div className="profile-info">
                             <div className="profile-name-line">
                                 <h1>{formData.firstName} {formData.lastName}</h1>
+                                {/* Instagram-style Blue Tick for Paid Users */}
+                                {enrollment.isPaid && (
+                                    <span className="verified-badge" title="Premium Member">
+                                        <BadgeCheck size={22} />
+                                    </span>
+                                )}
                                 {formData.age && <span className="badge-age">{formData.age} yrs</span>}
                             </div>
                             <div className="profile-meta">

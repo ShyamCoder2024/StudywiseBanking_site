@@ -70,7 +70,7 @@
 .profile-name-line {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 6px;
 }
@@ -83,6 +83,37 @@
     white-space: nowrap;
 }
 
+/* Instagram-style Verified Blue Tick Badge */
+.verified-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #1d9bf0;
+    flex-shrink: 0;
+    animation: badge-pop 0.3s ease-out;
+}
+
+.verified-badge svg {
+    fill: #1d9bf0;
+    stroke: #1d9bf0;
+}
+
+@keyframes badge-pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 .badge-age {
     background: var(--color-bg);
     padding: 4px 12px;
@@ -92,6 +123,7 @@
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
 }
+
 
 .profile-meta {
     display: flex;
@@ -624,6 +656,11 @@
 
     .profile-name-line h1 {
         font-size: 1.2rem;
+    }
+
+    .verified-badge svg {
+        width: 18px;
+        height: 18px;
     }
 
     .badge-age {
