@@ -470,29 +470,37 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
         const userIdStr = req.user._id.toString();
         const resetTime = getTodayResetTime();
 
+        console.log('[TOGGLE DEBUG] User:', userIdStr);
+        console.log('[TOGGLE DEBUG] Task:', task._id, task.content);
+        console.log('[TOGGLE DEBUG] Current completedBy:', JSON.stringify(task.completedBy));
+
         // Check if user completed after today's reset
         const existingCompletionIndex = task.completedBy.findIndex(
             c => c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime
         );
 
         const isCompleted = existingCompletionIndex !== -1;
+        console.log('[TOGGLE DEBUG] Is already completed?:', isCompleted);
 
         if (isCompleted) {
             // Remove ALL completions for this user for today (fixes duplicate bug)
             task.completedBy = task.completedBy.filter(c =>
                 !(c.userId?.toString() === userIdStr && new Date(c.completedAt) >= resetTime)
             );
+            console.log('[TOGGLE DEBUG] Removed completion, new array:', JSON.stringify(task.completedBy));
         } else {
             // Add new completion - ensure userId is stored as ObjectId
             task.completedBy.push({
                 userId: req.user._id,
                 completedAt: new Date()
             });
+            console.log('[TOGGLE DEBUG] Added completion, new array:', JSON.stringify(task.completedBy));
         }
 
         // CRITICAL: Mark array as modified so Mongoose detects the change
         task.markModified('completedBy');
-        await task.save();
+        const savedTask = await task.save();
+        console.log('[TOGGLE DEBUG] Saved! DB completedBy now:', JSON.stringify(savedTask.completedBy));
 
         // Calculate updated progress for all tasks (so frontend can verify)
         const allTasks = await GlobalTask.find({ isActive: true });
@@ -513,7 +521,10 @@ router.patch('/global-tasks/:id/toggle', async (req, res, next) => {
                 percent: allTasks.length > 0 ? Math.round((completedCount / allTasks.length) * 100) : 0
             }
         });
-    } catch (error) { next(error); }
+    } catch (error) {
+        console.error('[TOGGLE DEBUG] ERROR:', error);
+        next(error);
+    }
 });
 
 // ============ Leaderboard ============
