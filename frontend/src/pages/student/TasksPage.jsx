@@ -39,6 +39,8 @@ export default function TasksPage() {
     };
 
     const toggleTask = async (task) => {
+        console.log('[TOGGLE DEBUG] Toggle clicked for task:', task._id, task.content);
+
         // Optimistic update
         const updatedTasks = tasks.map(t =>
             t._id === task._id ? { ...t, isCompleted: !t.isCompleted } : t
@@ -54,10 +56,12 @@ export default function TasksPage() {
         });
 
         try {
-            await api.patch(`/student/global-tasks/${task._id}/toggle`);
+            console.log('[TOGGLE DEBUG] Calling API:', `/student/global-tasks/${task._id}/toggle`);
+            const response = await api.patch(`/student/global-tasks/${task._id}/toggle`);
+            console.log('[TOGGLE DEBUG] API Response:', response.data);
         } catch (error) {
             // Revert on failure
-            console.error('Failed to update task', error);
+            console.error('[TOGGLE DEBUG] API Error:', error);
             fetchTasks();
         }
     };
