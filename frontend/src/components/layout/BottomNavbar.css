@@ -110,21 +110,19 @@
    ============================================ */
 @media (max-width: 768px) {
 
-    /* Minimal bottom navbar height - just what's needed */
+    /* Bottom navbar height - 80px for the nav + safe area */
     :root {
-        --bottom-nav-height: 70px;
+        --bottom-nav-height: 80px;
     }
 
     .bottom-navbar {
         display: grid;
     }
 
-    /* Minimal body padding - just enough to clear the fixed navbar */
+    /* Body padding to push content above fixed navbar */
     body {
-        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 20px) !important;
     }
-
-    /* Removed excessive page container padding to eliminate the large gap */
 }
 
 /* ============================================

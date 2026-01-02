@@ -347,13 +347,12 @@ body,
 }
 
 /* ============================================
-   MOBILE: Bottom Navigation - Minimal Gap
-   Body padding handles the navbar, no extra needed
+   MOBILE: Bottom Navigation - Proper Clearance
    ============================================ */
 @media (max-width: 768px) {
 
-  /* Only apply minimal extra padding where absolutely needed */
+  /* Floating buttons should stay above the navbar */
   .floating-action-btn {
-    bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px) + 12px) !important;
   }
 }
