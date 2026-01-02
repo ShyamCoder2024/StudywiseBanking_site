@@ -494,25 +494,27 @@
     .profile-main {
         display: flex;
         align-items: flex-start;
-        padding: 20px 40px 30px;
-        gap: 24px;
-        margin-top: -60px;
+        padding: 24px 40px 32px;
+        gap: 28px;
+        margin-top: -55px;
         flex-wrap: nowrap;
     }
 
     .profile-avatar-wrap {
         flex-shrink: 0;
+        margin-top: 0;
     }
 
     .profile-info {
         flex: 1;
         min-width: 0;
-        padding-top: 35px;
-        /* Push text below the banner area */
+        padding-top: 60px;
+        /* Push text content well below the purple banner */
     }
 
     .profile-name-line {
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+        align-items: center;
     }
 
     .profile-name-line h1 {
@@ -522,6 +524,7 @@
 
     .badge-age {
         font-size: 0.85rem;
+        padding: 5px 14px;
     }
 
     .profile-meta {
@@ -539,10 +542,10 @@
     .btn-edit-profile {
         padding: 12px 28px;
         font-size: 0.9rem;
-        align-self: center;
+        align-self: flex-start;
         flex-shrink: 0;
-        margin-top: 30px;
-        /* Align with text content */
+        margin-top: 60px;
+        /* Align with the profile info content */
     }
 }
 
