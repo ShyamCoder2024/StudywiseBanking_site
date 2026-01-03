@@ -1,8 +1,8 @@
 // Service Worker for StudyWise Banking PWA
 // Enhanced for native app-like experience with aggressive caching
-// VERSION: v11 - To-Do list fix + Bug fixes notification
+// VERSION: v12 - To-Do list fix + Bug fixes notification
 
-const CACHE_VERSION = 'v11';
+const CACHE_VERSION = 'v12';
 const STATIC_CACHE = `studywise-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `studywise-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `studywise-api-${CACHE_VERSION}`;
