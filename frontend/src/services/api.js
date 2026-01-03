@@ -29,6 +29,27 @@ api.interceptors.request.use(
 
         // Check cache for GET requests (stale-while-revalidate pattern)
         if (config.method === 'get') {
+            // CRITICAL FIX: Skip caching for personalized endpoints
+            // These endpoints return PER-USER data and must NEVER be cached by URL alone
+            // Caching them causes User A's data to be served to User B (global state bug)
+            const personalizedEndpoints = [
+                '/global-tasks',     // To-do list with per-user completion status
+                '/tasks',            // User-assigned tasks
+                '/dashboard',        // Dashboard has per-user stats
+                '/enrollment',       // Per-user enrollment status
+            ];
+
+            const isPersonalizedEndpoint = personalizedEndpoints.some(endpoint =>
+                config.url?.includes(endpoint)
+            );
+
+            if (isPersonalizedEndpoint) {
+                // Skip cache entirely for personalized data
+                // Mark this request so response interceptor also skips caching
+                config._skipCache = true;
+                return config;
+            }
+
             const cacheKey = `${config.baseURL}${config.url}`;
             const cached = apiCache.get(cacheKey);
 
@@ -56,8 +77,8 @@ api.interceptors.request.use(
 // Response interceptor to handle caching and errors
 api.interceptors.response.use(
     (response) => {
-        // Cache successful GET responses
-        if (response.config.method === 'get' && response.status === 200) {
+        // Cache successful GET responses (skip personalized endpoints)
+        if (response.config.method === 'get' && response.status === 200 && !response.config._skipCache) {
             const cacheKey = `${response.config.baseURL}${response.config.url}`;
             apiCache.set(cacheKey, {
                 data: response.data,
