@@ -205,26 +205,46 @@ router.post('/quizzes/:id/submit', protect, async (req, res, next) => {
         // Ensure XP doesn't go negative
         xpEarned = Math.max(0, xpEarned);
 
-        // === STREAK CALCULATION ===
+        // === STREAK CALCULATION (IST-aware) ===
+        // Use 5 AM IST as day boundary (same as to-do list)
+        // IST is UTC + 5:30, so 5 AM IST = 23:30 UTC previous day
         const user = await User.findById(req.user._id);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+
+        // Helper function to get IST day start (5 AM IST = 23:30 UTC previous day)
+        const getISTDayStart = (date) => {
+            const d = new Date(date);
+            // Get current date at 23:30 UTC (5 AM IST)
+            const dayStartUTC = new Date(Date.UTC(
+                d.getUTCFullYear(),
+                d.getUTCMonth(),
+                d.getUTCDate(),
+                23, 30, 0, 0
+            ));
+            // If current time is before 23:30 UTC, we're still in "yesterday" IST day
+            if (d.getTime() < dayStartUTC.getTime()) {
+                dayStartUTC.setUTCDate(dayStartUTC.getUTCDate() - 1);
+            }
+            return dayStartUTC;
+        };
+
+        const todayISTStart = getISTDayStart(new Date());
 
         let newStreak = 1;
         if (user.lastActivityDate) {
-            const lastActivity = new Date(user.lastActivityDate);
-            lastActivity.setHours(0, 0, 0, 0);
+            const lastActivityISTStart = getISTDayStart(new Date(user.lastActivityDate));
 
-            const diffDays = Math.floor((today - lastActivity) / (1000 * 60 * 60 * 24));
+            // Calculate difference in IST days
+            const diffMs = todayISTStart.getTime() - lastActivityISTStart.getTime();
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
             if (diffDays === 0) {
-                // Same day - keep current streak
+                // Same IST day - keep current streak
                 newStreak = user.streakCount || 1;
             } else if (diffDays === 1) {
-                // Consecutive day - increment streak
+                // Consecutive IST day - increment streak
                 newStreak = (user.streakCount || 0) + 1;
             } else {
-                // Missed days - reset streak to 1
+                // Missed IST days - reset streak to 1
                 newStreak = 1;
             }
         }
