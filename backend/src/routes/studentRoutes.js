@@ -137,8 +137,8 @@ router.get('/dashboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, perU
 // @route   GET /api/student/ai-analysis
 // @desc    Get AI-powered personalized performance analysis (Gemini)
 // @access  Private
-// CACHED: AI analysis is expensive (calls Gemini API) - cache for 5 minutes per user
-router.get('/ai-analysis', cacheMiddleware({ duration: CACHE_DURATIONS.LONG, perUser: true }), async (req, res, next) => {
+// CACHED: Short cache (30s) - balances performance with data freshness
+router.get('/ai-analysis', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, perUser: true }), async (req, res, next) => {
     try {
         const userId = req.user._id;
 
