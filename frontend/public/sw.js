@@ -1,8 +1,8 @@
 // Service Worker for StudyWise Banking PWA
 // Enhanced for native app-like experience with aggressive caching
-// VERSION: v9 - Changed status bar color to white
+// VERSION: v10 - Major bug fixes: To-Do personalization, Streak tracking, AI Coach
 
-const CACHE_VERSION = 'v9';
+const CACHE_VERSION = 'v10';
 const STATIC_CACHE = `studywise-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `studywise-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `studywise-api-${CACHE_VERSION}`;

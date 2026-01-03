@@ -136,12 +136,10 @@ function showUpdateNotification(registration) {
       }
     </style>
     <div id="sw-update-card">
-      <span class="update-icon">🚀</span>
-      <div class="update-title">New Update Available!</div>
-      <div class="update-desc" style="text-align: left; padding-left: 12px;">
-        • To-Do List issue fixed<br>
-        • Improved app performance<br>
-        • Better user experience
+      <span class="update-icon">✨</span>
+      <div class="update-title">Update Available!</div>
+      <div class="update-desc">
+        Bug fixes and improvements for a better experience.
       </div>
       <div class="update-buttons">
         <button class="btn-update" id="sw-update-btn">Update Now</button>
