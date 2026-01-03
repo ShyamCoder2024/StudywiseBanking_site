@@ -49,6 +49,25 @@ export const cacheMiddleware = (options = {}) => {
             return next();
         }
 
+        // CRITICAL FIX: Skip caching for PERSONALIZED endpoints
+        // These endpoints return PER-USER data and must NEVER be cached globally
+        // Caching them causes User A's data to be served to User B (MAJOR BUG)
+        const personalizedEndpoints = [
+            '/global-tasks',    // To-do list with per-user completion status
+            '/tasks',           // User-assigned tasks  
+        ];
+
+        const requestPath = req.originalUrl.split('?')[0];
+        const shouldSkipCache = personalizedEndpoints.some(endpoint =>
+            requestPath.includes(endpoint)
+        );
+
+        if (shouldSkipCache && !perUser) {
+            // Skip global cache for personalized data
+            // Let the route handler serve fresh data every time
+            return next();
+        }
+
         const key = generateKey(req, perUser);
         const cachedResponse = cache.get(key);
 
