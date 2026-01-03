@@ -137,8 +137,8 @@ router.get('/dashboard', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, perU
 // @route   GET /api/student/ai-analysis
 // @desc    Get AI-powered personalized performance analysis (Gemini)
 // @access  Private
-// CACHED: Short cache (30s) - balances performance with data freshness
-router.get('/ai-analysis', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, perUser: true }), async (req, res, next) => {
+// NO CACHE: Always return fresh data to avoid stale analytics display
+router.get('/ai-analysis', async (req, res, next) => {
     try {
         const userId = req.user._id;
 
@@ -151,6 +151,13 @@ router.get('/ai-analysis', cacheMiddleware({ duration: CACHE_DURATIONS.SHORT, pe
                 error: { message: 'Failed to generate AI analysis' }
             });
         }
+
+        // Set no-cache headers to prevent stale data
+        res.set({
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
 
         res.json({
             success: true,
