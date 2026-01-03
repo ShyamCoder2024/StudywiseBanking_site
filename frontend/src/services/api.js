@@ -37,6 +37,7 @@ api.interceptors.request.use(
                 '/tasks',            // User-assigned tasks
                 '/dashboard',        // Dashboard has per-user stats
                 '/enrollment',       // Per-user enrollment status
+                '/ai-analysis',      // User-specific AI analysis - must be fresh
             ];
 
             const isPersonalizedEndpoint = personalizedEndpoints.some(endpoint =>

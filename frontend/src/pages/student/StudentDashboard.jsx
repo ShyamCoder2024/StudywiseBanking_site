@@ -56,6 +56,7 @@ export function StudentDashboard() {
     const [videoCourses, setVideoCourses] = useState([]);
     // AI Analysis data for AI Coach card
     const [aiAnalysis, setAiAnalysis] = useState(null);
+    const [aiAnalysisLoaded, setAiAnalysisLoaded] = useState(false);
     // Live countdown state
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -257,6 +258,10 @@ export function StudentDashboard() {
             }
         } catch (error) {
             console.error('Failed to fetch AI analysis:', error);
+        } finally {
+            if (isMounted) {
+                setAiAnalysisLoaded(true);
+            }
         }
     };
 
@@ -511,14 +516,18 @@ export function StudentDashboard() {
                                         <span className="coach-dot strong"></span>
                                         <div className="coach-text">
                                             <span className="coach-t-label">Strong</span>
-                                            <span className="coach-t-val">{aiAnalysis?.strengths?.[0]?.topic || 'Take Quiz'}</span>
+                                            <span className="coach-t-val">
+                                                {!aiAnalysisLoaded ? '...' : (aiAnalysis?.strengths?.[0]?.topic || 'Take Quiz')}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="coach-item">
                                         <span className="coach-dot focus"></span>
                                         <div className="coach-text">
                                             <span className="coach-t-label">Focus</span>
-                                            <span className="coach-t-val">{aiAnalysis?.weaknesses?.[0]?.topic || 'Practice'}</span>
+                                            <span className="coach-t-val">
+                                                {!aiAnalysisLoaded ? '...' : (aiAnalysis?.weaknesses?.[0]?.topic || 'Practice')}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

@@ -54,7 +54,8 @@ export const cacheMiddleware = (options = {}) => {
         // Caching them causes User A's data to be served to User B (MAJOR BUG)
         const personalizedEndpoints = [
             '/global-tasks',    // To-do list with per-user completion status
-            '/tasks',           // User-assigned tasks  
+            '/tasks',           // User-assigned tasks
+            '/ai-analysis',     // User-specific AI analysis - must be fresh
         ];
 
         const requestPath = req.originalUrl.split('?')[0];
