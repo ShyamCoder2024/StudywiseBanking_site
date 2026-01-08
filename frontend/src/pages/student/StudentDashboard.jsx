@@ -112,7 +112,7 @@ export function StudentDashboard() {
         };
     }, []);
 
-    // Live countdown timer - updates every second
+    // Live countdown timer - updates every second (only when tab visible)
     useEffect(() => {
         const calculateCountdown = () => {
             let targetDate = null;
@@ -145,12 +145,39 @@ export function StudentDashboard() {
         // Set initial countdown
         setCountdown(calculateCountdown());
 
-        // Update every second for live countdown
-        const interval = setInterval(() => {
-            setCountdown(calculateCountdown());
-        }, 1000);
+        // PERFORMANCE: Only update timer when tab is visible
+        let interval = null;
+        const startTimer = () => {
+            if (!interval) {
+                interval = setInterval(() => {
+                    setCountdown(calculateCountdown());
+                }, 1000);
+            }
+        };
+        const stopTimer = () => {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+        };
 
-        return () => clearInterval(interval);
+        // Visibility change handler
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                stopTimer();
+            } else {
+                setCountdown(calculateCountdown()); // Update immediately
+                startTimer();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        if (!document.hidden) startTimer();
+
+        return () => {
+            stopTimer();
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
     }, [examSettings, newQuizzes]);
 
     // Fetch real dashboard data from backend
@@ -324,16 +351,16 @@ export function StudentDashboard() {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
-            transition: { staggerChildren: 0.01 } // Reduced from 0.02 for faster animation
+            transition: { staggerChildren: 0.005 } // PERFORMANCE: Reduced from 0.01 for faster animation
         }
     };
 
     const tile = {
-        hidden: { y: 15, opacity: 0 },
+        hidden: { y: 10, opacity: 0 }, // PERFORMANCE: Reduced y distance
         show: {
             y: 0,
             opacity: 1,
-            transition: { type: "spring", stiffness: 150, damping: 14 }
+            transition: { type: "tween", duration: 0.12, ease: "easeOut" } // PERFORMANCE: tween is faster than spring
         }
     };
 

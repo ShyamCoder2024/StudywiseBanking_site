@@ -11,10 +11,10 @@ if ('serviceWorker' in navigator) {
       .then((registration) => {
         console.log('SW registered:', registration.scope);
 
-        // Check for updates every 5 minutes
+        // PERFORMANCE: Check for updates every 10 minutes (reduced from 5)
         setInterval(() => {
           registration.update();
-        }, 5 * 60 * 1000);
+        }, 10 * 60 * 1000);
 
         // Listen for new service worker installation
         registration.addEventListener('updatefound', () => {
@@ -139,8 +139,8 @@ function showUpdateNotification(registration) {
       <span class="update-icon">✨</span>
       <div class="update-title">Update Available!</div>
       <div class="update-desc" style="text-align: left; padding-left: 8px;">
-        • To-Do list problem fixed<br>
-        • Bug fixes for better experience
+        • Improved app performance<br>
+        • Faster loading & smoother experience
       </div>
       <div class="update-buttons">
         <button class="btn-update" id="sw-update-btn">Update Now</button>

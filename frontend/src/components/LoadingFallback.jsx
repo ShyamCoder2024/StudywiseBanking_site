@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import { Loader } from './ui/Loader';
 import './LoadingFallback.css';
 
-export function LoadingFallback({ timeout = 8000 }) {
+// PERFORMANCE: Reduced timeouts for faster perceived loading
+export function LoadingFallback({ timeout = 6000 }) {
     const [showSlowWarning, setShowSlowWarning] = useState(false);
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
-        // Show warning after 3 seconds (reduced from 5)
+        // Show warning after 2 seconds (reduced from 3)
         const warningTimer = setTimeout(() => {
             setShowSlowWarning(true);
-        }, 3000);
+        }, 2000);
 
         // Show error after timeout
         const errorTimer = setTimeout(() => {

@@ -1,6 +1,6 @@
 /* Unacademy-style Typography - Work Sans */
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap');
-@import "tailwindcss";
+/* Font loaded via preload in index.html for non-blocking render */
+/* Tailwind configured via PostCSS */
 
 :root {
   /* Brand Palette - User Specified */
@@ -317,12 +317,18 @@ select:-webkit-autofill:focus {
 }
 
 /* Performance Optimization - GPU Acceleration */
+/* OPTIMIZED: will-change only on hover to reduce memory usage */
 .clickable,
 .bento-tile,
 .card {
-  will-change: transform;
-  transform: translateZ(0);
   backface-visibility: hidden;
+}
+
+.clickable:hover,
+.clickable:active,
+.bento-tile:hover,
+.card:hover {
+  will-change: transform;
 }
 
 /* ============================================
@@ -556,12 +562,19 @@ img:not([loading="lazy"]) {
 }
 
 /* Smooth Color Transitions for Theme Switching */
+/* OPTIMIZED: Reduced transition duration for snappier feel */
 body,
 .card,
 .bento-tile,
 .bottom-navbar,
 .navbar {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* PERFORMANCE: Content-visibility for off-screen elements */
+.bento-grid>.bento-tile:nth-child(n+5) {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
 }
 
 /* Keyboard appears - adjust viewport */
