@@ -9,6 +9,7 @@ import {
 import { AIAnalysis } from '../../components/ai/AIAnalysis';
 import { Leaderboard } from '../../components/leaderboard/Leaderboard';
 import { AvatarDisplay } from '../../components/ui/AvatarDisplay';
+import { UpdateCard } from '../../components/ui/UpdateCard';
 import api from '../../services/api';
 import './StudentDashboard.css';
 
@@ -395,6 +396,9 @@ export function StudentDashboard() {
                         </div>
                     </div>
                 </motion.div>
+
+                {/* Update Notification Card */}
+                <UpdateCard />
 
                 {/* BENTO GRID LAYOUT */}
                 <motion.div

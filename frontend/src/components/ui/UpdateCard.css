@@ -1,0 +1,142 @@
+/* Update Card Styles - Premium Success Banner */
+
+.update-card-wrapper {
+    position: relative;
+    margin-bottom: 24px;
+    animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.update-card {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.update-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.update-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1;
+}
+
+.update-content {
+    flex: 1;
+    z-index: 1;
+}
+
+.update-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.update-message {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.update-close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.update-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.update-close:active {
+    transform: scale(0.95);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .update-card {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .update-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .update-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .update-title {
+        font-size: 1rem;
+    }
+
+    .update-message {
+        font-size: 0.875rem;
+    }
+
+    .update-close {
+        width: 28px;
+        height: 28px;
+    }
+
+    .update-close svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Dark Mode Support */
+:root.dark .update-card {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
