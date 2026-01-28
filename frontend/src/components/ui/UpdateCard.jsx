@@ -10,7 +10,8 @@ export function UpdateCard() {
         // Check if user has already dismissed this update
         const dismissed = localStorage.getItem(dismissKey);
         if (!dismissed) {
-            setIsVisible(true);
+            // Small delay before showing for better UX
+            setTimeout(() => setIsVisible(true), 500);
         }
     }, []);
 
@@ -22,23 +23,29 @@ export function UpdateCard() {
     if (!isVisible) return null;
 
     return (
-        <div className="update-card-wrapper">
-            <div className="update-card">
-                <div className="update-icon">
-                    <CheckCircle2 size={24} />
+        <>
+            <div className="update-card-wrapper">
+                <div className="update-backdrop" onClick={handleDismiss} />
+                <div className="update-card">
+                    <button onClick={handleDismiss} className="update-close" aria-label="Dismiss">
+                        <X size={20} />
+                    </button>
+                    <div className="update-icon">
+                        <CheckCircle2 size={32} />
+                    </div>
+                    <div className="update-content">
+                        <h3 className="update-title">🎉 App Updated!</h3>
+                        <p className="update-message">
+                            We've fixed critical scrolling issues and improved the overall user experience.
+                            Enjoy smoother navigation across all pages!
+                        </p>
+                    </div>
+                    <button onClick={handleDismiss} className="update-dismiss-btn">
+                        Got it!
+                    </button>
                 </div>
-                <div className="update-content">
-                    <h3 className="update-title">🎉 App Updated - Critical Fixes!</h3>
-                    <p className="update-message">
-                        We've fixed critical scrolling issues and improved the overall user experience.
-                        Enjoy smoother navigation across all pages!
-                    </p>
-                </div>
-                <button onClick={handleDismiss} className="update-close" aria-label="Dismiss">
-                    <X size={20} />
-                </button>
             </div>
-        </div>
+        </>
     );
 }
 
