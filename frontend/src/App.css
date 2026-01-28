@@ -3,7 +3,7 @@
    BULLETPROOF RESPONSIVE DESIGN
    ============================================ */
 
-/* Force full width on all elements - CRITICAL FIX FOR SCROLLING */
+/* CRITICAL SCROLLING FIX - Let content flow naturally */
 html,
 body,
 #root {
@@ -11,12 +11,12 @@ body,
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* REMOVED overflow-x: hidden - was blocking page scroll */
-  /* Users could only scroll via scrollbar, not content area */
-  overflow-y: scroll !important;
-  /* Force scrollbar always visible */
-  overflow-x: visible;
-  /* Allow horizontal content if needed */
+  /* DO NOT set overflow on root elements - let natural scrolling work */
+  /* This allows mobile PWA to scroll content properly */
+  height: auto !important;
+  min-height: 100vh;
+  overflow: visible !important;
+  /* Natural scrolling */
 }
 
 /* Main app wrapper */
