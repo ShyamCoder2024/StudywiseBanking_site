@@ -4,7 +4,7 @@ import './UpdateCard.css';
 
 export function UpdateCard() {
     const [isVisible, setIsVisible] = useState(false);
-    const dismissKey = 'update-dismissed-jan2026';
+    const dismissKey = 'update-dismissed-jan28-v2'; // Updated key for new pop-up version
 
     useEffect(() => {
         // Check if user has already dismissed this update
