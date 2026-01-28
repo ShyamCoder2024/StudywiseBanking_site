@@ -3,7 +3,7 @@
    BULLETPROOF RESPONSIVE DESIGN
    ============================================ */
 
-/* Force full width on all elements */
+/* Force full width on all elements - CRITICAL FIX FOR SCROLLING */
 html,
 body,
 #root {
@@ -11,8 +11,12 @@ body,
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* REMOVED overflow-x: hidden - was blocking page scroll */
+  /* Users could only scroll via scrollbar, not content area */
+  overflow-y: scroll !important;
+  /* Force scrollbar always visible */
+  overflow-x: visible;
+  /* Allow horizontal content if needed */
 }
 
 /* Main app wrapper */

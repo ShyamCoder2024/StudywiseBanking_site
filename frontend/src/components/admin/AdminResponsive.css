@@ -440,11 +440,15 @@ table tbody tr:hover {
     .admin-modal {
         width: 100% !important;
         max-width: 100% !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
+        /* REMOVED height: 100vh - was preventing scroll */
+        /* REMOVED max-height: 100vh - was blocking content overflow */
+        min-height: 100vh !important;
+        /* Allow content to expand */
         border-radius: 0 !important;
         margin: 0 !important;
         animation: adminSlideUp 0.3s ease-out;
+        overflow-y: auto !important;
+        /* Enable scrolling */
     }
 
     .admin-modal-content {

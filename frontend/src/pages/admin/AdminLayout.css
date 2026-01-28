@@ -32,7 +32,12 @@
     display: flex;
     flex-direction: column;
     position: fixed;
-    height: 100vh;
+    min-height: 100vh;
+    /* Changed from height to min-height for proper scrolling */
+    max-height: 100vh;
+    /* Constrain to viewport */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
     left: 0;
     top: 0;
     z-index: 50;
